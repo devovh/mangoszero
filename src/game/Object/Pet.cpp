@@ -2232,7 +2232,9 @@ void Pet::ProhibitSpellSchool(SpellSchoolMask idSchoolMask, uint32 unTimeMs)
             AddCreatureSpellCooldown(spellInfo->Id, unTimeMs);
         }
     }
-    pOwner = ((Player*)GetOwner());
-    if (pOwner)
-        pOwner->GetSession()->SendPacket(&msg);
+	if (GetOwner()->isType(TYPEMASK_PLAYER))
+	{
+		pOwner = GetOwner()->ToPlayer();
+		pOwner->GetSession()->SendPacket(&msg);
+	}
 }
