@@ -359,15 +359,15 @@ void WorldSession::HandleForceSpeedChangeAckOpcodes(WorldPacket& recv_data)
 
 void WorldSession::HandleSetActiveMoverOpcode(WorldPacket& recv_data)
 {
-    DEBUG_LOG("WORLD: Received opcode CMSG_SET_ACTIVE_MOVER");
-
     ObjectGuid guid;
     recv_data >> guid;
 
+	if (!_player)
+		return;
+
     if (_player->GetMover()->GetObjectGuid() != guid)
     {
-        sLog.outError("HandleSetActiveMoverOpcode: incorrect mover guid: mover is %s and should be %s",
-                      _player->GetMover()->GetGuidStr().c_str(), guid.GetString().c_str());
+        sLog.outError("\n%s, %s line %d does NOTHING\n", __FUNCTION__, __FILE__, __LINE__);
         return;
     }
 }
