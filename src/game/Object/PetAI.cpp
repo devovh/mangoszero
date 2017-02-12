@@ -68,7 +68,7 @@ void PetAI::MoveInLineOfSight(Unit* u)
             if (m_creature->IsWithinLOSInMap(u))
             {
                 AttackStart(u);
-                // u->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+                u->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
             }
         }
     }
@@ -76,7 +76,8 @@ void PetAI::MoveInLineOfSight(Unit* u)
 
 void PetAI::AttackStart(Unit* u)
 {
-    if (!u || (m_creature->IsPet() && ((Pet*)m_creature)->getPetType() == MINI_PET))
+    if (!u || (m_creature->IsPet() && ((Pet*)m_creature)->getPetType() == MINI_PET) ||
+        !u->IsTargetableForAttack() || u->IsFriendlyTo(m_creature->GetCharmerOrOwner()))
         { return; }
 
     if (m_creature->Attack(u, true))
