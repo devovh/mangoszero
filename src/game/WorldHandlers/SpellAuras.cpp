@@ -5496,9 +5496,11 @@ void SpellAuraHolder::Update(uint32 diff)
         }
     }
 
-    for (int32 i = 0; i < MAX_EFFECT_INDEX; ++i)
-        if (Aura* aura = m_auras[i])
-            { aura->UpdateAura(diff); }
+	for (int32 i = 0; i < MAX_EFFECT_INDEX; ++i)
+	{
+		if (Aura *aura = m_auras[i])
+			aura->UpdateAura(diff);
+	}
 
     if (m_isHeartbeatSubject && m_duration)
     {

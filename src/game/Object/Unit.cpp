@@ -3021,7 +3021,8 @@ void Unit::_UpdateSpells(uint32 time)
     {
         SpellAuraHolder* i_holder = m_spellAuraHoldersUpdateIterator->second;
         ++m_spellAuraHoldersUpdateIterator;                 // need shift to next for allow update if need into aura update
-        i_holder->UpdateHolder(time);
+		if (i_holder)
+			i_holder->UpdateHolder(time);
     }
 
     // remove expired auras
