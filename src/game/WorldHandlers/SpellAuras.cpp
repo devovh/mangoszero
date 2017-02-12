@@ -3019,15 +3019,42 @@ void Aura::HandleAuraModStalked(bool apply, bool /*Real*/)
 
 void Aura::HandlePeriodicTriggerSpell(bool apply, bool /*Real*/)
 {
+    Unit* pOwner;
+    Unit* target;
+    
     m_isPeriodic = apply;
+    target = GetTarget();
+    pOwner = target->GetOwner(); // Totem owner
+    
+    DEBUG_LOG("=========Target: %s Spell: %d apply: %d Owner: %s", target->GetName(), GetId(), apply, pOwner->GetName());
 
-    Unit* target = GetTarget();
-
-    if (!apply)
+    if (apply)
     {
         switch (GetId())
         {
-            case 29213:                                     // Curse of the Plaguebringer
+            // Shaman totems.
+            case 8167: // Poison Cleansing Totem Passive
+            case 8172: // Disease Cleansing Totem Passive
+            case 8179: // Grounding Totem Passive
+                if (pOwner)
+                {
+                    DEBUG_LOG("========pOWNER");
+                    if (((Player*)pOwner)->GetGroup() == NULL)
+                    {
+                        // Affects player only.
+                        SpellEntry const* spellInfo = sSpellStore.LookupEntry(GetId());
+                        MANGOS_ASSERT(spellInfo);
+                        DEBUG_LOG("=========EffectTriggerSpell: %d", spellInfo->EffectTriggerSpell[0]);
+                        target->CastSpell(pOwner, spellInfo->EffectTriggerSpell[0], true, 0, this, target->GetObjectGuid(), spellInfo); // Always 0 for these spells.
+                    }
+                    else
+                    {
+                        // Affects group members too.
+                        ///< TODO: Iterate over MemberSlotList and cast the effect on them.
+                    }
+                }
+                break;
+            case 29213:                                         // Curse of the Plaguebringer
                 if (m_removeMode != AURA_REMOVE_BY_DISPEL)
                     // Cast Wrath of the Plaguebringer if not dispelled
                     { target->CastSpell(target, 29214, true, 0, this); }
