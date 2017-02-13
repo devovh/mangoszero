@@ -8513,6 +8513,22 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
         if (itr->second->IsDeleted())
             { continue; }
 
+		// Custom procced spells added here due to insufficient proc flags
+		if (procSpell) {
+			uint32 procTriggeredId = itr->second->GetId();
+			switch (procSpell->Id) {
+				case 5138: case 6226: case 11703: case 11704:	// All Drain Mana ranks should proc Improved Drain Mana. No drain mana proc flags exist.
+				{
+					if (procTriggeredId == 17864 || procTriggeredId == 18393) {		// Improved Drain Mana Ranks 1 and 2.
+						itr->second->SetInUse(true);
+						procTriggered.push_back(ProcTriggeredData(NULL, itr->second));
+						continue;
+					}
+					break;
+				}
+			}
+		}
+
         SpellProcEventEntry const* spellProcEvent = NULL;
         if (!IsTriggeredAtSpellProcEvent(pTarget, itr->second, procSpell, procFlag, procExtra, attType, isVictim, spellProcEvent))
             { continue; }

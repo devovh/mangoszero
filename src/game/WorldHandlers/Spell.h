@@ -503,6 +503,8 @@ class Spell
         int32 m_healing;                                    // Healing in effects count here
         int32 m_healthLeech;                                // Health leech in effects for all targets count here
 
+		int32 m_damageOverride;								// Some spells need to use a set damage amount based on triggering auras/spells. Set here to use in final damage calculations.
+
         //******************************************
         // Spell trigger system
         //******************************************

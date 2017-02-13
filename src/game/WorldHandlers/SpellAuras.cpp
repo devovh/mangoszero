@@ -4649,6 +4649,12 @@ void Aura::PeriodicTick()
             {
                 int32 gain = pCaster->ModifyPower(power, gain_amount);
                 target->AddThreat(pCaster, float(gain) * 0.5f, false, GetSpellSchoolMask(spellProto), spellProto);
+
+				// Set trigger flag
+				uint32 procAttacker = PROC_FLAG_ON_DO_PERIODIC;
+				uint32 procVictim = PROC_FLAG_ON_TAKE_PERIODIC;
+				uint32 procEx = PROC_EX_NORMAL_HIT | PROC_EX_PERIODIC_POSITIVE;
+				pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, procEx, gain_amount, BASE_ATTACK, spellProto);
             }
 
             // Some special cases

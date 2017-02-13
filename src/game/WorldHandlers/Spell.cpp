@@ -326,6 +326,7 @@ Spell::Spell(Unit* caster, SpellEntry const* info, bool triggered, ObjectGuid or
     m_casttime = 0;                                         // setup to correct value in Spell::prepare, don't must be used before.
     m_timer = 0;                                            // will set to cast time in prepare
     m_duration = 0;
+	m_damageOverride = 0;
 
     m_needAliveTargetMask = 0;
 
@@ -1043,8 +1044,12 @@ void Spell::DoAllEffectOnTarget(TargetInfo* target)
             { unitTarget->GetHostileRefManager().threatAssist(real_caster, float(gain) * 0.5f * sSpellMgr.GetSpellThreatMultiplier(m_spellInfo), m_spellInfo); }
     }
     // Do damage and triggers
-    else if (m_damage)
+    else if (m_damage || m_damageOverride)
     {
+		// Some spells need their damage set again at this point to a value directly based on the triggering spell.
+		if (m_damageOverride > 0)
+			m_damage = m_damageOverride;
+
         // Fill base damage struct (unitTarget - is real spell target)
         SpellNonMeleeDamage damageInfo(caster, unitTarget, m_spellInfo->Id, GetFirstSchoolInMask(m_spellSchoolMask));
 
@@ -2621,6 +2626,19 @@ void Spell::prepare(SpellCastTargets const* targets, Aura* triggeredByAura)
     // calculate cast time (calculated after first CheckCast check to prevent charge counting for first CheckCast fail)
     m_casttime = GetSpellCastTime(m_spellInfo, this);
     m_duration = CalculateSpellDuration(m_spellInfo, m_caster);
+
+	// Set custom override damage for some triggered spells
+	if (triggeredByAura)
+	{
+		switch (m_spellInfo->Id)
+		{
+			case 18394:	// Drain Mana damage proc spell needs triggering aura mana drain amount
+			{
+				m_damageOverride = triggeredByAura->GetModifier()->m_amount;
+				break;
+			}
+		}
+	}
 
     // set timer base at cast time
     ReSetTimer();

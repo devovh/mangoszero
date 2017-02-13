@@ -1280,7 +1280,7 @@ SpellAuraProcResult Unit::HandleProcTriggerDamageAuraProc(Unit* pVictim, uint32 
     return SPELL_AURA_PROC_OK;
 }
 
-SpellAuraProcResult Unit::HandleOverrideClassScriptAuraProc(Unit* pVictim, uint32 /*damage*/, Aura* triggeredByAura, SpellEntry const* procSpell, uint32 /*procFlag*/, uint32 /*procEx*/ , uint32 cooldown)
+SpellAuraProcResult Unit::HandleOverrideClassScriptAuraProc(Unit* pVictim, uint32 damage, Aura* triggeredByAura, SpellEntry const* procSpell, uint32 /*procFlag*/, uint32 /*procEx*/ , uint32 cooldown)
 {
     int32 scriptId = triggeredByAura->GetModifier()->m_miscvalue;
 
@@ -1318,6 +1318,16 @@ SpellAuraProcResult Unit::HandleOverrideClassScriptAuraProc(Unit* pVictim, uint3
             triggered_spell_id = 12486;
             break;
         }
+		case 2028: case 2029:								// Improved Drain Mana (Ranks 1 and 2)
+		{
+			triggered_spell_id = 18394;
+			Modifier* mod = triggeredByAura->GetModifier();
+			int32 drainManaDamage = int32(damage * (scriptId == 2028 ? 0.15f : 0.3f));
+			triggeredByAura->SetModifier(mod->m_auraname, drainManaDamage, mod->periodictime, mod->m_miscvalue);
+			
+			if (!procSpell || drainManaDamage <= 1) return SPELL_AURA_PROC_FAILED;
+			break;
+		}
         case 3656:                                          // Corrupted Healing / Nefarian Priest Classcall
         {
             triggered_spell_id = 23402;
