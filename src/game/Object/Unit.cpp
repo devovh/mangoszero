@@ -3002,61 +3002,66 @@ uint32 Unit::GetWeaponSkillValue(WeaponAttackType attType, Unit const* target) c
 
 void Unit::_UpdateSpells(uint32 time)
 {
-    if (m_currentSpells[CURRENT_AUTOREPEAT_SPELL])
-        { _UpdateAutoRepeatSpell(); }
+	if (m_currentSpells[CURRENT_AUTOREPEAT_SPELL])
+	{
+		_UpdateAutoRepeatSpell();
+	}
 
-    // remove finished spells from current pointers
-    for (uint32 i = 0; i < CURRENT_MAX_SPELL; ++i)
-    {
-        if (m_currentSpells[i] && m_currentSpells[i]->getState() == SPELL_STATE_FINISHED)
-        {
-            m_currentSpells[i]->SetReferencedFromCurrent(false);
-            m_currentSpells[i] = NULL;                      // remove pointer
-        }
-    }
+	// remove finished spells from current pointers
+	for (uint32 i = 0; i < CURRENT_MAX_SPELL; ++i)
+	{
+		if (m_currentSpells[i] && m_currentSpells[i]->getState() == SPELL_STATE_FINISHED)
+		{
+			m_currentSpells[i]->SetReferencedFromCurrent(false);
+			m_currentSpells[i] = NULL;                      // remove pointer
+		}
+	}
 
-    // update auras
-    // m_AurasUpdateIterator can be updated in inderect called code at aura remove to skip next planned to update but removed auras
-    for (m_spellAuraHoldersUpdateIterator = m_spellAuraHolders.begin(); m_spellAuraHoldersUpdateIterator != m_spellAuraHolders.end();)
-    {
-        SpellAuraHolder* i_holder = m_spellAuraHoldersUpdateIterator->second;
-        ++m_spellAuraHoldersUpdateIterator;                 // need shift to next for allow update if need into aura update
-		if (i_holder)
-			i_holder->UpdateHolder(time);
-    }
+	// update auras
+	// m_AurasUpdateIterator can be updated in inderect called code at aura remove to skip next planned to update but removed auras
+	for (m_spellAuraHoldersUpdateIterator = m_spellAuraHolders.begin(); m_spellAuraHoldersUpdateIterator != m_spellAuraHolders.end();)
+	{
+		SpellAuraHolder* i_holder = m_spellAuraHoldersUpdateIterator->second;
+		++m_spellAuraHoldersUpdateIterator;                 // need shift to next for allow update if need into aura update
+		i_holder->UpdateHolder(time);
+	}
 
-    // remove expired auras
-    for (SpellAuraHolderMap::iterator iter = m_spellAuraHolders.begin(); iter != m_spellAuraHolders.end();)
-    {
-        SpellAuraHolder* holder = iter->second;
+	// remove expired auras
+	for (SpellAuraHolderMap::iterator iter = m_spellAuraHolders.begin(); iter != m_spellAuraHolders.end();)
+	{
+		SpellAuraHolder* holder = iter->second;
 
-        if (!(holder->IsPermanent() || holder->IsPassive()) && holder->GetAuraDuration() == 0)
-        {
-            RemoveSpellAuraHolder(holder, AURA_REMOVE_BY_EXPIRE);
-            iter = m_spellAuraHolders.begin();
-        }
-        else
-            { ++iter; }
-    }
+		if (!(holder->IsPermanent() || holder->IsPassive()) && holder->GetAuraDuration() == 0)
+		{
+			RemoveSpellAuraHolder(holder, AURA_REMOVE_BY_EXPIRE);
+			iter = m_spellAuraHolders.begin();
+		}
+		else
+		{
+			++iter;
+		}
+	}
 
-    if (!m_gameObj.empty())
-    {
-        GameObjectList::iterator ite1, dnext1;
-        for (ite1 = m_gameObj.begin(); ite1 != m_gameObj.end(); ite1 = dnext1)
-        {
-            dnext1 = ite1;
-            //(*i)->Update( difftime );
-            if (!(*ite1)->isSpawned())
-            {
-                (*ite1)->SetOwnerGuid(ObjectGuid());
-                (*ite1)->SetRespawnTime(0);
-                (*ite1)->Delete();
-                dnext1 = m_gameObj.erase(ite1);
-            }
-            else
-                { ++dnext1; }
-        }
-    }
+	if (!m_gameObj.empty())
+	{
+		GameObjectList::iterator ite1, dnext1;
+		for (ite1 = m_gameObj.begin(); ite1 != m_gameObj.end(); ite1 = dnext1)
+		{
+			dnext1 = ite1;
+			//(*i)->Update( difftime );
+			if (!(*ite1)->isSpawned())
+			{
+				(*ite1)->SetOwnerGuid(ObjectGuid());
+				(*ite1)->SetRespawnTime(0);
+				(*ite1)->Delete();
+				dnext1 = m_gameObj.erase(ite1);
+			}
+			else
+			{
+				++dnext1;
+			}
+		}
+	}
 }
 
 void Unit::_UpdateAutoRepeatSpell()
