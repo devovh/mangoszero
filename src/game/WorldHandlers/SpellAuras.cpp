@@ -3026,7 +3026,7 @@ void Aura::HandlePeriodicTriggerSpell(bool apply, bool /*Real*/)
     target = GetTarget();
     pOwner = target->GetOwner(); // Totem owner
     
-    DEBUG_LOG("=========Target: %s Spell: %d apply: %d Owner: %s", target->GetName(), GetId(), apply, pOwner->GetName());
+    DEBUG_LOG("=========Target: %s Spell: %d apply: %d Owner: %s", target->GetName(), GetId(), apply, (pOwner ? pOwner->GetName() : "[None]"));
 
     if (apply)
     {
