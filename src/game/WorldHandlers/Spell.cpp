@@ -6072,6 +6072,7 @@ SpellCastResult Spell::CheckItems()
                 break;
             }
             case SPELL_EFFECT_ENCHANT_HELD_ITEM:
+				;
                 // check item existence in effect code (not output errors at offhand hold item effect to main hand for example
                 break;
             case SPELL_EFFECT_DISENCHANT:

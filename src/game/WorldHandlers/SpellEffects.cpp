@@ -207,7 +207,7 @@ void Spell::EffectNULL(SpellEffectIndex /*eff_idx*/)
 
 void Spell::EffectUnused(SpellEffectIndex /*eff_idx*/)
 {
-    // NOT USED BY ANY SPELL OR USELESS OR IMPLEMENTED IN DIFFERENT WAY IN MANGOS
+	DEBUG_LOG("WORLD: Spell Effect UNUSED");
 }
 
 void Spell::EffectResurrectNew(SpellEffectIndex eff_idx)
@@ -1302,6 +1302,26 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
                 m_caster->CastCustomSpell(unitTarget, 10444, &totalDamage, NULL, NULL, true, m_CastItem);
                 return;
             }
+
+			// Flametongue Totem Proc
+			if (
+				m_spellInfo->Id == 8253
+				|| m_spellInfo->Id == 8248
+				|| m_spellInfo->Id == 10523
+				|| m_spellInfo->Id == 16389
+				)
+			{
+				if (m_CastItem)
+				{
+					// found spelldamage coefficients of 0.381% per 0.1 speed and 15.244 per 4.0 speed
+					// but own calculation say 0.385 gives at most one point difference to published values
+					int32 spellDamage = m_caster->SpellBaseDamageBonusDone(GetSpellSchoolMask(m_spellInfo));
+					float weaponSpeed = (1.0f / IN_MILLISECONDS) * m_CastItem->GetProto()->Delay;
+					int32 totalDamage = int32((damage + 3.85f * spellDamage) * 0.01 * weaponSpeed);
+
+					m_caster->CastCustomSpell(unitTarget, 29469, &totalDamage, NULL, NULL, true, m_CastItem);
+				}
+			}
 
             break;
         }

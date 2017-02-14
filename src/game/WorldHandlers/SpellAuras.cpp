@@ -984,15 +984,6 @@ void Aura::TriggerSpell()
 //                }
 //                break;
 //            }
-//            case SPELLFAMILY_SHAMAN:
-//            {
-//                switch (auraId)
-//                {
-//                    default:
-//                        break;
-//                }
-//                break;
-//            }
             default:
                 break;
         }
@@ -1090,6 +1081,42 @@ void Aura::TriggerSpell()
                 triggerTarget->CastCustomSpell(triggerTarget, 19698, &damageForTick[GetAuraTicks() - 1], NULL, NULL, true, NULL);
                 return;
             }
+			case 8167:	// Poison Cleansing Totem Passive
+			{
+				target = m_caster->GetOwner();
+				if (target && target->GetTypeId() == TYPEID_PLAYER)
+				{
+					MANGOS_ASSERT(triggeredSpellInfo);
+					if (target->IsWithinDist(m_caster, GetSpellRadius(sSpellRadiusStore.LookupEntry(triggeredSpellInfo->EffectRadiusIndex[0]))))
+						m_caster->CastSpell(target, triggeredSpellInfo, true, 0, this, m_caster->GetObjectGuid());
+					if (target->ToPlayer()->GetGroup())
+					{
+						Group::MemberSlotList slots = target->ToPlayer()->GetGroup()->GetMemberSlots();
+						for (Group::MemberSlotList::iterator itr = slots.begin(); itr != slots.end(); ++itr)
+						{
+							if (Player *member = sObjectMgr.GetPlayer(itr->guid))
+							{
+								if (
+									member != target->ToPlayer()
+									&& member->IsWithinDist(m_caster, GetSpellRadius(sSpellRadiusStore.LookupEntry(triggeredSpellInfo->EffectRadiusIndex[0])))
+									)
+								{
+									m_caster->CastSpell
+									(
+										member,
+										triggeredSpellInfo,
+										true,
+										0,
+										this,
+										m_caster->GetObjectGuid()
+									);
+								}
+							}
+						}
+					}
+				}
+				return;
+			}
         }
     }
 
@@ -3019,50 +3046,69 @@ void Aura::HandleAuraModStalked(bool apply, bool /*Real*/)
 
 void Aura::HandlePeriodicTriggerSpell(bool apply, bool /*Real*/)
 {
-    Unit* pOwner;
-    Unit* target;
-    
-    m_isPeriodic = apply;
-    target = GetTarget();
-    pOwner = target->GetOwner(); // Totem owner
-    
-    DEBUG_LOG("=========Target: %s Spell: %d apply: %d Owner: %s", target->GetName(), GetId(), apply, (pOwner ? pOwner->GetName() : "[None]"));
+	Unit *target;
+	Unit *caster;
+	SpellEntry const *triggeredSpellInfo = sSpellStore.LookupEntry(GetId());
 
-    if (apply)
-    {
-        switch (GetId())
-        {
-            // Shaman totems.
-            case 8167: // Poison Cleansing Totem Passive
-            case 8172: // Disease Cleansing Totem Passive
-            case 8179: // Grounding Totem Passive
-                if (pOwner)
-                {
-                    DEBUG_LOG("========pOWNER");
-                    if (((Player*)pOwner)->GetGroup() == NULL)
-                    {
-                        // Affects player only.
-                        SpellEntry const* spellInfo = sSpellStore.LookupEntry(GetId());
-                        MANGOS_ASSERT(spellInfo);
-                        DEBUG_LOG("=========EffectTriggerSpell: %d", spellInfo->EffectTriggerSpell[0]);
-                        target->CastSpell(pOwner, spellInfo->EffectTriggerSpell[0], true, 0, this, target->GetObjectGuid(), spellInfo); // Always 0 for these spells.
-                    }
-                    else
-                    {
-                        // Affects group members too.
-                        ///< TODO: Iterate over MemberSlotList and cast the effect on them.
-                    }
-                }
-                break;
-            case 29213:                                         // Curse of the Plaguebringer
-                if (m_removeMode != AURA_REMOVE_BY_DISPEL)
-                    // Cast Wrath of the Plaguebringer if not dispelled
-                    { target->CastSpell(target, 29214, true, 0, this); }
-                return;
-            default:
-                break;
-        }
-    }
+	target = GetTarget();
+	caster = GetCaster();
+	if (apply, m_isPeriodic = apply)
+	{
+		switch (GetId())
+		{
+			// Shaman totems.
+		case 8167:  // Poison Cleansing Totem Passive
+		case 8172:  // Disease Cleansing Totem Passive
+		case 8179:  // Grounding Totem Passive
+		case 8229:  // Flametongue Totem Passive (Rank 1)
+		case 8251:  // Flametongue Totem Passive (Rank 2)
+		case 10524: // Flametongue Totem Passive (Rank 3)
+		case 16388: // Flametongue Totem Passive (Rank 4)
+			caster = target;
+			target = caster->GetOwner();
+			if (target && target->GetTypeId() == TYPEID_PLAYER)
+			{
+				MANGOS_ASSERT(triggeredSpellInfo);
+				caster->CastSpell(target, triggeredSpellInfo->EffectTriggerSpell[0], true, 0, this, caster->GetObjectGuid(), triggeredSpellInfo);
+				if (target->ToPlayer()->GetGroup())
+				{
+					Group::MemberSlotList slots = target->ToPlayer()->GetGroup()->GetMemberSlots();
+					for (Group::MemberSlotList::iterator itr = slots.begin(); itr != slots.end(); ++itr)
+					{
+						if (Player *member = sObjectMgr.GetPlayer(itr->guid))
+						{
+							if (
+								member != target->ToPlayer()
+								&& member->IsWithinDist(caster, GetSpellMaxRange(sSpellRangeStore.LookupEntry(GetSpellProto()->rangeIndex)))
+								)
+							{
+								caster->CastSpell
+								(
+									member->ToUnit(),
+									triggeredSpellInfo->EffectTriggerSpell[0],
+									true,
+									0,
+									this,
+									caster->GetObjectGuid(),
+									triggeredSpellInfo
+								);
+							}
+						}
+					}
+				}
+			}
+			break;
+		case 29213:                                         // Curse of the Plaguebringer
+			if (m_removeMode != AURA_REMOVE_BY_DISPEL)
+				// Cast Wrath of the Plaguebringer if not dispelled
+			{
+				target->CastSpell(target, 29214, true, 0, this);
+			}
+			return;
+		default:
+			break;
+		}
+	}
 }
 
 void Aura::HandlePeriodicTriggerSpellWithValue(bool apply, bool /*Real*/)
@@ -5340,8 +5386,11 @@ bool SpellAuraHolder::IsNeedVisibleSlot(Unit const* caster) const
         }
     }
 
-    // passive auras (except totem auras) do not get placed in the slots
-    return !m_isPassive || totemAura;
+    // Passive and totem bound auras should not be made visible to players
+	if (totemAura || m_isPassive)
+		return false;
+	else
+		return true;
 }
 
 void SpellAuraHolder::HandleSpellSpecificBoosts(bool apply)
@@ -5496,7 +5545,7 @@ SpellAuraHolder::~SpellAuraHolder()
 {
     // note: auras in delete list won't be affected since they clear themselves from holder when adding to deletedAuraslist
     for (int32 i = 0; i < MAX_EFFECT_INDEX; ++i)
-        if (Aura* aur = m_auras[i])
+        if (Aura *aur = m_auras[i])
             { delete aur; }
 }
 
