@@ -81,6 +81,21 @@ bool normalizePlayerName(std::string& name)
     return true;
 }
 
+void NormalizePlayerName(char *name)
+{
+	size_t length;
+
+	if (name && *name)
+	{
+		length = strlen(name);
+		*name = toupper(*name);
+		for (size_t i = length; i > 0; i--)
+		{
+			*(name + i) = tolower(*(name + i));
+		}
+	}
+}
+
 LanguageDesc lang_description[LANGUAGES_COUNT] =
 {
     { LANG_ADDON,           0, 0                       },
