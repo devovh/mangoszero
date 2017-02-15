@@ -430,6 +430,19 @@ class ByteBuffer
             return *this;
         }
 
+		ByteBuffer &operator>>(char *pval)
+		{
+			char c;
+
+			/* We make sure that the buffer's position does not overrun its maximum set size (default: 4096) */
+			for (int i = 0; rpos() < size(); i++)
+			{
+				c = read<char>();
+				*(pval + i) = c;
+			}
+			return *this;
+		}
+
         template<class T>
         /**
          * @brief
