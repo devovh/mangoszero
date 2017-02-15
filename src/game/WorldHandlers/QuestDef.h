@@ -172,8 +172,9 @@ enum QuestActor
 
 enum QuestRole
 {
-    QR_START = 0,
-    QR_END   = 1,
+    QR_START	= 0,
+    QR_END		= 1,
+	QR_REQUIREMENT	= 2
 };
 
 struct QuestLocale

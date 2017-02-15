@@ -6317,6 +6317,21 @@ void ObjectMgr::LoadGameobjectInvolvedRelations()
         else if (goInfo->type != GAMEOBJECT_TYPE_QUESTGIVER)
             { sLog.outErrorDb("Table `quest_relations` have data gameobject entry (%u) for quest %u, but GO is not GAMEOBJECT_TYPE_QUESTGIVER", itr->first, itr->second); }
     }
+
+	LoadQuestRelationsHelper(m_GOQuestRequirementRelations, QA_GAMEOBJECT, QR_REQUIREMENT);
+
+	for (QuestRelationsMap::iterator itr = m_GOQuestRequirementRelations.begin(); itr != m_GOQuestRequirementRelations.end(); ++itr)
+	{
+		GameObjectInfo const* goInfo = GetGameObjectInfo(itr->first);
+		if (!goInfo)
+		{
+			sLog.outErrorDb("Table `quest_relations` have data for nonexistent gameobject entry (%u) and existing quest %u", itr->first, itr->second);
+		}
+		else if (goInfo->type != GAMEOBJECT_TYPE_QUESTGIVER)
+		{
+			sLog.outErrorDb("Table `quest_relations` have data gameobject entry (%u) for quest %u, but GO is not GAMEOBJECT_TYPE_QUESTGIVER", itr->first, itr->second);
+		}
+	}
 }
 
 void ObjectMgr::LoadCreatureQuestRelations()

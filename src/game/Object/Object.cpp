@@ -307,7 +307,7 @@ void Object::BuildMovementUpdate(ByteBuffer* data, uint8 updateFlags) const
 void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* updateMask, Player* target) const
 {
     if (!target)
-        { return; }
+		return;
 
     bool IsActivateToQuest = false;
 	bool canUse = true;
@@ -338,6 +338,18 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
 						canUse = false;
 						IsActivateToQuest = false;
 					}
+				}
+			}
+
+			// Here we check if the GO is 'required' for the quest (quest_relations table)
+			bounds = sObjectMgr.GetGOQuestRequirementRelationsMapBounds(GetEntry());
+			for (QuestRelationsMap::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
+			{
+				if (target->GetQuestStatus(itr->second) == QUEST_STATUS_INCOMPLETE)
+				{
+						canUse = true;
+						IsActivateToQuest = true;
+						break;
 				}
 			}
 		}

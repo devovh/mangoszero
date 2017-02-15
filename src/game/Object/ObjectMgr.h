@@ -1114,6 +1114,11 @@ class ObjectMgr
             return m_GOQuestInvolvedRelations.equal_range(entry);
         }
 
+		QuestRelationsMapBounds GetGOQuestRequirementRelationsMapBounds(uint32 entry) const
+		{
+			return m_GOQuestRequirementRelations.equal_range(entry);
+		}
+
         QuestRelationsMap& GetCreatureQuestRelationsMap()
         {
             return m_CreatureQuestRelations;
@@ -1197,10 +1202,11 @@ class ObjectMgr
 
         ExclusiveQuestGroupsMap m_ExclusiveQuestGroups;
 
-        QuestRelationsMap       m_CreatureQuestRelations;
-        QuestRelationsMap       m_CreatureQuestInvolvedRelations;
-        QuestRelationsMap       m_GOQuestRelations;
-        QuestRelationsMap       m_GOQuestInvolvedRelations;
+        QuestRelationsMap	m_CreatureQuestRelations;
+        QuestRelationsMap	m_CreatureQuestInvolvedRelations;
+        QuestRelationsMap	m_GOQuestRelations;
+        QuestRelationsMap	m_GOQuestInvolvedRelations;
+		QuestRelationsMap	m_GOQuestRequirementRelations;
 
         int DBCLocaleIndex;
 
