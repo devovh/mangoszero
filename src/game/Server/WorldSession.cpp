@@ -689,6 +689,12 @@ void WorldSession::Handle_Deprecated(WorldPacket& recvPacket)
                   recvPacket.GetOpcode());
 }
 
+void WorldSession::SendPlayerNotFoundFailure()
+{
+	WorldPacket msg(SMSG_PLAYER_NOT_FOUND_FAILURE);
+	SendPacket(&msg);
+}
+
 void WorldSession::SendAuthWaitQue(uint32 position)
 {
     if (position == 0)

@@ -159,6 +159,7 @@ class WorldSession
         void SendPacket(WorldPacket const* packet);
         void SendNotification(const char* format, ...) ATTR_PRINTF(2, 3);
         void SendNotification(int32 string_id, ...);
+		void SendPlayerNotFoundFailure();
         void SendPetNameInvalid(uint32 error, const std::string& name);
         void SendPartyResult(PartyOperation operation, const std::string& member, PartyResult res);
         void SendGuildInvite(Player* player, bool alreadyInGuild = false);
