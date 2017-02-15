@@ -90,6 +90,15 @@ struct Position
     float x, y, z, o;
 };
 
+struct C3Vector
+{
+	C3Vector();
+	C3Vector(float x, float y, float z);
+	float x;
+	float y;
+	float z;
+};
+
 struct WorldLocation
 {
     uint32 mapid;

@@ -1885,3 +1885,14 @@ void WorldObject::SetActiveObjectState(bool active)
     }
     m_isActiveObject = active;
 }
+
+C3Vector::C3Vector() : x(0.0f), y(0.0f), z(0.0f)
+{
+}
+
+C3Vector::C3Vector(float x, float y, float z)
+{
+	this->x = x;
+	this->y = y;
+	this->z = z;
+}
