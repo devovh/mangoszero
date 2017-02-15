@@ -709,7 +709,6 @@ class WorldSession
         void HandleLeaveBattlefieldOpcode(WorldPacket& recv_data);
 
         void HandleWardenDataOpcode(WorldPacket& recv_data);
-        void HandleWorldTeleportOpcode(WorldPacket& recv_data);
         void HandleMinimapPingOpcode(WorldPacket& recv_data);
         void HandleRandomRollOpcode(WorldPacket& recv_data);
         void HandleFarSightOpcode(WorldPacket& recv_data);
@@ -725,6 +724,10 @@ class WorldSession
         void HandleCancelTempEnchantmentOpcode(WorldPacket& recv_data);
 
         void HandleSetTaxiBenchmarkOpcode(WorldPacket& recv_data);
+
+		/*** CLIENT COMMANDS ***/
+		void HandleWorldTeleportOpcode(WorldPacket& recv_data);
+		void GmSummonHandler(WorldPacket &msg);
 
 #ifdef ENABLE_PLAYERBOTS
         void HandleBotPackets();

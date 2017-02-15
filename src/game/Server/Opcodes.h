@@ -957,11 +957,15 @@ enum OpcodesList
     SMSG_PROPOSE_LEVEL_GRANT                        = 0x41E,
     CMSG_ACCEPT_LEVEL_GRANT                         = 0x41F,
     SMSG_REFER_A_FRIEND_FAILURE                     = 0x420,
-    SMSG_SUMMON_CANCEL                              = 0x423
+    SMSG_SUMMON_CANCEL                              = 0x423,
+		SMSG_PLAYER_NOT_FOUND_FAILURE = 0x523,
+		SMSG_GM_RESURRECT = 0x524,
+		SMSG_GM_FREEZE = 0x525,
+		SMSG_CONSOLE_WRITE = 0x527
 };
 
 // Don't forget to change this value and add opcode name to Opcodes.cpp when you add new opcode!
-#define NUM_MSG_TYPES 0x424
+#define NUM_MSG_TYPES 0x528
 
 /// Player state
 enum SessionStatus

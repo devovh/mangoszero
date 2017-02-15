@@ -549,7 +549,7 @@ void Opcodes::BuildOpcodeList()
     /*0x1E6*/  StoreOpcode(CMSG_GM_INVIS,                     "CMSG_GM_INVIS",                    STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*[-ZERO] Need check */ /*0x1E7*/  StoreOpcode(SMSG_INVALID_PROMOTION_CODE,       "SMSG_INVALID_PROMOTION_CODE",      STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x1E8*/  StoreOpcode(MSG_GM_BIND_OTHER,                 "MSG_GM_BIND_OTHER",                STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
-    /*0x1E9*/  StoreOpcode(MSG_GM_SUMMON,                     "MSG_GM_SUMMON",                    STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x1E9*/  StoreOpcode(MSG_GM_SUMMON,                     "MSG_GM_SUMMON",                    STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::GmSummonHandler);
     /*[-ZERO] Need check */ /*0x1EA*/  StoreOpcode(SMSG_ITEM_TIME_UPDATE,             "SMSG_ITEM_TIME_UPDATE",            STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*[-ZERO] Need check */ /*0x1EB*/  StoreOpcode(SMSG_ITEM_ENCHANT_TIME_UPDATE,     "SMSG_ITEM_ENCHANT_TIME_UPDATE",    STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x1EC*/  StoreOpcode(SMSG_AUTH_CHALLENGE,               "SMSG_AUTH_CHALLENGE",              STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
