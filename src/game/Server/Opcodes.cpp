@@ -68,8 +68,8 @@ void Opcodes::BuildOpcodeList()
     /*0x005*/  StoreOpcode(SMSG_QUERY_OBJECT_POSITION,        "SMSG_QUERY_OBJECT_POSITION",       STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x006*/  StoreOpcode(CMSG_QUERY_OBJECT_ROTATION,        "CMSG_QUERY_OBJECT_ROTATION",       STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x007*/  StoreOpcode(SMSG_QUERY_OBJECT_ROTATION,        "SMSG_QUERY_OBJECT_ROTATION",       STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
-    /*0x008*/  StoreOpcode(CMSG_WORLD_TELEPORT,               "CMSG_WORLD_TELEPORT",              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleWorldTeleportOpcode);
-    /*0x009*/  StoreOpcode(CMSG_TELEPORT_TO_UNIT,             "CMSG_TELEPORT_TO_UNIT",            STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x008*/  StoreOpcode(CMSG_WORLD_TELEPORT,               "CMSG_WORLD_TELEPORT",              STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::WorldTeleportHandler);
+    /*0x009*/  StoreOpcode(CMSG_TELEPORT_TO_UNIT,             "CMSG_TELEPORT_TO_UNIT",            STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleTeleportToUnit);
     /*0x00A*/  StoreOpcode(CMSG_ZONE_MAP,                     "CMSG_ZONE_MAP",                    STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x00B*/  StoreOpcode(SMSG_ZONE_MAP,                     "SMSG_ZONE_MAP",                    STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x00C*/  StoreOpcode(CMSG_DEBUG_CHANGECELLZONE,         "CMSG_DEBUG_CHANGECELLZONE",        STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
@@ -160,7 +160,7 @@ void Opcodes::BuildOpcodeList()
     /*[-ZERO] Need check */ /*0x061*/  StoreOpcode(SMSG_CREATURE_QUERY_RESPONSE,      "SMSG_CREATURE_QUERY_RESPONSE",     STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x062*/  StoreOpcode(CMSG_WHO,                          "CMSG_WHO",                         STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleWhoOpcode);
     /*0x063*/  StoreOpcode(SMSG_WHO,                          "SMSG_WHO",                         STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
-    /*[-ZERO] Need check */ /*0x064*/  StoreOpcode(CMSG_WHOIS,                        "CMSG_WHOIS",                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleWhoisOpcode);
+    /*[-ZERO] Need check */ /*0x064*/  StoreOpcode(CMSG_WHOIS,                        "CMSG_WHOIS",                       STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::WhoIsHandler);
     /*[-ZERO] Need check */ /*0x065*/  StoreOpcode(SMSG_WHOIS,                        "SMSG_WHOIS",                       STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x066*/  StoreOpcode(CMSG_FRIEND_LIST,                  "CMSG_FRIEND_LIST",                 STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleFriendListOpcode);
     /*0x067*/  StoreOpcode(SMSG_FRIEND_LIST,                  "SMSG_FRIEND_LIST",                 STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
@@ -569,7 +569,7 @@ void Opcodes::BuildOpcodeList()
     /*0x1FA*/  StoreOpcode(CMSG_GM_NUKE,                      "CMSG_GM_NUKE",                     STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x1FB*/  StoreOpcode(MSG_RANDOM_ROLL,                   "MSG_RANDOM_ROLL",                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleRandomRollOpcode);
     /*[-ZERO] Need check */ /*0x1FC*/  StoreOpcode(SMSG_ENVIRONMENTALDAMAGELOG,       "SMSG_ENVIRONMENTALDAMAGELOG",      STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
-    /*0x1FD*/  StoreOpcode(CMSG_RWHOIS_OBSOLETE,              "CMSG_RWHOIS_OBSOLETE",             STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x1FD*/  StoreOpcode(CMSG_RWHOIS_OBSOLETE,              "CMSG_RWHOIS_OBSOLETE",             STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::ReverseWhoIsHandler);
     /*0x1FE*/  StoreOpcode(SMSG_RWHOIS,                       "SMSG_RWHOIS",                      STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x201*/  StoreOpcode(CMSG_UNLEARN_SPELL,                "CMSG_UNLEARN_SPELL",               STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*[-ZERO] Need check */ /*0x202*/  StoreOpcode(CMSG_UNLEARN_SKILL,                "CMSG_UNLEARN_SKILL",               STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleUnlearnSkillOpcode);

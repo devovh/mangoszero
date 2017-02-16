@@ -1037,63 +1037,6 @@ void WorldSession::HandleInspectHonorStatsOpcode(WorldPacket& recv_data)
         { DEBUG_LOG("%s not found!", guid.GetString().c_str()); }
 }
 
-void WorldSession::HandleWhoisOpcode(WorldPacket& recv_data)
-{
-    DEBUG_LOG("WORLD: Received opcode CMSG_WHOIS");
-    std::string charname;
-    recv_data >> charname;
-
-    if (GetSecurity() < SEC_ADMINISTRATOR)
-    {
-        SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
-        return;
-    }
-
-    if (charname.empty() || !normalizePlayerName(charname))
-    {
-        SendNotification(LANG_NEED_CHARACTER_NAME);
-        return;
-    }
-
-    Player* plr = sObjectMgr.GetPlayer(charname.c_str());
-
-    if (!plr)
-    {
-        SendNotification(LANG_PLAYER_NOT_EXIST_OR_OFFLINE, charname.c_str());
-        return;
-    }
-
-    uint32 accid = plr->GetSession()->GetAccountId();
-
-    QueryResult* result = LoginDatabase.PQuery("SELECT username,email,last_ip FROM account WHERE id=%u", accid);
-    if (!result)
-    {
-        SendNotification(LANG_ACCOUNT_FOR_PLAYER_NOT_FOUND, charname.c_str());
-        return;
-    }
-
-    Field* fields = result->Fetch();
-    std::string acc = fields[0].GetCppString();
-    if (acc.empty())
-        { acc = "Unknown"; }
-    std::string email = fields[1].GetCppString();
-    if (email.empty())
-        { email = "Unknown"; }
-    std::string lastip = fields[2].GetCppString();
-    if (lastip.empty())
-        { lastip = "Unknown"; }
-
-    std::string msg = charname + "'s " + "account is " + acc + ", e-mail: " + email + ", last ip: " + lastip;
-
-    WorldPacket data(SMSG_WHOIS, msg.size() + 1);
-    data << msg;
-    _player->GetSession()->SendPacket(&data);
-
-    delete result;
-
-    DEBUG_LOG("Received whois command from player %s for character %s", GetPlayer()->GetName(), charname.c_str());
-}
-
 void WorldSession::HandleFarSightOpcode(WorldPacket& recv_data)
 {
     DEBUG_LOG("WORLD: Received opcode CMSG_FAR_SIGHT");

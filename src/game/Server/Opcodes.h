@@ -958,10 +958,14 @@ enum OpcodesList
     CMSG_ACCEPT_LEVEL_GRANT                         = 0x41F,
     SMSG_REFER_A_FRIEND_FAILURE                     = 0x420,
     SMSG_SUMMON_CANCEL                              = 0x423,
-		SMSG_PLAYER_NOT_FOUND_FAILURE = 0x523,
-		SMSG_GM_RESURRECT = 0x524,
-		SMSG_GM_FREEZE = 0x525,
-		SMSG_CONSOLE_WRITE = 0x527
+	CMSG_GM_BUG = 0x520,
+	CMSG_QUEST_IQC = 0x521,
+	SMSG_QUEST_IQC_RESPONSE = 0x522,
+	SMSG_PLAYER_NOT_FOUND_FAILURE = 0x523,
+	SMSG_GM_RESURRECT = 0x524,
+	SMSG_GM_FREEZE = 0x525,
+	CMSG_CANCEL_AURA_CHEAT = 0x526,
+	SMSG_CONSOLE_WRITE = 0x527
 };
 
 // Don't forget to change this value and add opcode name to Opcodes.cpp when you add new opcode!

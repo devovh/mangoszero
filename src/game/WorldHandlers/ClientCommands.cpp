@@ -24,30 +24,22 @@
 #include "Pet.h"
 #include "SocialMgr.h"
 
-void WorldSession::HandleWorldTeleportOpcode(WorldPacket& recv_data)
+void WorldSession::WorldTeleportHandler(WorldPacket &msg)
 {
-	DEBUG_LOG("WORLD: Received opcode CMSG_WORLD_TELEPORT from %s", GetPlayer()->GetGuidStr().c_str());
+	int time;
+	int mapId;
+	C3Vector position;
+	float facing;
 
-	// write in client console: worldport 469 452 6454 2536 180 or /console worldport 469 452 6454 2536 180
-	// Received opcode CMSG_WORLD_TELEPORT
-	// Time is ***, map=469, x=452.000000, y=6454.000000, z=2536.000000, orient=3.141593
+	msg >> time;
+	msg >> mapId;
+	msg >> position.x;
+	msg >> position.y;
+	msg >> position.z;
+	msg >> facing;
 
-	uint32 time;
-	uint32 mapid;
-	float PositionX;
-	float PositionY;
-	float PositionZ;
-	float Orientation;
-
-	recv_data >> time;                                      // time in m.sec.
-	recv_data >> mapid;
-	recv_data >> PositionX;
-	recv_data >> PositionY;
-	recv_data >> PositionZ;
-	recv_data >> Orientation;                               // o (3.141593 = 180 degrees)
-
-	if (GetSecurity() >= SEC_ADMINISTRATOR)
-		GetPlayer()->TeleportTo(mapid, PositionX, PositionY, PositionZ, Orientation);
+	if (GetSecurity() > SEC_PLAYER)
+		GetPlayer()->TeleportTo(mapId, position.x, position.y, position.z, facing, TELE_TO_GM_MODE);
 	else
 		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
 }
@@ -64,7 +56,7 @@ void WorldSession::GmSummonHandler(WorldPacket &msg)
 
 	summoning = 0;
 	characterName[0] = 0;
-	if (GetSecurity() > 0)
+	if (GetSecurity() > SEC_PLAYER)
 	{
 		msg >> characterName;
 		if (!*characterName)
@@ -84,6 +76,145 @@ void WorldSession::GmSummonHandler(WorldPacket &msg)
 				position.z = plyr1->GetPositionZ();
 				facing = plyr1->GetOrientation();
 				summoning = plyr2->TeleportTo(worldId, position.x, position.y, position.z, facing, TELE_TO_GM_MODE, true);
+				msg.clear();
+				msg.SetOpcode(MSG_GM_SUMMON);
+				msg << summoning;
+				msg.rpos(msg.size());	// Muting ByteBuffer::m_readPos related warning message
+				SendPacket(&msg);
+			}
+		}
+	}
+	else
+		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}
+
+void WorldSession::ReverseWhoIsHandler(WorldPacket &msg)
+{
+	char accountName[64];
+	char characterName[48];
+	int result;
+	int online;
+	unsigned int numcharacters;
+
+	*accountName = 0;
+	*characterName = 0;
+	result = 0;
+	online = -1;
+	numcharacters = 0;
+	if (GetSecurity())
+	{
+		msg >> accountName;
+		msg.clear();
+		msg.SetOpcode(SMSG_RWHOIS);
+		for (size_t i = strlen(accountName); i > 0; i--)
+		{
+			*(accountName + i) = toupper(*(accountName + i));
+		}
+		QueryResult *accountquery = LoginDatabase.PQuery("SELECT id FROM account WHERE username = '%s'", accountName);
+		if (accountquery)
+		{
+			result = (*accountquery)[0].GetInt32();
+			QueryResult *characterquery = CharacterDatabase.PQuery("SELECT name FROM characters WHERE account = '%d'", result);
+			if (characterquery)
+			{
+				result = 1;
+				numcharacters = characterquery->GetRowCount();
+				msg << result;
+				msg << accountName;
+				msg << numcharacters;
+				msg << result;
+				result = msg.wpos() - 4;
+				for (unsigned int i = 0; i < numcharacters; i++)
+				{
+					Field *field = characterquery->Fetch();
+					strcpy(characterName, field[0].GetString());
+					strcpy(accountName, characterName);
+					msg << accountName;
+					characterquery->NextRow();
+					if (sObjectAccessor.FindPlayerByName(characterName))
+						online = i;
+				}
+				msg.put(result, online);
+			}
+			else
+			{
+				result = -1;
+				msg << result;
+			}
+			delete characterquery;
+		}
+		else
+			msg << result;
+		msg.rpos(msg.size());	// Muting ByteBuffer::m_readPos related warning message
+		SendPacket(&msg);
+		delete accountquery;
+	}
+	else
+		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}
+
+void WorldSession::WhoIsHandler(WorldPacket &msg)
+{
+	char characterName[48];
+
+	*characterName = 0;
+	if (GetSecurity() > *characterName)
+	{
+		msg >> characterName;
+		NormalizePlayerName(characterName);
+		QueryResult *accountquery = CharacterDatabase.PQuery("SELECT account FROM characters WHERE name = '%s'", characterName);
+		if (accountquery)
+		{
+			QueryResult *result = LoginDatabase.PQuery("SELECT username FROM account WHERE id = '%u'", (*accountquery)[0].GetInt32());
+			if (result)
+				strcpy(characterName, (*result)[0].GetString());
+			msg.clear();
+			msg.SetOpcode(SMSG_WHOIS);
+			msg << characterName;
+			msg.rpos(msg.size());	// Muting ByteBuffer::m_readPos related warning message
+			SendPacket(&msg);
+			delete result;
+		}
+		else
+			SendPlayerNotFoundFailure();
+		delete accountquery;
+	}
+	else
+		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}
+
+void WorldSession::HandleTeleportToUnit(WorldPacket &msg)
+{
+	Player *plyr;
+	Unit *unit;
+	C3Vector position;
+	unsigned int worldId;
+	float facing;
+	char characterName[64];
+	int summoning;
+
+	summoning = 0;
+	characterName[0] = 0;
+	if (GetSecurity() > SEC_PLAYER)
+	{
+		msg >> characterName;
+		if (!*characterName)
+			SendPlayerNotFoundFailure();
+		else
+		{
+			NormalizePlayerName(characterName);
+			plyr = GetPlayer();
+			unit = sObjectMgr.GetPlayer(characterName);
+			if (!unit)
+				SendPlayerNotFoundFailure();
+			else
+			{
+				worldId = plyr->GetMapId();
+				position.x = plyr->GetPositionX();
+				position.y = plyr->GetPositionY();
+				position.z = plyr->GetPositionZ();
+				facing = plyr->GetOrientation();
+				summoning = plyr->TeleportTo(worldId, position.x, position.y, position.z, facing, TELE_TO_GM_MODE, true);
 				msg.clear();
 				msg.SetOpcode(MSG_GM_SUMMON);
 				msg << summoning;

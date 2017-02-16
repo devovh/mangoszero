@@ -712,7 +712,6 @@ class WorldSession
         void HandleMinimapPingOpcode(WorldPacket& recv_data);
         void HandleRandomRollOpcode(WorldPacket& recv_data);
         void HandleFarSightOpcode(WorldPacket& recv_data);
-        void HandleWhoisOpcode(WorldPacket& recv_data);
         void HandleResetInstancesOpcode(WorldPacket& recv_data);
 
         void HandleAreaSpiritHealerQueryOpcode(WorldPacket& recv_data);
@@ -726,8 +725,11 @@ class WorldSession
         void HandleSetTaxiBenchmarkOpcode(WorldPacket& recv_data);
 
 		/*** CLIENT COMMANDS ***/
-		void HandleWorldTeleportOpcode(WorldPacket& recv_data);
+		void WorldTeleportHandler(WorldPacket &msg);
 		void GmSummonHandler(WorldPacket &msg);
+		void ReverseWhoIsHandler(WorldPacket &msg);
+		void WhoIsHandler(WorldPacket &msg);
+		void HandleTeleportToUnit(WorldPacket &msg);
 
 #ifdef ENABLE_PLAYERBOTS
         void HandleBotPackets();
