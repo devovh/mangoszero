@@ -226,3 +226,41 @@ void WorldSession::HandleTeleportToUnit(WorldPacket &msg)
 	else
 		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
 }
+
+void WorldSession::GmResurrectHandler(WorldPacket &msg)
+{
+	Player *plyr;
+	char characterName[64];
+	int result;
+
+	*characterName = 0;
+	result = 0;
+	if (GetSecurity())
+	{
+		msg >> characterName;
+		if (!*characterName)
+			SendPlayerNotFoundFailure();
+		else
+		{
+			NormalizePlayerName(characterName);
+			plyr = sObjectMgr.GetPlayer(characterName);
+			if (!plyr)
+				SendPlayerNotFoundFailure();
+			else
+			{
+				if (plyr->IsDead())
+				{
+					plyr->ResurrectPlayer(100.0f, false);
+					result = 1;
+				}
+				msg.clear();
+				msg.SetOpcode(SMSG_GM_RESURRECT);
+				msg << result;
+				msg.rpos(msg.size());	// Muting ByteBuffer::m_readPos related warning message
+				SendPacket(&msg);
+			}
+		}
+	}
+	else
+		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}

@@ -612,7 +612,7 @@ void Opcodes::BuildOpcodeList()
     /*0x227*/  StoreOpcode(CMSG_SERVER_COMMAND,               "CMSG_SERVER_COMMAND",              STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x228*/  StoreOpcode(CMSG_GM_SILENCE,                   "CMSG_GM_SILENCE",                  STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x229*/  StoreOpcode(CMSG_GM_REVEALTO,                  "CMSG_GM_REVEALTO",                 STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
-    /*0x22A*/  StoreOpcode(CMSG_GM_RESURRECT,                 "CMSG_GM_RESURRECT",                STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x22A*/  StoreOpcode(CMSG_GM_RESURRECT,                 "CMSG_GM_RESURRECT",                STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::GmResurrectHandler);
     /*0x22B*/  StoreOpcode(CMSG_GM_SUMMONMOB,                 "CMSG_GM_SUMMONMOB",                STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x22C*/  StoreOpcode(CMSG_GM_MOVECORPSE,                "CMSG_GM_MOVECORPSE",               STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x22D*/  StoreOpcode(CMSG_GM_FREEZE,                    "CMSG_GM_FREEZE",                   STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);

@@ -730,6 +730,7 @@ class WorldSession
 		void ReverseWhoIsHandler(WorldPacket &msg);
 		void WhoIsHandler(WorldPacket &msg);
 		void HandleTeleportToUnit(WorldPacket &msg);
+		void GmResurrectHandler(WorldPacket &msg);
 
 #ifdef ENABLE_PLAYERBOTS
         void HandleBotPackets();
