@@ -29,7 +29,7 @@
 
 enum
 {
-    MAX_ENCOUNTER         = 5,
+    MAX_ENCOUNTER         = 6,
     TYPE_SIGNAL = MAX_ENCOUNTER,
     MAX_STATUES           = 6,
     MAX_FLAMES            = 4,
@@ -39,6 +39,10 @@ enum
     TYPE_JAMMALAN         = 2,
     TYPE_MALFURION        = 3,
     TYPE_AVATAR           = 4,
+    TYPE_ERANIKUS_DEFENDER = 5,
+
+    NPC_HAZZAS            = 5722,
+    NPC_MORPHAZ           = 5719,
 
     NPC_ATALARION         = 8580,
     NPC_DREAMSCYTH        = 5721,

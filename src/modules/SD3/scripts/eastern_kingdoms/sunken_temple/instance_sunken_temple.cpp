@@ -44,6 +44,7 @@ struct is_sunken_temple : public InstanceScript
     {
     public:
         instance_sunken_temple(Map* pMap) : ScriptedInstance(pMap),
+            m_uiEranikusDefendersRemaining(0),
             m_uiProtectorsRemaining(0),
             m_uiStatueCounter(0),
             m_uiFlameCounter(0),
@@ -109,10 +110,15 @@ struct is_sunken_temple : public InstanceScript
             case NPC_MIJAN:
                 ++m_uiProtectorsRemaining;
                 break;
+            case NPC_HAZZAS:
+            case NPC_MORPHAZ:
+                ++m_uiEranikusDefendersRemaining;
+                break;
             case NPC_JAMMALAN:
             case NPC_ATALARION:
             case NPC_SHADE_OF_HAKKAR:
             case NPC_AVATAR_OF_HAKKAR:
+            case NPC_SHADE_OF_ERANIKUS:
                 m_mNpcEntryGuidStore[pCreature->GetEntry()] = pCreature->GetObjectGuid();
                 break;
             }
@@ -150,6 +156,12 @@ struct is_sunken_temple : public InstanceScript
                 m_bCanSummonBloodkeeper = true;
                 break;
 
+                // Hazzas and Morphaz
+            case NPC_HAZZAS:
+            case NPC_MORPHAZ:
+                SetData(TYPE_ERANIKUS_DEFENDER, DONE);
+                break;
+
                 // Jammalain mini-bosses
             case NPC_ZOLO:
             case NPC_GASHER:
@@ -183,6 +195,22 @@ struct is_sunken_temple : public InstanceScript
                         DoUseDoorOrButton(GO_JAMMALAN_BARRIER);
                         // Intro yell
                         DoOrSimulateScriptTextForThisInstance(SAY_JAMMALAN_INTRO, NPC_JAMMALAN);
+                    }
+                }
+                break;
+            case TYPE_ERANIKUS_DEFENDER:
+                if (uiData == DONE)
+                {
+                    --m_uiEranikusDefendersRemaining;
+
+                    if (m_uiEranikusDefendersRemaining == 0)
+                    {
+                        Creature *pEranikus = GetSingleCreatureFromStorage(NPC_SHADE_OF_ERANIKUS);
+                        if (pEranikus)
+                        {
+                            // Eranikus encounter can now start.
+                            pEranikus->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_1); // Remove unattackable flag
+                        }
                     }
                 }
                 break;
@@ -552,6 +580,7 @@ struct is_sunken_temple : public InstanceScript
         uint32 m_auiEncounter[MAX_ENCOUNTER];
         std::string m_strInstData;
 
+        uint8 m_uiEranikusDefendersRemaining;               // Hazzas and Morphaz counter.
         uint8 m_uiProtectorsRemaining;                      // Jammalan door handling
         uint8 m_uiStatueCounter;                            // Atalarion Statue Event
         uint8 m_uiFlameCounter;                             // Avatar of Hakkar Event
