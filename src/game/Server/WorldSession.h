@@ -731,6 +731,8 @@ class WorldSession
 		void WhoIsHandler(WorldPacket &msg);
 		void HandleTeleportToUnit(WorldPacket &msg);
 		void GmResurrectHandler(WorldPacket &msg);
+        void GmFreezeHandler(WorldPacket &msg);
+        void GmSilenceHandler(WorldPacket &msg);
 
 #ifdef ENABLE_PLAYERBOTS
         void HandleBotPackets();

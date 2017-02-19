@@ -264,3 +264,84 @@ void WorldSession::GmResurrectHandler(WorldPacket &msg)
 	else
 		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
 }
+
+void WorldSession::GmFreezeHandler(WorldPacket &msg)
+{
+    Player *plyr;
+    char name[64];
+    int result;
+
+    plyr = 0;
+    *name = 0;
+    result = 0;
+    if (GetSecurity() > 1)
+    {
+        msg >> name;
+        NormalizePlayerName(name);
+        if (plyr = sObjectAccessor.FindPlayerByName(name))
+        {
+            if (plyr->HasAura(9454)) // GM Freeze.
+            {
+                result = 2;
+                plyr->RemoveAura(9454, EFFECT_INDEX_0, 0);
+            }
+            else
+            {
+                if (plyr->IsAlive())
+                {
+                    plyr->CastSpell(plyr, 9454, false, 0);
+                    result = 1;
+                }
+            }
+            msg.clear();
+            msg.SetOpcode(SMSG_GM_FREEZE);
+            msg << result;
+            SendPacket(&msg);
+        }
+        else
+            SendPlayerNotFoundFailure();
+    }
+    else
+        SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}
+
+// @TODO: Only the visual is implemented for this.
+void WorldSession::GmSilenceHandler(WorldPacket &msg)
+{
+    Player *plyr;
+    char name[64];
+    int result;
+
+    plyr = 0;
+    *name = 0;
+    result = 0;
+    if (GetSecurity() > 1)
+    {
+        msg >> name;
+        NormalizePlayerName(name);
+        if (plyr = sObjectAccessor.FindPlayerByName(name))
+        {
+            if (plyr->HasAura(1852)) // GM Silence (visual).
+            {
+                result = 2;
+                plyr->RemoveAura(1852, EFFECT_INDEX_0, 0);
+            }
+            else
+            {
+                if (plyr->IsAlive()) // Should affect while dead too? (Prevents chat with normal players).
+                {
+                    plyr->CastSpell(plyr, 1852, false, 0);
+                    result = 1;
+                }
+            }
+            msg.clear();
+            msg.SetOpcode(SMSG_GM_SILENCE);
+            msg << result;
+            SendPacket(&msg);
+        }
+        else
+            SendPlayerNotFoundFailure();
+    }
+    else
+        SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}

@@ -958,6 +958,7 @@ enum OpcodesList
     CMSG_ACCEPT_LEVEL_GRANT                         = 0x41F,
     SMSG_REFER_A_FRIEND_FAILURE                     = 0x420,
     SMSG_SUMMON_CANCEL                              = 0x423,
+	SMSG_GM_SILENCE = 0x51F,
 	CMSG_GM_BUG = 0x520,
 	CMSG_QUEST_IQC = 0x521,
 	SMSG_QUEST_IQC_RESPONSE = 0x522,

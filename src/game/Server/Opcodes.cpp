@@ -610,12 +610,12 @@ void Opcodes::BuildOpcodeList()
     /*[-ZERO] Need check */ /*0x225*/  StoreOpcode(CMSG_CHAT_IGNORED,                 "CMSG_CHAT_IGNORED",                STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleChatIgnoredOpcode);
     /*0x226*/  StoreOpcode(CMSG_GM_VISION,                    "CMSG_GM_VISION",                   STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x227*/  StoreOpcode(CMSG_SERVER_COMMAND,               "CMSG_SERVER_COMMAND",              STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
-    /*0x228*/  StoreOpcode(CMSG_GM_SILENCE,                   "CMSG_GM_SILENCE",                  STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x228*/  StoreOpcode(CMSG_GM_SILENCE,                   "CMSG_GM_SILENCE",                  STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::GmSilenceHandler);
     /*0x229*/  StoreOpcode(CMSG_GM_REVEALTO,                  "CMSG_GM_REVEALTO",                 STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x22A*/  StoreOpcode(CMSG_GM_RESURRECT,                 "CMSG_GM_RESURRECT",                STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::GmResurrectHandler);
     /*0x22B*/  StoreOpcode(CMSG_GM_SUMMONMOB,                 "CMSG_GM_SUMMONMOB",                STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x22C*/  StoreOpcode(CMSG_GM_MOVECORPSE,                "CMSG_GM_MOVECORPSE",               STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
-    /*0x22D*/  StoreOpcode(CMSG_GM_FREEZE,                    "CMSG_GM_FREEZE",                   STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x22D*/  StoreOpcode(CMSG_GM_FREEZE,                    "CMSG_GM_FREEZE",                   STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::GmFreezeHandler);
     /*0x22E*/  StoreOpcode(CMSG_GM_UBERINVIS,                 "CMSG_GM_UBERINVIS",                STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x22F*/  StoreOpcode(CMSG_GM_REQUEST_PLAYER_INFO,       "CMSG_GM_REQUEST_PLAYER_INFO",      STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x230*/  StoreOpcode(SMSG_GM_PLAYER_INFO,               "SMSG_GM_PLAYER_INFO",              STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
