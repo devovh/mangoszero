@@ -315,6 +315,18 @@ struct is_sunken_temple : public InstanceScript
 
                 m_strInstData = saveStream.str();
 
+                // Open gates to Sanctum of the Fallen God.
+                GameObject *pDoor1 = GetSingleGameObjectFromStorage(GO_HAKKAR_DOOR_1);
+                GameObject *pDoor2 = GetSingleGameObjectFromStorage(GO_HAKKAR_DOOR_2);
+                
+                // I'd rather set the state directly instead of toggling them, since I couldn't test with a full group.
+                // Better to be sure than sorry after you've locked a group of 5 people in a room unintentionally.
+                if (pDoor1 && pDoor2)
+                {
+                    pDoor1->SetGoState(GO_STATE_ACTIVE);
+                    pDoor2->SetGoState(GO_STATE_ACTIVE);
+                }
+
                 SaveToDB();
                 OUT_SAVE_INST_DATA_COMPLETE;
             }
