@@ -70,15 +70,24 @@ struct npc_spectral_tutor : public CreatureScript
             m_uiProjectionTimer = urand(12000, 13000);
         }
 
+        void EnterEvadeMode() override
+        {
+            if (m_uiProjEndTimer)
+                return;
+        }
+
         void UpdateAI(const uint32 uiDiff) override
         {
             if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
                 return;
+            
 
             if (m_uiProjEndTimer)
             {
                 if (m_uiProjEndTimer <= uiDiff)
                 {
+                    // Despawn handled in Lua.
+                    // Health leech doesn't work!
                     if (DoCastSpellIfCan(m_creature, SPELL_IMAGE_PROJECTION_HEAL) == CAST_OK)
                         m_uiProjEndTimer = 0;
                 }
@@ -110,7 +119,7 @@ struct npc_spectral_tutor : public CreatureScript
                 if (DoCastSpellIfCan(m_creature, SPELL_IMAGE_PROJECTION) == CAST_OK)
                 {
                     DoCastSpellIfCan(m_creature, SPELL_IMAGE_PROJECTION_SUMMON, CAST_TRIGGERED);
-                    m_uiProjEndTimer = 1000;
+                    m_uiProjEndTimer = 1000; // In case you were wondering, the timer stops ticking while the creature is invisible (due to the spell, which lasts 5s).
                     m_uiProjectionTimer = urand(18000, 25000);
                 }
             }
