@@ -654,9 +654,12 @@ void instance_blackrock_depths::HandleBarPatrons(uint8 uiEventType)
             {
                 if (Creature* pPatron = instance->GetCreature(*itr))
                 {
+                    float fX, fY, fZ;
+                    pPatron->GetRespawnCoord(fX, fY, fZ);
                     pPatron->SetFactionTemporary(FACTION_DARK_IRON, TEMPFACTION_RESTORE_RESPAWN);
                     pPatron->SetStandState(UNIT_STAND_STATE_STAND);
-                    // Patron should also start random movement around their current position (= home)
+                    pPatron->GetMotionMaster()->MoveRandomAroundPoint(fX, fY, fZ, 5.0f); // Patron should also start random movement around their current position (= home)
+                    pPatron->HandleEmoteState(0); // Stop dancing. (Blizzlike?)
                 }
             }
             // Mistress Nagmara and Private Rocknot despawn if the bar turns hostile

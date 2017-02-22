@@ -644,8 +644,11 @@ struct npc_phalanxAI : public npc_escortAI
         // so we made him restart right before reaching the door to guard it (again)
         if (HasEscortState(STATE_ESCORT_ESCORTING) || HasEscortState(STATE_ESCORT_PAUSED))
         {
-            SetCurrentWaypoint(1);
-            SetEscortPaused(false);
+            // SetCurrentWaypoint(1); // Causes crash.
+            m_creature->GetMotionMaster()->MoveIdle();
+            m_creature->NearTeleportTo(868.122, -223.884, -43.695, m_fKeepDoorOrientation);
+            m_creature->SendHeartBeat();
+            // MovementGenerator should be reset?
         }
 
         m_fKeepDoorOrientation = 2.06059f;
@@ -1859,6 +1862,10 @@ struct boss_plugger_spazzringAI : public ScriptedAI
             // Activate Phalanx and handle patrons faction
             if (Creature* pPhalanx = m_pInstance->GetSingleCreatureFromStorage(NPC_PHALANX))
             {
+                // Phalanx is already active if Rocknot's event is done.
+                if (m_pInstance->GetData(TYPE_ROCKNOT) == DONE)
+                    return;
+
                 if (npc_phalanxAI* pEscortAI = dynamic_cast<npc_phalanxAI*>(pPhalanx->AI()))
                     pEscortAI->Start(false, NULL, NULL, true);
             }
