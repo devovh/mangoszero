@@ -640,12 +640,15 @@ struct npc_phalanxAI : public npc_escortAI
 
     void Reset() override
     {
-        // If reset after an fight, it means Phalanx has already started moving (if not already reached door)
+        // If reset after a fight, it means Phalanx has already started moving (if not already reached door)
         // so we made him restart right before reaching the door to guard it (again)
         if (HasEscortState(STATE_ESCORT_ESCORTING) || HasEscortState(STATE_ESCORT_PAUSED))
         {
-            SetCurrentWaypoint(1);
-            SetEscortPaused(false);
+            // SetCurrentWaypoint(1); // Causes crash.
+            m_creature->GetMotionMaster()->MoveIdle();
+            m_creature->NearTeleportTo(868.122, -223.884, -43.695, m_fKeepDoorOrientation);
+            m_creature->SendHeartBeat();
+            // MovementGenerator should be reset?
         }
 
         m_fKeepDoorOrientation = 2.06059f;
@@ -671,6 +674,8 @@ struct npc_phalanxAI : public npc_escortAI
         {
             case 0:
                 DoScriptText(YELL_PHALANX_AGGRO, m_creature);
+                m_creature->SetFactionTemporary(FACTION_DARK_IRON, TEMPFACTION_NONE);
+                SetRun(true);
                 break;
             case 1:
                 SetEscortPaused(true);
@@ -789,6 +794,7 @@ struct npc_mistress_nagmaraAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     Creature* pRocknot;
+    CreatureAI *pRocknotAI;
 
     uint8 m_uiPhase;
     uint32 m_uiPhaseTimer;
@@ -891,12 +897,16 @@ struct npc_mistress_nagmara : public CreatureScript
     
     bool OnGossipHello(Player* pPlayer, Creature* pCreature) override
     {
+        ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         if (pCreature->IsQuestGiver())
             pPlayer->PrepareQuestMenu(pCreature->GetObjectGuid());
 
+        pPlayer->CLEAR_GOSSIP_MENU();
         if (pPlayer->GetQuestStatus(QUEST_POTION_LOVE) == QUEST_STATUS_COMPLETE)
         {
-            pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_NAGMARA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+            if (pInstance->GetData(TYPE_ROCKNOT) != SPECIAL && pInstance->GetData(TYPE_ROCKNOT) != DONE)
+                pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_NAGMARA, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+
             pPlayer->SEND_GOSSIP_MENU(GOSSIP_ID_NAGMARA_2, pCreature->GetObjectGuid());
         }
         else
@@ -942,6 +952,10 @@ struct npc_mistress_nagmara : public CreatureScript
 enum
 {
     SAY_GOT_BEER       = -1230000,
+    SAY_MORE_BEER      = -1230036,
+    SAY_BARREL_1       = -1230044,
+    SAY_BARREL_2       = -1230045,
+    SAY_BARREL_3       = -1230046,
 
     SPELL_DRUNKEN_RAGE = 14872,
 
@@ -964,6 +978,10 @@ struct npc_rocknot : public CreatureScript
 
         uint32 m_uiBreakKegTimer;
         uint32 m_uiBreakDoorTimer;
+        uint32 m_uiEmoteTimer;
+        uint32 m_uiBarReactTimer;
+        float m_fInitialOrientation;
+        Creature *pNagmara;
 
         void Reset() override
         {
@@ -974,6 +992,10 @@ struct npc_rocknot : public CreatureScript
 
             m_uiBreakKegTimer = 0;
             m_uiBreakDoorTimer = 0;
+            m_uiEmoteTimer = 0;
+            m_uiBarReactTimer = 0;
+            m_fInitialOrientation = 3.21141f;
+            pNagmara = m_pInstance->GetSingleCreatureFromStorage(NPC_MISTRESS_NAGMARA);
         }
 
         void DoGo(uint32 id, uint32 state)
@@ -993,21 +1015,66 @@ struct npc_rocknot : public CreatureScript
 
             switch (uiPointId)
             {
+            case 0: // Beer quest path.
+                SetEscortPaused(true);
+                if (m_pInstance->GetData(TYPE_NAGMARA) == IN_PROGRESS)
+                {
+                    pNagmara->GetMotionMaster()->MoveFollow(m_creature, 2.0f, 0);
+                    SetCurrentWaypoint(7); // Bad logic, gets incremented by 1.
+                }
+                SetEscortPaused(false);
+                break;
             case 1:
                 m_creature->HandleEmote(EMOTE_ONESHOT_KICK);
                 break;
             case 2:
                 m_creature->HandleEmote(EMOTE_ONESHOT_ATTACKUNARMED);
+                DoScriptText(SAY_BARREL_1, m_creature);
                 break;
             case 3:
                 m_creature->HandleEmote(EMOTE_ONESHOT_ATTACKUNARMED);
                 break;
             case 4:
                 m_creature->HandleEmote(EMOTE_ONESHOT_KICK);
+                DoScriptText(SAY_BARREL_2, m_creature);
                 break;
             case 5:
-                m_creature->HandleEmote(EMOTE_ONESHOT_KICK);
                 m_uiBreakKegTimer = 2000;
+                break;
+            case 7: // Home after breaking keg.
+                SetEscortPaused(true);
+                m_creature->SetFacingTo(m_fInitialOrientation);
+                break;
+            case 8: // Nagmara's Love Potion waypoint path.
+                // Nagmara follows us.
+                if (!pNagmara)
+                {
+                    SetEscortPaused(true);
+                    SetCurrentWaypoint(6); // Gets incremented by 1 after break.
+                }
+                else
+                    pNagmara->GetMotionMaster()->MoveFollow(m_creature, 2.0f, 0);
+                break;
+            case 15:
+                // Open back door.
+                if (GameObject *pBackDoor = m_pInstance->GetSingleGameObjectFromStorage(GO_BAR_DOOR))
+                    pBackDoor->SetGoState(GO_STATE_ACTIVE);
+
+                if (pNagmara)
+                    pNagmara->GetMotionMaster()->MoveFollow(m_creature, 2.0f, 0);
+                break;
+            case 32:
+                if (!pNagmara)
+                    break;
+
+                pNagmara->GetMotionMaster()->MoveIdle();
+                pNagmara->GetMotionMaster()->MovePoint(0, 878.1779f, -222.0662f, -49.96714f);
+                if (npc_mistress_nagmaraAI* pNagmaraAI = dynamic_cast<npc_mistress_nagmaraAI*>(pNagmara->AI()))
+                {
+                    pNagmaraAI->m_uiPhase = 4;
+                    pNagmaraAI->m_uiPhaseTimer = 5000;
+                }
+                SetEscortPaused(true);
                 break;
             }
         }
@@ -1019,18 +1086,25 @@ struct npc_rocknot : public CreatureScript
                 return;
             }
 
+            // Begin Nagmara escort.
+            if (m_pInstance->GetData(TYPE_NAGMARA) == SPECIAL)
+            {
+                m_pInstance->SetData(TYPE_NAGMARA, IN_PROGRESS);
+                Start(false, NULL, NULL, true);
+                return;
+            }
+
             if (m_uiBreakKegTimer)
             {
                 if (m_uiBreakKegTimer <= uiDiff)
                 {
                     DoGo(GO_BAR_KEG_SHOT, 0);
-                    m_uiBreakKegTimer = 0;
                     m_uiBreakDoorTimer = 1000;
+                    m_uiBarReactTimer = 5000;
+                    m_uiBreakKegTimer = 0;
                 }
                 else
-                {
                     m_uiBreakKegTimer -= uiDiff;
-                }
             }
 
             if (m_uiBreakDoorTimer)
@@ -1038,24 +1112,53 @@ struct npc_rocknot : public CreatureScript
                 if (m_uiBreakDoorTimer <= uiDiff)
                 {
                     DoGo(GO_BAR_DOOR, 2);
+                    m_creature->HandleEmote(EMOTE_ONESHOT_KICK);
+                    DoScriptText(SAY_BARREL_3, m_creature);
                     DoGo(GO_BAR_KEG_TRAP, 0);                   // doesn't work very well, leaving code here for future
-                    // spell by trap has effect61, this indicate the bar go hostile
+                    // spell by trap has effect61
 
-                    if (Creature* pTmp = m_pInstance->GetSingleCreatureFromStorage(NPC_PHALANX))
-                    {
-                        pTmp->SetFactionTemporary(14, TEMPFACTION_NONE);
-                    }
-
-                    // for later, this event(s) has alot more to it.
-                    // optionally, DONE can trigger bar to go hostile.
-                    m_pInstance->SetData(TYPE_BAR, DONE);
+                    // DONE triggers patrons to go hostile.
+                    m_pInstance->SetData(TYPE_ROCKNOT, DONE);
 
                     m_uiBreakDoorTimer = 0;
                 }
                 else
-                {
                     m_uiBreakDoorTimer -= uiDiff;
+            }
+
+            if (m_uiEmoteTimer)
+            {
+                if (m_uiEmoteTimer <= uiDiff)
+                {
+                    if (m_pInstance->GetData(TYPE_ROCKNOT) == SPECIAL)
+                    {
+                        DoCastSpellIfCan(m_creature, SPELL_DRUNKEN_RAGE);
+                        DoScriptText(SAY_MORE_BEER, m_creature);      // Begin walking to barrel.
+                        Start(false);
+                    }
+                    else
+                        m_creature->HandleEmote(EMOTE_ONESHOT_CHEER); // Still accepting beer.
+
+                    m_uiEmoteTimer = 0;
                 }
+                else
+                    m_uiEmoteTimer -= uiDiff;
+            }
+
+            if (m_uiBarReactTimer)
+            {
+                if (m_uiBarReactTimer <= uiDiff)
+                {
+                    if (Creature* pPhalanx = m_pInstance->GetSingleCreatureFromStorage(NPC_PHALANX))
+                    {
+                        if (npc_phalanxAI* pEscortAI = dynamic_cast<npc_phalanxAI*>(pPhalanx->AI()))
+                            pEscortAI->Start(false, NULL, NULL, true);
+                    }
+
+                    m_uiBarReactTimer = 0;
+                }
+                else
+                    m_uiBarReactTimer -= uiDiff;
             }
         }
     };
@@ -1065,40 +1168,29 @@ struct npc_rocknot : public CreatureScript
         return new npc_rocknotAI(pCreature);
     }
 
-    bool OnQuestRewarded(Player* /*pPlayer*/, Creature* pCreature, Quest const* pQuest) override
+    bool OnQuestRewarded(Player* pPlayer, Creature* pCreature, Quest const* pQuest) override
     {
         ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
         if (!pInstance)
-        {
             return true;
-        }
 
-        if (pInstance->GetData(TYPE_BAR) == DONE || pInstance->GetData(TYPE_BAR) == SPECIAL)
-        {
+        if (pInstance->GetData(TYPE_ROCKNOT) == DONE || pInstance->GetData(TYPE_ROCKNOT) == SPECIAL)
             return true;
-        }
 
         if (pQuest->GetQuestId() == QUEST_ALE)
         {
-            if (pInstance->GetData(TYPE_BAR) != IN_PROGRESS)
-            {
-                pInstance->SetData(TYPE_BAR, IN_PROGRESS);
-            }
+            if (pInstance->GetData(TYPE_ROCKNOT) != IN_PROGRESS)
+                pInstance->SetData(TYPE_ROCKNOT, IN_PROGRESS);
 
-            pInstance->SetData(TYPE_BAR, SPECIAL);
+            if (pPlayer)
+                pCreature->SetFacingToObject(pPlayer);
 
-            // keep track of amount in instance script, returns SPECIAL if amount ok and event in progress
-            if (pInstance->GetData(TYPE_BAR) == SPECIAL)
-            {
-                DoScriptText(SAY_GOT_BEER, pCreature);
-                pCreature->CastSpell(pCreature, SPELL_DRUNKEN_RAGE, false);
+            DoScriptText(SAY_GOT_BEER, pCreature); // Blizzlike to say it the 3rd time (Source: http://wowwiki.wikia.com/wiki/Grim_Guzzler)
+            if (npc_rocknotAI *pEscortAI = dynamic_cast<npc_rocknotAI*>(pCreature->AI()))
+                pEscortAI->m_uiEmoteTimer = 1500;
 
-                if (npc_rocknotAI* pEscortAI = dynamic_cast<npc_rocknotAI*>(pCreature->AI()))
-                {
-                    pEscortAI->Start(false, NULL, NULL, true);
-                }
-            }
+            pInstance->SetData(TYPE_ROCKNOT, SPECIAL); // Increments beer counter by 1.
         }
 
         return true;
@@ -1770,6 +1862,10 @@ struct boss_plugger_spazzringAI : public ScriptedAI
             // Activate Phalanx and handle patrons faction
             if (Creature* pPhalanx = m_pInstance->GetSingleCreatureFromStorage(NPC_PHALANX))
             {
+                // Phalanx is already active if Rocknot's event is done.
+                if (m_pInstance->GetData(TYPE_ROCKNOT) == DONE)
+                    return;
+
                 if (npc_phalanxAI* pEscortAI = dynamic_cast<npc_phalanxAI*>(pPhalanx->AI()))
                     pEscortAI->Start(false, NULL, NULL, true);
             }

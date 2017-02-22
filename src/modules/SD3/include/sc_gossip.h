@@ -174,6 +174,8 @@ extern uint32 GetSkillLevel(Player* pPlayer, uint32 uiSkill);
 
 // Closes the Menu
 #define CLOSE_GOSSIP_MENU()        PlayerTalkClass->CloseGossip()
+// Clears the menu.
+#define CLEAR_GOSSIP_MENU()        PlayerTalkClass->ClearMenus()
 
 // Fuctions to send NPC lists
 // a - is always the npc guid (ObjectGuid)

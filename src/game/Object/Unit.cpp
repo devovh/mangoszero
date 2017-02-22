@@ -8813,7 +8813,7 @@ void Unit::SetIncapacitatedState(bool apply, uint32 state, ObjectGuid casterGuid
             if (Unit* victim = getVictim())
             {
                 SetTargetGuid(victim->GetObjectGuid());  // Restore target
-                if (movement)
+                if (movement || (!apply && stun))
                     GetMotionMaster()->MoveChase(victim); // Restore movement generator
             }
             else if (movement)
