@@ -4475,7 +4475,7 @@ void Aura::PeriodicTick()
             if (pdamage)
                 { procVictim |= PROC_FLAG_TAKEN_ANY_DAMAGE; }
 
-            pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, PROC_EX_NORMAL_HIT, pdamage, BASE_ATTACK, spellProto);
+            pCaster->ProcDamageAndSpell(target, procAttacker, procVictim, PROC_EX_NORMAL_HIT, pdamage, BASE_ATTACK, spellProto, GetAuraTicks());
 
             pCaster->DealDamage(target, pdamage, &cleanDamage, DOT, GetSpellSchoolMask(spellProto), spellProto, true);
 

@@ -4663,15 +4663,15 @@ void Unit::SendPeriodicAuraLog(SpellPeriodicAuraLogInfo* pInfo)
     aura->GetTarget()->SendMessageToSet(&data, true);
 }
 
-void Unit::ProcDamageAndSpell(Unit* pVictim, uint32 procAttacker, uint32 procVictim, uint32 procExtra, uint32 amount, WeaponAttackType attType, SpellEntry const* procSpell)
+void Unit::ProcDamageAndSpell(Unit* pVictim, uint32 procAttacker, uint32 procVictim, uint32 procExtra, uint32 amount, WeaponAttackType attType, SpellEntry const* procSpell, uint32 tick)
 {
     // Not much to do if no flags are set.
     if (procAttacker)
-        { ProcDamageAndSpellFor(false, pVictim, procAttacker, procExtra, attType, procSpell, amount); }
+        { ProcDamageAndSpellFor(false, pVictim, procAttacker, procExtra, attType, procSpell, amount, tick); }
     // Now go on with a victim's events'n'auras
     // Not much to do if no flags are set or there is no victim
     if (pVictim && pVictim->IsAlive() && procVictim)
-        { pVictim->ProcDamageAndSpellFor(true, this, procVictim, procExtra, attType, procSpell, amount); }
+        { pVictim->ProcDamageAndSpellFor(true, this, procVictim, procExtra, attType, procSpell, amount, tick); }
 }
 
 void Unit::SendSpellMiss(Unit* target, uint32 spellID, SpellMissInfo missInfo)
@@ -8441,7 +8441,7 @@ uint32 createProcExtendMask(SpellNonMeleeDamage* damageInfo, SpellMissInfo missC
     return procEx;
 }
 
-void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, SpellEntry const* procSpell, uint32 damage)
+void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, SpellEntry const* procSpell, uint32 damage, uint32 tick)
 {
     // For melee/ranged based attack need update skills and set some Aura states
     if (procFlag & MELEE_BASED_TRIGGER_MASK)
@@ -8518,11 +8518,26 @@ void Unit::ProcDamageAndSpellFor(bool isVictim, Unit* pTarget, uint32 procFlag, 
         if (itr->second->IsDeleted())
             { continue; }
 
-		// Custom procced spells added here due to insufficient proc flags
+		// Custom procced spells added here due to insufficient proc flags. Hack to fix spell/procs that aren't triggering from dbc data.
 		if (procSpell) {
 			uint32 procTriggeredId = itr->second->GetId();
 			switch (procSpell->Id) {
-				case 5138: case 6226: case 11703: case 11704:	// All Drain Mana ranks should proc Improved Drain Mana. No drain mana proc flags exist.
+				case 10: case 6141: case 8427: case 10185: case 10186: case 10187:	// First Blizzard tick should check for Arcane Concentration proc. Arcane Concentration does not check for PROC_FLAG_ON_DO_PERIODIC.
+				{
+					if (tick != 1) break;											// First tick only.
+
+					switch (procTriggeredId) {
+						case 11213: case 12574: case 12575: case 12576: case 12577:	// Arcane Concentration ranks 1 - 5
+						{
+							procFlag |= PROC_FLAG_SUCCESSFUL_NEGATIVE_SPELL_HIT;	// Allows AC to proc from Blizzard.
+							break;
+						}
+					}
+
+					break;
+				}
+
+				case 5138: case 6226: case 11703: case 11704:						// All Drain Mana ranks should proc Improved Drain Mana. No drain mana proc flags exist.
 				{
 					if (procTriggeredId == 17864 || procTriggeredId == 18393) {		// Improved Drain Mana Ranks 1 and 2.
 						itr->second->SetInUse(true);
