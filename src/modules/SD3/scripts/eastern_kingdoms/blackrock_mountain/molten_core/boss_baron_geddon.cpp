@@ -67,7 +67,7 @@ struct boss_baron_geddon : public CreatureScript
         void Reset() override
         {
             m_bIsArmageddon = false;
-            m_uiInfernoTimer = 45000;
+            m_uiInfernoTimer = 28000; // Source: https://www.youtube.com/watch?v=ySGlAlWagTY (might be random between 25-30s)
             m_uiIgniteManaTimer = 30000;
             m_uiLivingBombTimer = 35000;
         }
@@ -124,7 +124,7 @@ struct boss_baron_geddon : public CreatureScript
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_INFERNO) == CAST_OK)
                 {
-                    m_uiInfernoTimer = 45000;
+                    m_uiInfernoTimer = 28000;
                 }
             }
             else
