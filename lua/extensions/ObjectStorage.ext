@@ -1,0 +1,75 @@
+--[[
+ * http://nostralia.org/ True Australian Vanilla World of Warcraft
+ * DESC   : Allows the storing and retrieval of object pointers.
+ * UPDATED: 2nd March 2017
+ * AUTHOR : sundays
+ * NOTE   : Extension
+--]]
+
+local ObjectStore = {};
+local AllowedTypes = {0, 3, 4, 5}; -- object, unit, player, gameobject
+
+-- Returns a key that can be used to access the object.
+function ObjectStore.StoreObject(pObject)
+	local typeId = pObject:GetTypeId();
+	if (not AllowedTypes[typeId]) then
+		PrintError(string.format("ObjectStore cannot store object of TypeID %d.", typeId));
+		return nil;
+	end
+	
+	local pMap = pObject:GetMap();
+	local mapId = pMap:GetMapId();
+	local objGUIDLow = pObject:GetGUIDLow();
+	local objInstanceId = pObject:GetInstanceId(); -- GUIDLow is only unique on the same map.
+	local key = tonumber(objGUIDLow .. objInstanceId);
+
+	if (ObjectStore[key]) then
+		PrintError(string.format("ObjectStore duplicate key error. Key: %d. GUIDLow: %d", key, objGUIDLow));
+	end
+	ObjectStore[key] = {mapId, objGUIDLow, objInstanceId};
+	
+	return key;
+end
+
+function ObjectStore.GetObject(key)
+	local obj = ObjectStore[key];
+	if (not obj) then
+		PrintError(string.format("ObjectStore could not access key %d.", key));
+		return nil;
+	end
+	
+	local mapId = obj[1];
+	local GUIDLow = obj[2];
+	local instanceId = obj[3];
+	
+	local pMap = GetMapById(mapId, instanceId);
+	local pObj = pMap:GetWorldObject(GUIDLow);
+
+	if (not pObj) then
+		PrintError(string.format("ObjectStore could not retrieve object guid %d from map id %d.", GUIDLow, mapId));
+		return nil;
+	end
+	
+	return pObj;
+end
+
+function ObjectStore.Clear(key)
+	if (not key) then
+		ObjectStore = {};
+	else
+		ObjectStore[key] = nil;
+	end
+end
+
+local function DestroyObjData(event, pObj)
+	local objGUIDLow = pObj:GetGUIDLow();
+	local objInstanceId = pObj:GetInstanceId();
+	local key = tonumber(objGUIDLow .. objInstanceId);
+	ObjectStore.Clear(key);
+end
+
+RegisterPlayerEvent(4, DestroyObjData);  -- Logout.
+RegisterServerEvent(31, DestroyObjData); -- Creature delete.
+RegisterServerEvent(32, DestroyObjData); -- Gameobject delete.
+
+return ObjectStore;
