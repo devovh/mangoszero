@@ -42,17 +42,19 @@ function QuestGhostoplasm.OnMagnetSpawned(event, go)
 	QuestGhostoplasm.Magnets[magnetGUID].numberToSpawn = 8;
 	QuestGhostoplasm.Magnets[magnetGUID].nextGhostTimer = 5000;
 	
+	-- Returns empty table, dunno why.
 	magnetsInRange = go:GetGameObjectsInRange(30, GO_GHOST_MAGNET, 0);
-	magnetCount = #magnetsInRange;
-	
-	for i = 1, magnetCount do
-		if (magnetsInRange[i] and magnetsInRange[i]:IsSpawned()) then
-			-- If another active magnet is available, overwrite it.
-			local otherMagnet = magnetsInRange[i]:GetGUIDLow();
-			if (QuestGhostoplasm.Magnets[otherMagnet]) then
-				QuestGhostoplasm.Magnets[otherMagnet].state = false;
-				break;
-			end
+	for _, pMagnet in pairs(magnetsInRange) do
+		if (not pMagnet) then
+			return;
+		end
+
+		local otherMagnet = pMagnet:GetGUIDLow();
+		if (QuestGhostoplasm.Magnets[otherMagnet] and QuestGhostoplasm.Magnets[otherMagnet].state == true) then
+			QuestGhostoplasm.Magnets[magnetGUID].state = false;
+			QuestGhostoplasm.Magnets[magnetGUID].numberToSpawn = 0;
+			PrintDebug(string.format("Magnet GUID %d is already active.", otherMagnet));
+			break;
 		end
 	end
 
@@ -81,7 +83,7 @@ function QuestGhostoplasm.SpawnSpectre(pMagnet)
 	local x, y, z = pMagnet:GetRelativePoint(40, math.random(0, 2 * math.pi)); -- Ghost spawn
 	local magnetData = QuestGhostoplasm.Magnets[magnetGUID];
 	
-	if (magnetData.numberToSpawn <= 0) then
+	if (not magnetData.state or magnetData.numberToSpawn <= 0) then
 		magnetData.state = false;
 		return;
 	end
@@ -90,6 +92,7 @@ function QuestGhostoplasm.SpawnSpectre(pMagnet)
 	if (pSpectre) then
 		pSpectre:SetData(2, pMagnet:GetGUIDLow());
 		magnetData.numberToSpawn = magnetData.numberToSpawn - 1;
+		QuestGhostoplasm.SendSpectreToMagnet(pSpectre, pMagnet);
 	end
 end
 
@@ -115,6 +118,7 @@ function QuestGhostoplasm.TurnSpectreGreen(event, delay, repeats, pCreature)
 	pCreature:SetFaction(FACTION_ENEMY);
 	pCreature:AddAura(SPELL_GREEN_AURA, pCreature);
 	pCreature:SetData(1, true); -- isGreen
+	pCreature:SetSpeed(1, 1, true);
 	
 	local pPlayer = pCreature:GetNearestPlayer(15, 1, 1); -- 45yd, hostile, alive
 	if (pPlayer) then
@@ -124,26 +128,21 @@ function QuestGhostoplasm.TurnSpectreGreen(event, delay, repeats, pCreature)
 	end
 end
 
-function QuestGhostoplasm.OnSpectreSpawned(event, pCreature)
-	local magnetGUIDLow = pCreature:GetData(2);
-	local magnetGUID = tonumber(GO_GHOST_MAGNET .. magnetGUIDLow .. 0); -- entry, guidlow, typeid make up the object's GUID
-	local pMap = pCreature:GetMap();
+function QuestGhostoplasm.SendSpectreToMagnet(pSpectre, pMagnet)
 	local facing;
 	local x, y, z;
-	local pMagnet = pMap:GetWorldObject(magnetGUID);
-	local firstCurse = math.random(8000, 14000);
+	local firstCurse = math.random(8000, 13000);
 	
-	pCreature:AddAura(SPELL_BLUE_AURA, pCreature);
-	pCreature:SetFaction(FACTION_NEUTRAL);
-	pCreature:SetFacingToObject(pMagnet);
-	facing = pCreature:GetO();
-	x, y, z = pMagnet:GetRelativePoint(2, facing); -- 2pi = 360
-	pCreature:SetHomePosition(x, y, z, facing - math.pi);
+	pSpectre:AddAura(SPELL_BLUE_AURA, pSpectre);
+	pSpectre:SetFaction(FACTION_NEUTRAL);
+	pSpectre:SetFacingToObject(pMagnet);
+	facing = pSpectre:GetO();
+	x, y, z = pMagnet:GetRelativePoint(2, facing);
+	pSpectre:SetHomePosition(x, y, z, facing - math.pi);
 	-- pCreature:SetWalk(true); -- Doesn't work when creature moving home. Always runs.
-	-- pCreature:MoveTo(0, x, y, z, true);
-	pCreature:SetSpeed(1, 0.5, true);
-	pCreature:MoveHome();
-	pCreature:RegisterEvent(QuestGhostoplasm.MagramiCurse, firstCurse, 1);
+	pSpectre:SetSpeed(1, 0.5, true);
+	pSpectre:MoveHome();
+	pSpectre:RegisterEvent(QuestGhostoplasm.MagramiCurse, firstCurse, 1);
 end
 
 function QuestGhostoplasm.OnSpectreReachHome(event, pCreature)
@@ -180,5 +179,4 @@ end
 
 RegisterCreatureEvent(NPC_MAGRAMI_SPECTRE,  2, QuestGhostoplasm.MagramiReset);
 RegisterCreatureEvent(NPC_MAGRAMI_SPECTRE,  4, QuestGhostoplasm.MagramiReset);
-RegisterCreatureEvent(NPC_MAGRAMI_SPECTRE,  5, QuestGhostoplasm.OnSpectreSpawned);
 RegisterCreatureEvent(NPC_MAGRAMI_SPECTRE, 24, QuestGhostoplasm.OnSpectreReachHome);
