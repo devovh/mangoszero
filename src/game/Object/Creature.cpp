@@ -1955,11 +1955,21 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
     if (IsInEvadeMode())
         return false;
 
-    // only from same creature faction
+    // Only from factions friendly to ours.
     if (checkfaction)
     {
-        if (getFaction() != u->getFaction())
-            return false;
+        FactionTemplateEntry const* myFaction = getFactionTemplateEntry();
+        FactionTemplateEntry const* testerFaction = u->getFactionTemplateEntry();
+
+        if (myFaction && testerFaction)
+        {
+            if (myFaction->IsFriendlyTo(*testerFaction))
+                return true;
+        }
+        else
+        {
+            return false; // assert?
+        }
     }
     else
     {
