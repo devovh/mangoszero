@@ -699,7 +699,7 @@ struct go_inconspicuous_landmark : public GameObjectScript
         SpawnPirates(pPlayer, iTotalPirates);
 
         // spawn chest
-        pGo->SummonGameObject(GO_PIRATE_TREASURE, -10117.715f, -4051.644f, 5.407f, 0.0f, 60);
+        pGo->SummonGameObject(GO_PIRATE_TREASURE, -10117.715f, -4051.644f, 5.407f, 0.0f, 240);
         return true;
     }
 };
