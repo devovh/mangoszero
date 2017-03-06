@@ -109,15 +109,11 @@ struct is_blackrock_spire : public InstanceScript
             m_uiFlamewreathWaveCount(0),
             m_uiStadiumEventTimer(0),
             m_uiStadiumWaves(0),
-#if defined (CLASSIC)
             m_uiStadiumMobsAlive(0),
 
             m_uiDragonspineDoorTimer(0),
             m_uiDragonspineGoCount(0),
             m_bUpperDoorOpened(false)
-#else
-            m_uiStadiumMobsAlive(0)
-#endif
         {
             Initialize();
         }
@@ -162,7 +158,6 @@ struct is_blackrock_spire : public InstanceScript
                 }
                 break;
 
-#if defined (CLASSIC)
         case GO_BRAZIER_1:
         case GO_BRAZIER_2:
         case GO_BRAZIER_3:
@@ -171,7 +166,6 @@ struct is_blackrock_spire : public InstanceScript
         case GO_BRAZIER_6:
         case GO_DRAGONSPINE:
             break;
-#endif
             case GO_ROOM_1_RUNE:
                 m_aRoomRuneGuid[0] = pGo->GetObjectGuid();
                 return;
@@ -508,12 +502,10 @@ struct is_blackrock_spire : public InstanceScript
                 }
                 break;
             }
-#if defined (CLASSIC)
             case MAX_ENCOUNTER:
                 if (Player* pPlayer = instance->GetPlayer(ObjectGuid(guid)))
                     DoOpenUpperDoorIfCan(pPlayer);
                 break;
-#endif
             default:
                 break;
             }
@@ -540,13 +532,9 @@ struct is_blackrock_spire : public InstanceScript
                     m_auiEncounter[i] = NOT_STARTED;
                 }
             }
-
-#if defined (CLASSIC)
             OUT_LOAD_INST_DATA_COMPLETE;
-#endif
         }
 
-#if defined (CLASSIC)
         void DoOpenUpperDoorIfCan(Player* pPlayer)
         {
             if (m_bUpperDoorOpened)
@@ -559,7 +547,6 @@ struct is_blackrock_spire : public InstanceScript
                 m_bUpperDoorOpened = true;
             }
         }
-#endif
 
         void Update(uint32 uiDiff) override
         {
@@ -589,7 +576,6 @@ struct is_blackrock_spire : public InstanceScript
                 }
             }
 
-#if defined (CLASSIC)
             // unlock dragon spine door
             if (m_uiDragonspineDoorTimer)
             {
@@ -623,7 +609,6 @@ struct is_blackrock_spire : public InstanceScript
                 else
                     m_uiDragonspineDoorTimer -= uiDiff;
             }
-#endif
         }
 
         void JustDidDialogueStep(int32 iEntry) override
@@ -905,11 +890,9 @@ struct is_blackrock_spire : public InstanceScript
         uint8 m_uiStadiumWaves;
         uint8 m_uiStadiumMobsAlive;
 
-#if defined (CLASSIC)
         bool m_bUpperDoorOpened;
         uint32 m_uiDragonspineGoCount;
         uint32 m_uiDragonspineDoorTimer;
-#endif
         ObjectGuid m_aRoomRuneGuid[MAX_ROOMS];
         GuidList m_alRoomEventMobGUIDSorted[MAX_ROOMS];
         GuidList m_lRoomEventMobGUIDList;
@@ -940,9 +923,7 @@ struct at_blackrock_spire : public AreaTriggerScript
             if (InstanceData* pInstance = pPlayer->GetInstanceData())
             {
                 pInstance->SetData(MAX_ENCOUNTER, DO_SORT_MOBS);
-#if defined (CLASSIC)
                 pInstance->SetData64(MAX_ENCOUNTER, pPlayer->GetObjectGuid().GetRawValue());
-#endif
             }
             break;
         case AREATRIGGER_STADIUM:
@@ -1016,24 +997,4 @@ void AddSC_instance_blackrock_spire()
     s->RegisterSelf();
     s = new go_father_flame();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_blackrock_spire";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_blackrock_spire;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "at_blackrock_spire";
-    //pNewScript->pAreaTrigger = &AreaTrigger_at_blackrock_spire;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "event_spell_altar_emberseer";
-    //pNewScript->pProcessEventId = &ProcessEventId_event_spell_altar_emberseer;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_father_flame";
-    //pNewScript->pGOUse = &GOUse_go_father_flame;
-    //pNewScript->RegisterSelf();
 }

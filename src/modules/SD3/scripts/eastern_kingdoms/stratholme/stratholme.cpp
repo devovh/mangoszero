@@ -406,29 +406,4 @@ void AddSC_stratholme()
     s->RegisterSelf();
     s = new mobs_spectral_ghostly_citizen();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_service_gate";
-    //pNewScript->pGOUse = &GOUse_go_service_gate;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_gauntlet_gate";
-    //pNewScript->pGOUse = &GOUse_go_gauntlet_gate;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_stratholme_postbox";
-    //pNewScript->pGOUse = &GOUse_go_stratholme_postbox;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_restless_soul";
-    //pNewScript->GetAI = &GetAI_mob_restless_soul;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mobs_spectral_ghostly_citizen";
-    //pNewScript->GetAI = &GetAI_mobs_spectral_ghostly_citizen;
-    //pNewScript->RegisterSelf();
 }

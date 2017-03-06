@@ -373,14 +373,4 @@ void AddSC_boss_maexxna()
     s->RegisterSelf();
     s = new npc_web_wrap();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_maexxna";
-    //pNewScript->GetAI = &GetAI_boss_maexxna;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_web_wrap";
-    //pNewScript->GetAI = &GetAI_npc_web_wrap;
-    //pNewScript->RegisterSelf();
 }

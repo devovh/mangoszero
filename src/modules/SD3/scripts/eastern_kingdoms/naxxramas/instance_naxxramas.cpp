@@ -1118,14 +1118,4 @@ void AddSC_instance_naxxramas()
     s->RegisterSelf();
     s = new at_naxxramas();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_naxxramas";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_naxxramas;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "at_naxxramas";
-    //pNewScript->pAreaTrigger = &AreaTrigger_at_naxxramas;
-    //pNewScript->RegisterSelf();
 }

@@ -241,20 +241,4 @@ void AddSC_tirisfal_glades()
     s->RegisterSelf();
     s = new npc_calvin_montague();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_mausoleum_door";
-    //pNewScript->pGOUse = &GOUse_go_mausoleum_door;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_mausoleum_trigger";
-    //pNewScript->pGOUse = &GOUse_go_mausoleum_trigger;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_calvin_montague";
-    //pNewScript->GetAI = &GetAI_npc_calvin_montague;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_calvin_montague;
-    //pNewScript->RegisterSelf();
 }

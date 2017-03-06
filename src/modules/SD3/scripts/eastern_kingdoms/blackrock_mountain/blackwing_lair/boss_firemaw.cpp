@@ -173,9 +173,4 @@ void AddSC_boss_firemaw()
     Script* s;
     s = new boss_firemaw();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_firemaw";
-    //pNewScript->GetAI = &GetAI_boss_firemaw;
-    //pNewScript->RegisterSelf();
 }

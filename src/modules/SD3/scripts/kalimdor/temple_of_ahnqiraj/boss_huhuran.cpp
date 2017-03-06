@@ -193,9 +193,4 @@ void AddSC_boss_huhuran()
     Script* s;
     s = new boss_huhuran();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_huhuran";
-    //pNewScript->GetAI = &GetAI_boss_huhuran;
-    //pNewScript->RegisterSelf();
 }

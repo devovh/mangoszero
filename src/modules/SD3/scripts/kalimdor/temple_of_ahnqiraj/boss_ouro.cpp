@@ -51,31 +51,20 @@ enum
 
     // submerge spells
     SPELL_SUBMERGE_VISUAL   = 26063,
-#if defined (CLASSIC)  
     SPELL_SUMMON_OURO_MOUNDS = 26058,                       // summons 5 dirt mounds
-#else
-    SPELL_SUMMON_OURO_MOUND = 26058,                        // summons 5 dirt mounds
-#endif
 
     SPELL_SUMMON_TRIGGER    = 26284,
 
     SPELL_SUMMON_OURO       = 26642,
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-    SPELL_QUAKE             = 26093,
-#endif
 
     // other spells - not used TODO check this "synced mess"
     // SPELL_SUMMON_SCARABS    = 26060,                     // triggered after 30 secs - cast by the Dirt Mounds
-#if defined (CLASSIC)  
     SPELL_DIRTMOUND_PASSIVE = 26092,                        // casts 26093 every 1 sec
-#endif
     // SPELL_SET_OURO_HEALTH   = 26075,                     // removed from DBC
     // SPELL_SAVE_OURO_HEALTH  = 26076,                     // removed from DBC
     // SPELL_TELEPORT_TRIGGER  = 26285,                     // removed from DBC
     // SPELL_SUBMERGE_TRIGGER  = 26104,                     // removed from DBC
-#if defined (CLASSIC)  
     SPELL_SUMMON_OURO_MOUND = 26617,
-#endif
     // SPELL_SCARABS_PERIODIC  = 26619,                     // cast by the Dirt Mounds in order to spawn the scarabs - removed from DBC
 
     // summoned npcs
@@ -229,12 +218,8 @@ struct boss_ouro : public CreatureScript
                     if (m_uiSubmergeTimer < uiDiff)
                     {
                         if (DoCastSpellIfCan(m_creature, SPELL_SUBMERGE_VISUAL) == CAST_OK)
-                        {
-#if defined (CLASSIC)  
+                        { 
                             DoCastSpellIfCan(m_creature, SPELL_SUMMON_OURO_MOUNDS, CAST_TRIGGERED);
-#else
-                            DoCastSpellIfCan(m_creature, SPELL_SUMMON_OURO_MOUND, CAST_TRIGGERED);
-#endif
                             DoCastSpellIfCan(m_creature, SPELL_SUMMON_TRIGGER, CAST_TRIGGERED);
 
                             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -252,13 +237,8 @@ struct boss_ouro : public CreatureScript
                 {
                     // Summon 1 mound every 10 secs when enraged
                     if (m_uiSummonMoundTimer < uiDiff)
-                    {
-
-#if defined (CLASSIC)  
+                    { 
                         if (DoCastSpellIfCan(m_creature, SPELL_SUMMON_OURO_MOUND) == CAST_OK)
-#else
-                    DoSpawnCreature(NPC_DIRT_MOUND, 0, 0, 0, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-#endif
                         {
                             m_uiSummonMoundTimer = 10000;
                         }
@@ -329,18 +309,10 @@ struct npc_ouro_spawner : public CreatureScript
     {
         npc_ouro_spawnerAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature) { }
 
-
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-    uint32 m_uiQuakeTimer;
-#endif
         bool m_bHasSummoned;
 
         void Reset() override
         {
-
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-        m_uiQuakeTimer = 1000;
-#endif
             m_bHasSummoned = false;
         }
 
@@ -348,17 +320,10 @@ struct npc_ouro_spawner : public CreatureScript
         {
             // Spawn Ouro on LoS check
             if (!m_bHasSummoned && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() && m_creature->IsWithinDistInMap(pWho, 50.0f))
-            {
-
-#if defined (CLASSIC)  
+            {  
                 if (DoCastSpellIfCan(m_creature, SPELL_SUMMON_OURO, CAST_TRIGGERED) == CAST_OK)
-#else
-                if (DoCastSpellIfCan(m_creature, SPELL_SUMMON_OURO) == CAST_OK)
-#endif
-                {
-#if defined (CLASSIC)  
+                { 
                     DoCastSpellIfCan(m_creature, SPELL_DIRTMOUND_PASSIVE, CAST_TRIGGERED);
-#endif
                     m_bHasSummoned = true;
                 }
             }
@@ -376,22 +341,6 @@ struct npc_ouro_spawner : public CreatureScript
                 m_creature->ForcedDespawn();
             }
         }
-
-    void UpdateAI(const uint32 uiDiff) override
-    {
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-        if (m_bHasSummoned)
-        {
-            if (m_uiQuakeTimer < uiDiff)
-            {
-                if (DoCastSpellIfCan(m_creature, SPELL_QUAKE) == CAST_OK)
-                { m_uiQuakeTimer = 1000; }
-            }
-            else
-            { m_uiQuakeTimer -= uiDiff; }
-        }
-#endif
-    }
     };
 
     CreatureAI* GetAI(Creature* pCreature) override
@@ -407,14 +356,4 @@ void AddSC_boss_ouro()
     s->RegisterSelf();
     s = new npc_ouro_spawner();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_ouro";
-    //pNewScript->GetAI = &GetAI_boss_ouro;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_ouro_spawner";
-    //pNewScript->GetAI = &GetAI_npc_ouro_spawner;
-    //pNewScript->RegisterSelf();
 }

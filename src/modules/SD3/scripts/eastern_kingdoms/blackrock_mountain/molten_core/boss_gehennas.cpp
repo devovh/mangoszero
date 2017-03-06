@@ -162,9 +162,4 @@ void AddSC_boss_gehennas()
     Script* s;
     s = new boss_gehennas();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_gehennas";
-    //pNewScript->GetAI = &GetAI_boss_gehennas;
-    //pNewScript->RegisterSelf();
 }

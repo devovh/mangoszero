@@ -327,9 +327,4 @@ void AddSC_boss_heigan()
     Script* s;
     s = new boss_heigan();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_heigan";
-    //pNewScript->GetAI = &GetAI_boss_heigan;
-    //pNewScript->RegisterSelf();
 }

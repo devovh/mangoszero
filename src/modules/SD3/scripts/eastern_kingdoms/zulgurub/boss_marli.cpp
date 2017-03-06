@@ -293,9 +293,4 @@ void AddSC_boss_marli()
     Script* s;
     s = new boss_marli();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_marli";
-    //pNewScript->GetAI = &GetAI_boss_marli;
-    //pNewScript->RegisterSelf();
 }

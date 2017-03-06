@@ -626,29 +626,4 @@ void AddSC_bosses_emerald_dragons()
     s->RegisterSelf();
     s = new boss_ysondre();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_emeriss";
-    //pNewScript->GetAI = &GetAI_boss_emeriss;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_lethon";
-    //pNewScript->GetAI = &GetAI_boss_lethon;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_spirit_shade";
-    //pNewScript->GetAI = &GetAI_npc_spirit_shade;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_taerar";
-    //pNewScript->GetAI = &GetAI_boss_taerar;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_ysondre";
-    //pNewScript->GetAI = &GetAI_boss_ysondre;
-    //pNewScript->RegisterSelf();
 }

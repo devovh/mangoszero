@@ -244,9 +244,4 @@ void AddSC_boss_kazzakAI()
     Script* s;
     s = new boss_kazzak();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_kazzak";
-    //pNewScript->GetAI = &GetAI_boss_kazzak;
-    //pNewScript->RegisterSelf();
 }

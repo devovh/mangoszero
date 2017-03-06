@@ -53,16 +53,12 @@ enum
     SPELL_CTHUN_VULNERABLE          = 26235,
     SPELL_MOUTH_TENTACLE            = 26332,                // prepare target to teleport to stomach
 
-#if defined (CLASSIC)  
     SPELL_DIGESTIVE_ACID_TELEPORT   = 26220,                // stomach teleport spell
-#endif
 
-    SPELL_EXIT_STOMACH_KNOCKBACK    = 25383,                // spell id is wrong
-#if defined (CLASSIC)  
+    SPELL_EXIT_STOMACH_KNOCKBACK    = 25383,                // spell id is wrong 
     SPELL_EXIT_STOMACH_JUMP         = 26224,                // should make the player jump to the ceiling - not used yet
     SPELL_EXIT_STOMACH_EFFECT       = 26230,                // used to complete the eject effect from the stomach - not used yet
     SPELL_PORT_OUT_STOMACH_EFFECT   = 26648,                // used to kill players inside the stomach on evade
-#endif
     SPELL_DIGESTIVE_ACID            = 26476,                // damage spell - should be handled by the map
     // SPELL_EXIT_STOMACH            = 26221,               // summons 15800
 
@@ -479,11 +475,7 @@ struct boss_cthun : public CreatureScript
             // Workaround for missing spell 26648
                 if (Player* pPlayer = m_creature->GetMap()->GetPlayer(*itr))
                 {
-#if defined (CLASSIC)
                     pPlayer->CastSpell(pPlayer, SPELL_PORT_OUT_STOMACH_EFFECT, true);
-#else
-                    m_creature->DealDamage(pPlayer, pPlayer->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
-#endif
                 }
             }
 
@@ -701,14 +693,8 @@ struct boss_cthun : public CreatureScript
                     {
                         // Check for valid player
                         if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_stomachEnterTargetGuid))
-                        {
-
-#if defined (CLASSIC)  
+                        { 
                             pPlayer->CastSpell(pPlayer, SPELL_DIGESTIVE_ACID_TELEPORT, true);
-#else
-                            DoTeleportPlayer(pPlayer, afCthunLocations[2][0], afCthunLocations[2][1], afCthunLocations[2][2], afCthunLocations[2][3]);
-#endif
-
                             m_lPlayersInStomachList.push_back(pPlayer->GetObjectGuid());
                         }
 
@@ -939,12 +925,7 @@ struct at_stomach_cthun : public AreaTriggerScript
 
             // Note: because of the missing spell id 26224, we will use basic jump movement
             // Disabled because of the missing jump effect
-#if defined (WOTLK) || defined (CATA)
-            pPlayer->GetMotionMaster()->MoveJump(afCthunLocations[3][0], afCthunLocations[3][1], afCthunLocations[3][2], pPlayer->GetSpeed(MOVE_RUN) * 5, 0);
-        }
-        else if (pAt->id == AREATRIGGER_STOMACH_2)
-        {
-#endif
+
             if (ScriptedInstance* pInstance = (ScriptedInstance*)pPlayer->GetInstanceData())
             {
                 if (Creature* pCthun = pInstance->GetSingleCreatureFromStorage(NPC_CTHUN))
@@ -980,24 +961,4 @@ void AddSC_boss_cthun()
     s->RegisterSelf();
     s = new at_stomach_cthun();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_eye_of_cthun";
-    //pNewScript->GetAI = &GetAI_boss_eye_of_cthun;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_cthun";
-    //pNewScript->GetAI = &GetAI_boss_cthun;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_giant_claw_tentacle";
-    //pNewScript->GetAI = &GetAI_npc_giant_claw_tentacle;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "at_stomach_cthun";
-    //pNewScript->pAreaTrigger = &AreaTrigger_at_stomach_cthun;
-    //pNewScript->RegisterSelf();
 }

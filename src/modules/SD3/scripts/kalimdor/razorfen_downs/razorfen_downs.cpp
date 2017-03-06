@@ -340,15 +340,4 @@ void AddSC_razorfen_downs()
     s->RegisterSelf();
     s = new go_tutenkash_gong();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_tutenkash_gong";
-    //pNewScript->pGOUse = &GOUse_go_tutenkash_gong;
-    //pNewScript->RegisterSelf();
-    //
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_belnistrasz";
-    //pNewScript->GetAI = &GetAI_npc_belnistrasz;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_belnistrasz;
-    //pNewScript->RegisterSelf();
 }

@@ -144,10 +144,4 @@ void AddSC_blasted_lands()
     Script* s;
     s = new npc_fallen_hero_of_horde();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_fallen_hero_of_horde";
-    //pNewScript->pGossipHello =  &GossipHello_npc_fallen_hero_of_horde;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_fallen_hero_of_horde;
-    //pNewScript->RegisterSelf();
 }

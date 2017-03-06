@@ -99,9 +99,4 @@ void AddSC_npc_onyxian_warder()
     Script *s;
     s = new npc_onyxian_warder();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_onyxian_warder";
-    //pNewScript->GetAI = &GetAI_npc_onyxian_warderAI;
-    //pNewScript->RegisterSelf();
 }

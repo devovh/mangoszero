@@ -135,12 +135,7 @@ struct is_blackfathom_deeps : public InstanceScript
         }
 
         void OnCreatureDeath(Creature* pCreature) override
-        {
-#if defined (WOTLK) || defined (CATA)
-    if (pCreature->GetEntry() == NPC_BARON_AQUANIS)
-        { SetData(TYPE_AQUANIS, DONE); }
-#endif
-        
+        {        
             // Only use this function if shrine event is in progress
             if (m_auiEncounter[1] != IN_PROGRESS)
             {
@@ -216,19 +211,12 @@ struct is_blackfathom_deeps : public InstanceScript
                     DoUseDoorOrButton(GO_PORTAL_DOOR);
                 }
                 break;
-#if defined (CLASSIC) || defined (TBC)
             case TYPE_STONE:
                 if (m_auiEncounter[2] != DONE && uiData == DONE)
                 {
                     m_auiEncounter[2] = uiData;
                 }
                 break;
-#endif
-#if defined (WOTLK) || defined (CATA)
-        case TYPE_AQUANIS:
-            m_auiEncounter[2] = uiData;;
-            break;
-#endif
             }
 
             if (uiData == DONE)
@@ -253,10 +241,8 @@ struct is_blackfathom_deeps : public InstanceScript
                 return m_auiEncounter[0];
             case TYPE_SHRINE:
                 return m_auiEncounter[1];
-#if defined (CLASSIC) || defined (TBC)
             case TYPE_STONE:
                 return m_auiEncounter[2];
-#endif
             default:
                 return 0;
             }
@@ -379,18 +365,4 @@ void AddSC_instance_blackfathom_deeps()
 //    s->RegisterSelf();
 //    s = new go_fathom_stone();
 //    s->RegisterSelf();
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_blackfathom_deeps";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_blackfathom_deeps;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_fire_of_akumai";
-    //pNewScript->pGOUse = &GOUse_go_fire_of_akumai;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_fathom_stone";
-    //pNewScript->pGOUse = &GOUse_go_fathom_stone;
-    //pNewScript->RegisterSelf();
 }

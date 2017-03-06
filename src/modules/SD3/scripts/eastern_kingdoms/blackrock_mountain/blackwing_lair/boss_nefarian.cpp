@@ -323,9 +323,4 @@ void AddSC_boss_nefarian()
     Script* s;
     s = new boss_nefarian();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_nefarian";
-    //pNewScript->GetAI = &GetAI_boss_nefarian;
-    //pNewScript->RegisterSelf();
 }

@@ -432,12 +432,8 @@ struct npc_disciple_of_naralex : public CreatureScript
                             if (Creature* pNaralex = m_pInstance->GetSingleCreatureFromStorage(NPC_NARALEX))
                             {
                                 // ToDo: Make Naralex fly
-                                // sort of a hack, compare to boss_onyxia
-#if defined (CLASSIC)  
+                                // sort of a hack, compare to boss_onyxia 
                                 pNaralex->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND);
-#else
-                                    pNaralex->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_FLY_ANIM);
-#endif
 
                                 // Set to flying
                                 pNaralex->SetLevitate(true);
@@ -544,11 +540,7 @@ struct npc_disciple_of_naralex : public CreatureScript
             if (npc_disciple_of_naralexAI* pEscortAI = dynamic_cast<npc_disciple_of_naralexAI*>(pCreature->AI()))
             {
                 pEscortAI->Start(false, pPlayer);               // Note: after 4.0.3 set him run = true
-#if defined (CLASSIC)  
                 pCreature->SetFactionTemporary(FACTION_ESCORT_N_NEUTRAL_ACTIVE, TEMPFACTION_RESTORE_RESPAWN);
-#else
-            pCreature->SetFactionTemporary(FACTION_ESCORT_N_ACTIVE, TEMPFACTION_RESTORE_RESPAWN);
-#endif
             }
             pPlayer->CLOSE_GOSSIP_MENU();
         }
@@ -566,11 +558,4 @@ void AddSC_wailing_caverns()
     Script* s;
     s = new npc_disciple_of_naralex();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_disciple_of_naralex";
-    //pNewScript->GetAI = &GetAI_npc_disciple_of_naralex;
-    //pNewScript->pGossipHello =  &GossipHello_npc_disciple_of_naralex;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_disciple_of_naralex;
-    //pNewScript->RegisterSelf();
 }

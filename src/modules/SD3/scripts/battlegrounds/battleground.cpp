@@ -51,13 +51,7 @@
 enum
 {
     SPELL_SPIRIT_HEAL_CHANNEL       = 22011,                // Spirit Heal Channel
-
     SPELL_SPIRIT_HEAL               = 22012,                // Spirit Heal
-
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-    SPELL_SPIRIT_HEAL_MANA          = 44535,                // in battlegrounds player get this no-mana-cost-buff
-#endif
-
     SPELL_WAITING_TO_RESURRECT      = 2584                  // players who cancel this aura don't want a resurrection
 };
 
@@ -112,15 +106,6 @@ struct npc_spirit_guide : public CreatureScript
                 pPlayer->RepopAtGraveyard();
             }
         }
-
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-        void SpellHitTarget(Unit* pUnit, const SpellEntry* pSpellEntry) override
-        {
-            if (pSpellEntry->Id == SPELL_SPIRIT_HEAL && pUnit->GetTypeId() == TYPEID_PLAYER
-                && pUnit->HasAura(SPELL_WAITING_TO_RESURRECT))
-            { pUnit->CastSpell(pUnit, SPELL_SPIRIT_HEAL_MANA, true); }
-        }
-#endif
     };
 
     CreatureAI* GetAI(Creature* pCreature) override
@@ -134,10 +119,4 @@ void AddSC_battleground()
     Script *s;
     s = new npc_spirit_guide();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_spirit_guide";
-    //pNewScript->GetAI = &GetAI_npc_spirit_guide;
-    //pNewScript->pGossipHello = &GossipHello_npc_spirit_guide;
-    //pNewScript->RegisterSelf();
 }

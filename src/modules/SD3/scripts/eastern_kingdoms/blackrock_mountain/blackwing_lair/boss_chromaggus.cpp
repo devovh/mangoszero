@@ -304,9 +304,4 @@ void AddSC_boss_chromaggus()
     Script* s;
     s = new boss_chromaggus();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_chromaggus";
-    //pNewScript->GetAI = &GetAI_boss_chromaggus;
-    //pNewScript->RegisterSelf();
 }

@@ -261,9 +261,4 @@ void AddSC_boss_grobbulus()
     Script* s;
     s = new boss_grobbulus();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_grobbulus";
-    //pNewScript->GetAI = &GetAI_boss_grobbulus;
-    //pNewScript->RegisterSelf();
 }

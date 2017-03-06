@@ -290,14 +290,4 @@ void AddSC_boss_draganthaurissan()
     s->RegisterSelf();
     s = new boss_moira_bronzebeard();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_emperor_dagran_thaurissan";
-    //pNewScript->GetAI = &GetAI_boss_emperor_dagran_thaurissan;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_moira_bronzebeard";
-    //pNewScript->GetAI = &GetAI_boss_moira_bronzebeard;
-    //pNewScript->RegisterSelf();
 }

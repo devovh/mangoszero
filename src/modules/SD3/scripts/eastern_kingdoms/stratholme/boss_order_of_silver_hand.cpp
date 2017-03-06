@@ -201,9 +201,4 @@ void AddSC_boss_order_of_silver_hand()
     Script* s;
     s = new boss_silver_hand_bosses();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_silver_hand_bosses";
-    //pNewScript->GetAI = &GetAI_boss_silver_hand_bossesAI;
-    //pNewScript->RegisterSelf();
 }

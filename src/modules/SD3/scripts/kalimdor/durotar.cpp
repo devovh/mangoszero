@@ -200,10 +200,4 @@ void AddSC_durotar()
     s->RegisterSelf();
     s = new spell_lazy_peon_awake();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_lazy_peon";
-    //pNewScript->GetAI = &GetAI_npc_lazy_peon;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_lazy_peon_awake;
-    //pNewScript->RegisterSelf();
 }

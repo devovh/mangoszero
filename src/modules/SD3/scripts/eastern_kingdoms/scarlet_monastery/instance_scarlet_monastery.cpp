@@ -127,9 +127,4 @@ void AddSC_instance_scarlet_monastery()
     Script* s;
     s = new is_scarlet_monastery();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_scarlet_monastery";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_scarlet_monastery;
-    //pNewScript->RegisterSelf();
 }

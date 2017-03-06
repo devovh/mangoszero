@@ -176,9 +176,4 @@ void AddSC_boss_baron_geddon()
     Script* s;
     s = new boss_baron_geddon();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_baron_geddon";
-    //pNewScript->GetAI = &GetAI_boss_baron_geddon;
-    //pNewScript->RegisterSelf();
 }

@@ -538,15 +538,4 @@ void AddSC_winterspring()
     s->RegisterSelf();
     s = new go_elune_fire();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_ranshalla";
-    //pNewScript->GetAI = &GetAI_npc_ranshalla;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_ranshalla;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_elune_fire";
-    //pNewScript->pGOUse = &GOUse_go_elune_fire;
-    //pNewScript->RegisterSelf();
 }

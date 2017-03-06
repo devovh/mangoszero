@@ -228,12 +228,7 @@ struct npc_piznik : public CreatureScript
 
         void JustDied(Unit* /*pKiller*/)
         {
-#if defined (CLASSIC) || defined (TBC)
             if (Player* pPlayer = (m_creature->GetMap()->GetPlayer(m_uiPlayerGUID)))
-#endif
-#if defined (WOTLK) || defined (CATA)
-            if (Player* pPlayer = (m_creature->GetMap()->GetPlayer(ObjectGuid(m_uiPlayerGUID))))
-#endif
             {
                 pPlayer->SendQuestFailed(QUEST_GERENZOS_ORDERS);
             }
@@ -261,12 +256,7 @@ struct npc_piznik : public CreatureScript
 
             if (m_uiEventTimer < uiDiff)  //Event should be completed after 7 minutes even if waves are alive
             {
-#if defined (CLASSIC) || defined (TBC)
                 if (Player* pPlayer = (m_creature->GetMap()->GetPlayer(m_uiPlayerGUID)))
-#endif
-#if defined (WOTLK) || defined (CATA)
-                if (Player* pPlayer = (m_creature->GetMap()->GetPlayer(ObjectGuid(m_uiPlayerGUID))))
-#endif
                 {
                     pPlayer->GroupEventHappens(QUEST_GERENZOS_ORDERS, m_creature);
                 }
@@ -343,10 +333,6 @@ struct npc_piznik : public CreatureScript
     }
 };
 
-/*######
-## AddSC
-######*/
-
 void AddSC_stonetalon_mountains()
 {
     Script* s;
@@ -354,16 +340,4 @@ void AddSC_stonetalon_mountains()
     s->RegisterSelf();
     s = new npc_piznik();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_kaya";
-    //pNewScript->GetAI = &GetAI_npc_kaya;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_kaya;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_piznik";
-    //pNewScript->GetAI = &GetAI_npc_piznik;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_piznik;
-    //pNewScript->RegisterSelf();
 }

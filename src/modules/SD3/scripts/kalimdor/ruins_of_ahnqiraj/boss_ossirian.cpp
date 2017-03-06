@@ -340,14 +340,4 @@ void AddSC_boss_ossirian()
     s->RegisterSelf();
     s = new go_ossirian_crystal();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_ossirian";
-    //pNewScript->GetAI = &GetAI_boss_ossirian;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_ossirian_crystal";
-    //pNewScript->pGOUse = &GOUse_go_ossirian_crystal;
-    //pNewScript->RegisterSelf();
 }

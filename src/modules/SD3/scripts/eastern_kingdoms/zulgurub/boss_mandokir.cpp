@@ -471,14 +471,4 @@ void AddSC_boss_mandokir()
     s->RegisterSelf();
     s = new mob_ohgan();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_mandokir";
-    //pNewScript->GetAI = &GetAI_boss_mandokir;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_ohgan";
-    //pNewScript->GetAI = &GetAI_mob_ohgan;
-    //pNewScript->RegisterSelf();
 }

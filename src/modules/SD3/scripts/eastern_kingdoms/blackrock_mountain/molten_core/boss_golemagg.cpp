@@ -58,9 +58,6 @@ struct boss_golemagg : public CreatureScript
         boss_golemaggAI(Creature* pCreature) : ScriptedAI(pCreature)
         {
             m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-#if defined (WOTLK) || defined (CATA)
-        DoCastSpellIfCan(m_creature, SPELL_MAGMA_SPLASH, CAST_TRIGGERED | CAST_AURA_NOT_PRESENT);
-#endif
         }
 
         ScriptedInstance* m_pInstance;
@@ -102,9 +99,6 @@ struct boss_golemagg : public CreatureScript
             {
                 m_pInstance->SetData(TYPE_GOLEMAGG, FAIL);
             }
-#if defined (WOTLK) || defined (CATA)
-        DoCastSpellIfCan(m_creature, SPELL_MAGMA_SPLASH, CAST_TRIGGERED | CAST_AURA_NOT_PRESENT);
-#endif
         }
 
         void UpdateAI(const uint32 uiDiff) override
@@ -245,14 +239,4 @@ void AddSC_boss_golemagg()
     s->RegisterSelf();
     s = new mob_core_rager();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_golemagg";
-    //pNewScript->GetAI = &GetAI_boss_golemagg;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_core_rager";
-    //pNewScript->GetAI = &GetAI_mob_core_rager;
-    //pNewScript->RegisterSelf();
 }

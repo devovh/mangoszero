@@ -79,7 +79,7 @@ struct go_fathom_stone : public GameObjectScript
     bool OnUse(Player* pPlayer, GameObject* pGo) override
     {
         ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData();
-#if defined (CLASSIC) || defined (TBC)
+
         if (!pInstance)
         {
             return false;
@@ -96,8 +96,7 @@ struct go_fathom_stone : public GameObjectScript
 
         pInstance->SetData(TYPE_STONE, DONE);
         return true;
-#endif
-#if defined (WOTLK) || defined (CATA)
+
         if (!pInstance)
         { return true; }
 
@@ -108,7 +107,6 @@ struct go_fathom_stone : public GameObjectScript
         }
 
         return false;
-#endif
     }
 };
 
