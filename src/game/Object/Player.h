@@ -499,16 +499,17 @@ enum SkillUpdateState
     SKILL_UNCHANGED             = 0,
     SKILL_CHANGED               = 1,
     SKILL_NEW                   = 2,
-    SKILL_DELETED               = 3
+    SKILL_DELETED               = 3,
+	SKILL_DISABLED				= 4
 };
 
 struct SkillStatusData
 {
-    SkillStatusData(uint8 _pos, SkillUpdateState _uState) : pos(_pos), uState(_uState)
-    {
-    }
+    SkillStatusData(uint8 _pos, SkillUpdateState _uState) : pos(_pos), uState(_uState) {}
     uint8 pos;
     SkillUpdateState uState;
+
+	bool IsUnavailable() { return uState == SKILL_DELETED || uState == SKILL_DISABLED; }
 };
 
 typedef UNORDERED_MAP<uint32, SkillStatusData> SkillStatusMap;
@@ -1888,9 +1889,11 @@ class Player : public Unit
         uint16 GetSkillValue(uint32 skill) const;           // skill value + perm. bonus + temp bonus
         uint16 GetBaseSkillValue(uint32 skill) const;       // skill value + perm. bonus
         uint16 GetPureSkillValue(uint32 skill) const;       // skill value
+		uint16 GetPureSkillValueFromDb(uint32 skill);
         int16 GetSkillPermBonusValue(uint32 skill) const;
         int16 GetSkillTempBonusValue(uint32 skill) const;
         bool HasSkill(uint32 skill) const;
+		bool HasDisabledSkill(uint32 skill) const;
         void learnSkillRewardedSpells(uint32 id, uint32 value);
 
         WorldLocation& GetTeleportDest() { return m_teleport_dest; }
