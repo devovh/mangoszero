@@ -48,6 +48,8 @@ enum
     SPELL_FLAMEBREATH           = 18435,
     SPELL_CLEAVE                = 19983,
     SPELL_TAILSWEEP             = 15847,
+    SPELL_KNOCK_AWAY            = 19633,
+    SPELL_FIREBALL              = 18392,
 
     // Not much choise about these. We have to make own defintion on the direction/start-end point
     SPELL_BREATH_NORTH_TO_SOUTH = 17086,                    // 20x in "array"
