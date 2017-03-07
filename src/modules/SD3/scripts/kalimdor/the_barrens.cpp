@@ -1444,49 +1444,4 @@ void AddSC_the_barrens()
     s->RegisterSelf();
     s = new warlord_kromzar();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_beaten_corpse";
-    //pNewScript->pGossipHello = &GossipHello_npc_beaten_corpse;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_beaten_corpse;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_gilthares";
-    //pNewScript->GetAI = &GetAI_npc_gilthares;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_gilthares;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_taskmaster_fizzule";
-    //pNewScript->GetAI = &GetAI_npc_taskmaster_fizzule;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_twiggy_flathead";
-    //pNewScript->GetAI = &GetAI_npc_twiggy_flathead;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "at_twiggy_flathead";
-    //pNewScript->pAreaTrigger = &AreaTrigger_at_twiggy_flathead;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_wizzlecranks_shredder";
-    //pNewScript->GetAI = &GetAI_npc_wizzlecranks_shredder;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_wizzlecranks_shredder;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_regthar_deathgate";
-    //pNewScript->pGossipHello = &GossipHello_npc_regthar_deathgate;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_regthar_deathgate;
-    //pNewScript->GetAI = &GetAI_npc_regthar_deathgate;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_horde_defender";
-    //pNewScript->GetAI = &GetAI_npc_horde_defender;
-    //pNewScript->RegisterSelf();
 }

@@ -442,16 +442,4 @@ void AddSC_boss_rajaxx()
     s->RegisterSelf();
     s = new npc_kaldorei_elite();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_general_andorov";
-    //pNewScript->GetAI = &GetAI_npc_general_andorov;
-    //pNewScript->pGossipHello = &GossipHello_npc_general_andorov;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_general_andorov;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_kaldorei_elite";
-    //pNewScript->GetAI = &GetAI_npc_kaldorei_elite;
-    //pNewScript->RegisterSelf();
 }

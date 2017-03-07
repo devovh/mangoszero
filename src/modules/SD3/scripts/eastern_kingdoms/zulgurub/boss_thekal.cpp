@@ -112,10 +112,6 @@ struct boss_thekalBaseAI : public ScriptedAI
         m_creature->RemoveAllAurasOnDeath();
         m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
 
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-        m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
-#endif
-
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->ClearAllReactives();
         m_creature->GetMotionMaster()->Clear();
@@ -405,13 +401,7 @@ struct boss_thekal : public CreatureScript
                 {
                     if (DoCastSpellIfCan(m_creature, SPELL_SUMMON_TIGERS) == CAST_OK)
                     {
-
-#if defined (CLASSIC) || defined (WOTLK) 
                         m_uiSummonTigersTimer = 50000;
-#endif
-#if defined (TBC)
-                        m_uiSummonTigersTimer = urand(10000, 14000);
-#endif
                     }
                 }
                 else
@@ -830,22 +820,4 @@ void AddSC_boss_thekal()
     s->RegisterSelf();
     s = new spell_thekal_resurrection();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_thekal";
-    //pNewScript->GetAI = &GetAI_boss_thekal;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_thekal_resurrection;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_zealot_lorkhan";
-    //pNewScript->GetAI = &GetAI_mob_zealot_lorkhan;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_thekal_resurrection;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_zealot_zath";
-    //pNewScript->GetAI = &GetAI_mob_zealot_zath;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_thekal_resurrection;
-    //pNewScript->RegisterSelf();
 }

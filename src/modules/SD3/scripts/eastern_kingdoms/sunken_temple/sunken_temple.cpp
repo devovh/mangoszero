@@ -68,12 +68,7 @@ struct at_shade_of_eranikus : public AreaTriggerScript
             {
                 if (pInstance->GetData(TYPE_MALFURION) != DONE)
                 {
-#if defined (CLASSIC) || defined (TBC)
                     pPlayer->SummonCreature(NPC_MALFURION, aSunkenTempleLocation[2].m_fX, aSunkenTempleLocation[2].m_fY, aSunkenTempleLocation[2].m_fZ, aSunkenTempleLocation[2].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0);
-#endif
-#if defined (WOTLK) || defined (CATA)
-                pPlayer->SummonCreature(NPC_MALFURION, aSunkenTempleLocation[2].m_fX, aSunkenTempleLocation[2].m_fY, aSunkenTempleLocation[2].m_fZ, aSunkenTempleLocation[2].m_Orientation, TEMPSUMMON_DEAD_DESPAWN, 0);
-#endif
                     pInstance->SetData(TYPE_MALFURION, DONE);
                 }
             }
@@ -321,48 +316,14 @@ void AddSC_sunken_temple()
     Script *s;
     s = new at_shade_of_eranikus();
     s->RegisterSelf();
-
     s = new npc_malfurion();
     s->RegisterSelf();
-
     s = new event_antalarion_statue_activation();
     s->RegisterSelf();
     s = new event_avatar_of_hakkar();
     s->RegisterSelf();
-
     s = new go_eternal_flame();
     s->RegisterSelf();
-
     s = new spell_summon_hakkar();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "at_shade_of_eranikus";
-    //pNewScript->pAreaTrigger = &AreaTrigger_at_shade_of_eranikus;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_malfurion_stormrage";
-    //pNewScript->GetAI = &GetAI_npc_malfurion;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "event_antalarion_statue_activation";
-    //pNewScript->pProcessEventId = &ProcessEventId_event_antalarion_statue_activation;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "event_avatar_of_hakkar";
-    //pNewScript->pProcessEventId = &ProcessEventId_event_avatar_of_hakkar;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_eternal_flame";
-    //pNewScript->pGOUse = &GOUse_go_eternal_flame;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_shade_of_hakkar";
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_summon_hakkar;
-    //pNewScript->RegisterSelf();
 }

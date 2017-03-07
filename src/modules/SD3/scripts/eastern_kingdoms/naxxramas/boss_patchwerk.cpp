@@ -236,9 +236,4 @@ void AddSC_boss_patchwerk()
     Script* s;
     s = new boss_patchwerk();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_patchwerk";
-    //pNewScript->GetAI = &GetAI_boss_patchwerk;
-    //pNewScript->RegisterSelf();
 }

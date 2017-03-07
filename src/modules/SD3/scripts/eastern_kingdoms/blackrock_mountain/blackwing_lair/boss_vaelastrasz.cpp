@@ -457,16 +457,4 @@ void AddSC_boss_vaelastrasz()
     s->RegisterSelf();
     s = new at_vaelastrasz();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_vaelastrasz";
-    //pNewScript->GetAI = &GetAI_boss_vaelastrasz;
-    //pNewScript->pGossipHello = &GossipHello_boss_vaelastrasz;
-    //pNewScript->pGossipSelect = &GossipSelect_boss_vaelastrasz;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "at_vaelastrasz";
-    //pNewScript->pAreaTrigger = &AreaTrigger_at_vaelastrasz;
-    //pNewScript->RegisterSelf();
 }

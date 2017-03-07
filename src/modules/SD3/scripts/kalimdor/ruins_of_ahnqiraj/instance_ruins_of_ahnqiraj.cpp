@@ -493,9 +493,4 @@ void AddSC_instance_ruins_of_ahnqiraj()
     Script* s;
     s = new is_ruins_of_ahnqiraj();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_ruins_of_ahnqiraj";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_ruins_of_ahnqiraj;
-    //pNewScript->RegisterSelf();
 }

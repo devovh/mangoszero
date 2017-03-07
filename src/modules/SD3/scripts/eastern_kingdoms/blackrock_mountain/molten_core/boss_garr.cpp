@@ -222,17 +222,6 @@ struct mob_firesworn : public CreatureScript
                 m_bExploding = true;
             }
         }
-    
-#if defined (WOTLK) || defined (CATA)
-    void JustDied(Unit* /*pKiller*/) override
-    {
-        if (m_pInstance)
-        {
-            if (Creature* pGarr = m_pInstance->GetSingleCreatureFromStorage(NPC_GARR))
-                pGarr->CastSpell(pGarr, SPELL_GARR_ENRAGE, true, NULL, NULL, m_creature->GetObjectGuid());
-        }
-    }
-#endif
 
         void JustReachedHome() override
         {
@@ -248,11 +237,7 @@ struct mob_firesworn : public CreatureScript
             }
 
             if (m_uiSeparationCheckTimer < uiDiff)
-            {
-#if defined (WOTLK) || defined (CATA)
-            if (!m_pInstance)
-                return;
-#endif            
+            {         
                 // Distance guesswork, but should be ok
                 Creature* pGarr = m_pInstance->GetSingleCreatureFromStorage(NPC_GARR);
                 if (pGarr && pGarr->IsAlive() && !m_creature->IsWithinDist2d(pGarr->GetPositionX(), pGarr->GetPositionY(), 50.0f))
@@ -265,17 +250,7 @@ struct mob_firesworn : public CreatureScript
             else
             {
                 m_uiSeparationCheckTimer -= uiDiff;
-            }
-
-#if defined (WOTLK) || defined (CATA)
-            // Cast Erruption and let them die
-            if (m_creature->GetHealthPercent() <= 10.0f)
-            {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_ERUPTION);
-                m_creature->SetDeathState(JUST_DIED);
-                m_creature->RemoveCorpse();
-            }
-#endif    
+            }  
 
             DoMeleeAttackIfReady();
         }
@@ -294,15 +269,5 @@ void AddSC_boss_garr()
     s->RegisterSelf();
     s = new mob_firesworn();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_garr";
-    //pNewScript->GetAI = &GetAI_boss_garr;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_firesworn";
-    //pNewScript->GetAI = &GetAI_mob_firesworn;
-    //pNewScript->RegisterSelf();
 }
 

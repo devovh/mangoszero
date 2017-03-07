@@ -720,11 +720,7 @@ struct boss_thaddiusAddsAI : public ScriptedAI
         m_creature->StopMoving();
         m_creature->ClearComboPointHolders();
         m_creature->RemoveAllAurasOnDeath();
-#if defined (CLASSIC)
         m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
-#else
-        m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
-#endif
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->ClearAllReactives();
         m_creature->GetMotionMaster()->Clear();
@@ -874,26 +870,4 @@ void AddSC_boss_thaddius()
     s->RegisterSelf();
     s = new spell_thaddius_encounter();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_thaddius";
-    //pNewScript->GetAI = &GetAI_boss_thaddius;
-    //pNewScript->pEffectDummyNPC = &EffectDummyNPC_spell_thaddius_encounter;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_stalagg";
-    //pNewScript->GetAI = &GetAI_boss_stalagg;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_feugen";
-    //pNewScript->GetAI = &GetAI_boss_feugen;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_tesla_coil";
-    //pNewScript->GetAI = &GetAI_npc_tesla_coil;
-    //pNewScript->pEffectDummyNPC = &EffectDummyNPC_spell_thaddius_encounter;
-    //pNewScript->RegisterSelf();
 }

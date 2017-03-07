@@ -227,16 +227,4 @@ void AddSC_orgrimmar()
     s->RegisterSelf();
     s = new npc_thrall_warchief();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_shenthul";
-    //pNewScript->GetAI = &GetAI_npc_shenthul;
-    //pNewScript->pQuestAcceptNPC =  &QuestAccept_npc_shenthul;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_thrall_warchief";
-    //pNewScript->pGossipHello =  &GossipHello_npc_thrall_warchief;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_thrall_warchief;
-    //pNewScript->RegisterSelf();
 }

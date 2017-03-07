@@ -252,12 +252,4 @@ void AddSC_boss_pyroguard_emberseer()
     s->RegisterSelf();
     s = new spell_emberseer_growing();
     s->RegisterSelf();
-
-    //Script* pNewScript;
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_pyroguard_emberseer";
-    //pNewScript->GetAI = &GetAI_boss_pyroguard_emberseer;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_pyroguard_emberseer;
-    //pNewScript->RegisterSelf();
 }

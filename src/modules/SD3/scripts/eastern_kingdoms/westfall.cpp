@@ -299,16 +299,4 @@ void AddSC_westfall()
     s->RegisterSelf();
     s = new npc_defias_traitor();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_daphne_stilwell";
-    //pNewScript->GetAI = &GetAI_npc_daphne_stilwell;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_daphne_stilwell;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_defias_traitor";
-    //pNewScript->GetAI = &GetAI_npc_defias_traitor;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_defias_traitor;
-    //pNewScript->RegisterSelf();
 }

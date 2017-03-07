@@ -3960,7 +3960,7 @@ SpellCastResult SpellMgr::GetSpellAllowedInLocationError(SpellEntry const* spell
 
     switch (spellInfo->Id)
     {
-            // a trinket in alterac valley allows to teleport to the boss
+        // a trinket in alterac valley allows to teleport to the boss
         case 22564:                                         // recall
         case 22563:                                         // recall
         {
@@ -3970,9 +3970,7 @@ SpellCastResult SpellMgr::GetSpellAllowedInLocationError(SpellEntry const* spell
             return map_id == 30 && bg
                    && bg->GetStatus() != STATUS_WAIT_JOIN ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
         }
-        case 23333:                                         // Warsong Flag
-        case 23335:                                         // Silverwing Flag
-            return map_id == 489 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        
         case 2584:                                          // Waiting to Resurrect
         {
             return player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_ONLY_BATTLEGROUNDS;
@@ -3986,6 +3984,48 @@ SpellCastResult SpellMgr::GetSpellAllowedInLocationError(SpellEntry const* spell
                 { return SPELL_FAILED_REQUIRES_AREA; }
             return mapEntry->IsBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_ONLY_BATTLEGROUNDS;
         }
+        
+        // Warsong Gulch
+  
+        case 23333:                                         // Warsong Gulch Flag
+        case 23335:                                         // Warsong Gulch Silverwing Flag
+            return map_id == 489 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 23540:                                         // Warsong Gulch Enriched Ration
+            return map_id == 489 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 23541:                                         // Warsong Gulch Iron Ration
+            return map_id == 489 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 23542:                                         // Warsong Gulch Field Ration
+            return map_id == 489 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 23568:                                         // Warsong Gulch Mageweave Bandage
+            return map_id == 489 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 23567:                                         // Warsong Gulch Runecloth Bandage
+            return map_id == 489 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 23569:                                         // 	Warsong Gulch Silk Bandage
+            return map_id == 489 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+
+        // Arathi Basin
+      
+        case 24409:                                         // Arathi Basin Field Ration - Defiler's Field Ration - Highlander's Field Ration
+            return map_id == 529 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 24410:                                         // Arathi Basin Iron Ration - Defiler's Iron Ration - Highlander's Iron Ration
+            return map_id == 529 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 24411:                                         // Arathi Basin Enriched Ration - Defiler's Enriched Ration - Highlander's Enriched Ration
+            return map_id == 529 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 24412:                                         // Arathi Basin Silk Bandage - Defiler's Silk Bandage - Highlander's Silk Bandage
+            return map_id == 529 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 24413:                                         // Arathi Basin Mageweave Bandage -	Defiler's Mageweave Bandage - Highlander's Mageweave Bandage
+            return map_id == 529 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 24414:                                         // Arathi Basin Runecloth Bandage -	Defiler's Runecloth Bandage - Highlander's Runecloth Bandage
+            return map_id == 529 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+            
+        // Alterac valley
+
+        case 23696:                                         // Alterac Heavy Runecloth Bandage
+            return map_id == 30 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 23692:                                         // Alterac Manna Biscuit
+            return map_id == 30 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
+        case 23698:                                         // Bottled Alterac Spring Water
+            return map_id == 30 && player && player->InBattleGround() ? SPELL_CAST_OK : SPELL_FAILED_REQUIRES_AREA;
     }
 
     return SPELL_CAST_OK;

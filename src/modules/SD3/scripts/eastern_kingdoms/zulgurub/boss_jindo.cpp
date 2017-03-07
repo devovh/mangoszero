@@ -170,12 +170,7 @@ struct boss_jindo : public CreatureScript
                     m_creature->GetRandomPoint(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 5.0f, fX, fY, fZ);
                     if (Creature* pSummoned = m_creature->SummonCreature(NPC_SHADE_OF_JINDO, fX, fY, fZ, 0, TEMPSUMMON_TIMED_OOC_DESPAWN, 15000))
                     {
-#if defined (CLASSIC) || defined (TBC)
                         pSummoned->AI()->AttackStart(pTarget);
-#endif
-#if defined (WOTLK) || defined (CATA)
-                    pSummoned->CastSpell(pSummoned, SPELL_SHADE_OF_JINDO_PASSIVE, true);
-#endif
                     }
 
                     m_uiDelusionsTimer = urand(4000, 12000);
@@ -269,14 +264,4 @@ void AddSC_boss_jindo()
     s->RegisterSelf();
     s = new mob_healing_ward();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_jindo";
-    //pNewScript->GetAI = &GetAI_boss_jindo;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_healing_ward";
-    //pNewScript->GetAI = &GetAI_mob_healing_ward;
-    //pNewScript->RegisterSelf();
 }

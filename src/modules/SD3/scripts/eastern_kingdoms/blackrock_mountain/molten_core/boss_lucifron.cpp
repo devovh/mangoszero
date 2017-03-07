@@ -156,9 +156,4 @@ void AddSC_boss_lucifron()
     Script* s;
     s = new boss_lucifron();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_lucifron";
-    //pNewScript->GetAI = &GetAI_boss_lucifron;
-    //pNewScript->RegisterSelf();
 }

@@ -102,17 +102,11 @@ enum
     EMOTE_ANACHRONOS_PICKUP             = -1000769,
     SAY_ANACHRONOS_EPILOGUE_8           = -1000770,
 
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-    // The transform spell for Anachronos was removed from DBC
-    DISPLAY_ID_BRONZE_DRAGON            = 15500,
-#endif
     // Spells
     SPELL_GREEN_DRAGON_TRANSFORM        = 25105,
     SPELL_RED_DRAGON_TRANSFORM          = 25106,
     SPELL_BLUE_DRAGON_TRANSFORM         = 25107,
-#if defined (CLASSIC)  
     SPELL_BRONZE_DRAGON_TRANSFORM       = 25108,
-#endif
 
     SPELL_MERITHRA_WAKE                 = 25145,            // should trigger 25172 on targets
     SPELL_ARYGOS_VENGEANCE              = 25149,
@@ -330,11 +324,7 @@ struct npc_anachronos_the_ancient : public CreatureScript
                 // Move Merithra to the exit point
                 if (Creature* pMerithra = m_creature->GetMap()->GetCreature(m_merithraGuid))
                 {
-#if defined (CLASSIC)  
                     pMerithra->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND);
-#else
-                    pMerithra->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_FLY_ANIM);
-#endif
                     pMerithra->SetLevitate(true);
                     pMerithra->GetMotionMaster()->MovePoint(POINT_ID_EXIT, aEternalBoardMovement[0].m_fX, aEternalBoardMovement[0].m_fY, aEternalBoardMovement[0].m_fZ);
                     pMerithra->ForcedDespawn(9000);
@@ -356,11 +346,7 @@ struct npc_anachronos_the_ancient : public CreatureScript
                 // Move Arygos to the exit point
                 if (Creature* pArygos = m_creature->GetMap()->GetCreature(m_arygosGuid))
                 {
-#if defined (CLASSIC)  
-                    pArygos->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND);
-#else
-                    pArygos->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_FLY_ANIM);
-#endif
+                    pArygos->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND)
                     pArygos->SetLevitate(true);
                     pArygos->GetMotionMaster()->MovePoint(POINT_ID_EXIT, aEternalBoardMovement[0].m_fX, aEternalBoardMovement[0].m_fY, aEternalBoardMovement[0].m_fZ);
                     pArygos->ForcedDespawn(9000);
@@ -392,12 +378,8 @@ struct npc_anachronos_the_ancient : public CreatureScript
             case SAY_ANACHRONOS_SEAL_1:
                 // Send Caelestrasz on flight
                 if (Creature* pCaelestrasz = m_creature->GetMap()->GetCreature(m_CaelestraszGuid))
-                {
-#if defined (CLASSIC)  
+                { 
                     pCaelestrasz->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND);
-#else
-                    pCaelestrasz->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_FLY_ANIM);
-#endif
                     pCaelestrasz->SetLevitate(true);
                     pCaelestrasz->GetMotionMaster()->MovePoint(POINT_ID_EXIT, aEternalBoardMovement[0].m_fX, aEternalBoardMovement[0].m_fY, aEternalBoardMovement[0].m_fZ);
                     pCaelestrasz->ForcedDespawn(9000);
@@ -620,12 +602,7 @@ struct npc_anachronos_the_ancient : public CreatureScript
                 m_uiEventTimer = 4000;
                 break;
             case POINT_ID_EXIT:
-#if defined (CLASSIC)  
                 DoCastSpellIfCan(m_creature, SPELL_BRONZE_DRAGON_TRANSFORM);
-#else
-                // Spell was removed, manually change the display
-                m_creature->SetDisplayId(DISPLAY_ID_BRONZE_DRAGON);
-#endif
                 m_uiEventTimer = 4000;
                 break;
             }
@@ -713,12 +690,8 @@ struct npc_anachronos_the_ancient : public CreatureScript
                         m_uiEventTimer = 0;
                         break;
                     case 4:
-                        // Take off and fly
-#if defined (CLASSIC)  
+                        // Take off and fly 
                         m_creature->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND);
-#else
-                        m_creature->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_FLY_ANIM);
-#endif
                         m_creature->SetLevitate(true);
                         m_creature->GetMotionMaster()->MovePoint(0, aEternalBoardMovement[9].m_fX, aEternalBoardMovement[9].m_fY, aEternalBoardMovement[9].m_fZ);
                         m_creature->ForcedDespawn(10000);
@@ -778,14 +751,4 @@ void AddSC_silithus()
     s->RegisterSelf();
     s = new go_crystalline_tear();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_anachronos_the_ancient";
-    //pNewScript->GetAI = &GetAI_npc_anachronos_the_ancient;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_crystalline_tear";
-    //pNewScript->pQuestAcceptGO = &QuestAcceptGO_crystalline_tear;
-    //pNewScript->RegisterSelf();
 }

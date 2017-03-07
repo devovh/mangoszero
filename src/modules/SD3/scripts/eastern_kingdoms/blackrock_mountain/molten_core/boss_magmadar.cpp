@@ -162,9 +162,4 @@ void AddSC_boss_magmadar()
     Script* s;
     s = new boss_magmadar();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_magmadar";
-    //pNewScript->GetAI = &GetAI_boss_magmadar;
-    //pNewScript->RegisterSelf();
 }

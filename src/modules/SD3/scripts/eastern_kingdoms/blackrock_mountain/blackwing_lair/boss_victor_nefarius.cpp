@@ -201,12 +201,7 @@ struct boss_victor_nefarius : public CreatureScript
                 pSummoned->SetWalk(false);
 
                 // see boss_onyxia (also note the removal of this in boss_nefarian)
-#if defined (CLASSIC) || defined (TBC)
                 pSummoned->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND);
-#endif
-#if defined (WOTLK) || defined (CATA)
-                pSummoned->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_FLY_ANIM);
-#endif
                 pSummoned->SetLevitate(true);
 
                 // Let Nefarian fly towards combat area
@@ -467,11 +462,4 @@ void AddSC_boss_victor_nefarius()
     Script* s;
     s = new boss_victor_nefarius();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_victor_nefarius";
-    //pNewScript->GetAI = &GetAI_boss_victor_nefarius;
-    //pNewScript->pGossipHello = &GossipHello_boss_victor_nefarius;
-    //pNewScript->pGossipSelect = &GossipSelect_boss_victor_nefarius;
-    //pNewScript->RegisterSelf();
 }

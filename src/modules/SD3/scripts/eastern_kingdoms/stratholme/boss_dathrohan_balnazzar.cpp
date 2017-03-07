@@ -256,9 +256,4 @@ void AddSC_boss_dathrohan_balnazzar()
     CreatureScript *s;
     s = new boss_dathrohan_balnazzar();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_dathrohan_balnazzar";
-    //pNewScript->GetAI = &GetAI_boss_dathrohan_balnazzar;
-    //pNewScript->RegisterSelf();
 }

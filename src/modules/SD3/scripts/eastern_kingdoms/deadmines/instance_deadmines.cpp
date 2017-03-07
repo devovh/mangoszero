@@ -287,9 +287,4 @@ void AddSC_instance_deadmines()
     Script* s;
     s = new is_deadmines();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_deadmines";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_deadmines;
-    //pNewScript->RegisterSelf();
 }

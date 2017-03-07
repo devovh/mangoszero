@@ -136,9 +136,4 @@ void AddSC_boss_jandicebarov()
     Script *s;
     s = new boss_jandicebarov();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_jandice_barov";
-    //pNewScript->GetAI = &GetAI_boss_jandicebarov;
-    //pNewScript->RegisterSelf();
 }

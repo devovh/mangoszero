@@ -189,6 +189,7 @@ struct generic_creature : public CreatureScript
         return new generic_creatureAI(pCreature);
     }
 };
+
 void AddSC_generic_creature()
 {
     return; //TODO why was it removed for some ACID EAI?

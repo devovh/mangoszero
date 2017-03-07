@@ -797,17 +797,4 @@ void AddSC_gnomeregan()
     s->RegisterSelf();
     s = new npc_kernobee();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_blastmaster_emi_shortfuse";
-    //pNewScript->GetAI = &GetAI_npc_blastmaster_emi_shortfuse;
-    //pNewScript->pGossipHello = &GossipHello_npc_blastmaster_emi_shortfuse;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_blastmaster_emi_shortfuse;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_kernobee";
-    //pNewScript->GetAI = &GetAI_npc_kernobee;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_kernobee;
-    //pNewScript->RegisterSelf();
 }
