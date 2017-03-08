@@ -5,6 +5,7 @@
  *
  * Copyright (C) 2006-2013  ScriptDev2 <http://www.scriptdev2.com/>
  * Copyright (C) 2014-2017  MaNGOS  <https://getmangos.eu>
+ * Copyright (C) 2017       NostraliaWoW  <https://nostralia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,6 @@
  * ScriptData
  * SDName:      Boss_Lucifron
  * SD%Complete: 100
- * SDComment:   None
  * SDCategory:  Molten Core
  * EndScriptData
  */
@@ -55,17 +55,20 @@ struct boss_lucifron : public CreatureScript
             Reset();
         }
 
-        ScriptedInstance* m_pInstance;
-
         uint32 m_uiImpendingDoomTimer;
         uint32 m_uiLucifronCurseTimer;
         uint32 m_uiShadowShockTimer;
+
+        ScriptedInstance* m_pInstance;
 
         void Reset() override
         {
             m_uiImpendingDoomTimer = 10000;
             m_uiLucifronCurseTimer = 20000;
             m_uiShadowShockTimer = 6000;
+
+            if (m_pInstance && m_creature->IsAlive())
+                m_pInstance->SetData(TYPE_LUCIFRON, NOT_STARTED);
         }
 
         void Aggro(Unit* /*pWho*/) override
@@ -74,6 +77,7 @@ struct boss_lucifron : public CreatureScript
             {
                 m_pInstance->SetData(TYPE_LUCIFRON, IN_PROGRESS);
             }
+            m_creature->SetInCombatWithZone();
         }
 
         void JustDied(Unit* /*pKiller*/) override
@@ -81,14 +85,6 @@ struct boss_lucifron : public CreatureScript
             if (m_pInstance)
             {
                 m_pInstance->SetData(TYPE_LUCIFRON, DONE);
-            }
-        }
-
-        void JustReachedHome() override
-        {
-            if (m_pInstance)
-            {
-                m_pInstance->SetData(TYPE_LUCIFRON, FAIL);
             }
         }
 
@@ -102,9 +98,12 @@ struct boss_lucifron : public CreatureScript
             // Impending doom timer
             if (m_uiImpendingDoomTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature, SPELL_IMPENDINGDOOM) == CAST_OK)
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 {
-                    m_uiImpendingDoomTimer = 20000;
+                    if (DoCastSpellIfCan(pTarget, SPELL_IMPENDINGDOOM) == CAST_OK)
+                        m_uiImpendingDoomTimer = 20000;
+                    else
+                        m_uiImpendingDoomTimer = 100;
                 }
             }
             else
@@ -115,9 +114,12 @@ struct boss_lucifron : public CreatureScript
             // Lucifron's curse timer
             if (m_uiLucifronCurseTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature, SPELL_LUCIFRONCURSE) == CAST_OK)
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 {
-                    m_uiLucifronCurseTimer = 20000;
+                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_LUCIFRONCURSE) == CAST_OK)
+                        m_uiLucifronCurseTimer = 15000;
+                    else
+                        m_uiLucifronCurseTimer = 100;
                 }
             }
             else
@@ -128,13 +130,8 @@ struct boss_lucifron : public CreatureScript
             // Shadowshock
             if (m_uiShadowShockTimer < uiDiff)
             {
-                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                {
-                    if (DoCastSpellIfCan(pTarget, SPELL_SHADOWSHOCK) == CAST_OK)
-                    {
-                        m_uiShadowShockTimer = 6000;
-                    }
-                }
+                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOWSHOCK) == CAST_OK)
+                    m_uiShadowShockTimer = 2000 + rand() % 4000;
             }
             else
             {
