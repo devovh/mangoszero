@@ -101,7 +101,7 @@ function NpcLandMine.MoveInLineOfSight(event, pCreature, pUnit)
 	end
 	
 	-- TODO: NEEDS HOSTILE CHECK (NYI)
-	if (pCreature:GetDistance(pUnit) < 5) then
+	if (pUnit and pCreature:GetDistance(pUnit) < 5) then
 		NpcLandMine.Landmines[landmineGUID].isDetonating = true;
 		pCreature:RegisterEvent(NpcLandMine.Detonate, 500, 1);
 	end

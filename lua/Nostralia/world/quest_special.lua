@@ -147,6 +147,7 @@ local function OnUseChestOfContainmentCoffers(event, pPlayer, pItem, pTarget)
 	local pTarget = pPlayer:GetSelection(); -- Might not be correct.
 	if (not pTarget) then
 		pPlayer:SendNotification("Invalid target");
+		return;
 	end
 	
 	-- Only on Rift Spawns
