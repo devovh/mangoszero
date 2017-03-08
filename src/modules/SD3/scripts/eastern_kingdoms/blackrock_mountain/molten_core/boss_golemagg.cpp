@@ -5,6 +5,7 @@
  *
  * Copyright (C) 2006-2013  ScriptDev2 <http://www.scriptdev2.com/>
  * Copyright (C) 2014-2017  MaNGOS  <https://getmangos.eu>
+ * Copyright (C) 2017       NostraliaWoW  <https://nostralia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,10 +70,10 @@ struct boss_golemagg : public CreatureScript
 
         void Reset() override
         {
-            m_uiPyroblastTimer = 7 * IN_MILLISECONDS;
-            m_uiEarthquakeTimer = 3 * IN_MILLISECONDS;
-            m_uiBuffTimer = 1.5 * IN_MILLISECONDS;
-            m_bEnraged = false;
+            m_uiPyroblastTimer  = 7000;
+            m_uiEarthquakeTimer = 3000;
+            m_uiBuffTimer       = 10000;
+            m_bEnraged          = false;
 
             m_creature->CastSpell(m_creature, SPELL_MAGMA_SPLASH, true);
         }
@@ -115,7 +116,7 @@ struct boss_golemagg : public CreatureScript
                 {
                     if (DoCastSpellIfCan(pTarget, SPELL_PYROBLAST) == CAST_OK)
                     {
-                        m_uiPyroblastTimer = 7 * IN_MILLISECONDS;
+                        m_uiPyroblastTimer = (3 + rand() % 4) * IN_MILLISECONDS;
                     }
                 }
             }
@@ -140,7 +141,7 @@ struct boss_golemagg : public CreatureScript
                 {
                     if (DoCastSpellIfCan(m_creature, SPELL_EARTHQUAKE) == CAST_OK)
                     {
-                        m_uiEarthquakeTimer = 3 * IN_MILLISECONDS;
+                        m_uiEarthquakeTimer = 3000;
                     }
                 }
                 else
@@ -153,7 +154,7 @@ struct boss_golemagg : public CreatureScript
             if (m_uiBuffTimer < uiDiff)
             {
                 DoCastSpellIfCan(m_creature, SPELL_GOLEMAGG_TRUST);
-                m_uiBuffTimer = 1.5 * IN_MILLISECONDS;
+                m_uiBuffTimer = 2000;
             }
             else
             {
