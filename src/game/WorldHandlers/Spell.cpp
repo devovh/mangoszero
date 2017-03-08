@@ -5618,21 +5618,21 @@ SpellCastResult Spell::CheckRange(bool strict)
                 // with additional 5 dist for non stricted case (some melee spells have delay in apply
                 return m_caster->CanReachWithMeleeAttack(target, range_mod) ? SPELL_CAST_OK : SPELL_FAILED_OUT_OF_RANGE;
             }
-            break;                                          // let continue in generic way for no target
+            break; // let continue in generic way for no target
         }
-	case SPELL_RANGE_IDX_SHORT:
-	{
-		if ((m_spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && (m_spellInfo->SpellFamilyFlags & UI64LIT(0x00000080) || m_spellInfo->SpellFamilyFlags & 0x800000)))
+		case SPELL_RANGE_IDX_SHORT:
 		{
-			Pet* pet = m_caster->GetPet();
-			if (pet)
+			if ((m_spellInfo->SpellFamilyName == SPELLFAMILY_HUNTER && (m_spellInfo->SpellFamilyFlags & UI64LIT(0x00000080) || m_spellInfo->SpellFamilyFlags & 0x800000)))
 			{
-				float max_range = GetSpellMaxRange(sSpellRangeStore.LookupEntry(SPELL_RANGE_IDX_SHORT));
-				return m_caster->IsWithinDistInMap(pet, max_range) ? SPELL_CAST_OK : SPELL_FAILED_OUT_OF_RANGE;
+				Pet* pet = m_caster->GetPet();
+				if (pet)
+				{
+					float max_range = GetSpellMaxRange(sSpellRangeStore.LookupEntry(SPELL_RANGE_IDX_SHORT));
+					return m_caster->IsWithinDistInMap(pet, max_range) ? SPELL_CAST_OK : SPELL_FAILED_OUT_OF_RANGE;
+				}
 			}
-		}
-		break;
-	}        
+			break;
+		}        
     }
 
     // add radius of caster and some "give" check
