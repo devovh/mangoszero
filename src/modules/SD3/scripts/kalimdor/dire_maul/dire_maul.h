@@ -159,4 +159,5 @@ protected:
 	// North
 	bool m_bDoNorthBeforeWest;
 };
+
 #endif
