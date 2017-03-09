@@ -31,6 +31,17 @@ enum
 {
     MAX_ENCOUNTER               = 10,
 
+    NPC_LUCIFRON                = 12118,
+    NPC_MAGMADAR                = 11982,
+    NPC_GEHENNAS                = 12259,
+    NPC_GARR                    = 12057,
+    NPC_SHAZZRAH                = 12264,
+    NPC_GEDDON                  = 12056,
+    NPC_GOLEMAGG                = 11988,
+    NPC_SULFURON                = 12098,
+    NPC_MAJORDOMO               = 12018,
+    NPC_RAGNAROS                = 11502,
+
     TYPE_LUCIFRON               = 0,
     TYPE_MAGMADAR               = 1,    // do not change order: begin
     TYPE_GEHENNAS               = 2,
@@ -44,6 +55,11 @@ enum
     TYPE_FLAME_DOUSED           = MAX_ENCOUNTER,
     TYPE_DO_FREE_GARR_ADDS      = MAX_ENCOUNTER+1,
 
+    DATA_SULFURON               = 11,
+    DATA_GOLEMAGG               = 12,
+    DATA_GARR                   = 13,
+    DATA_MAJORDOMO              = 14,
+
     MAX_MOLTEN_RUNES            = 7,
 
     TYPE_RUNE_KRESS             = 0,
@@ -53,17 +69,6 @@ enum
     TYPE_RUNE_ZETH              = 4,
     TYPE_RUNE_THERI             = 5,
     TYPE_RUNE_KORO              = 6,
-
-    NPC_LUCIFRON                = 12118,
-    NPC_MAGMADAR                = 11982,
-    NPC_GEHENNAS                = 12259,
-    NPC_GARR                    = 12057,
-    NPC_SHAZZRAH                = 12264,
-    NPC_GEDDON                  = 12056,
-    NPC_GOLEMAGG                = 11988,
-    NPC_SULFURON                = 12098,
-    NPC_MAJORDOMO               = 12018,
-    NPC_RAGNAROS                = 11502,
 
     // Adds
     // Used for respawn in case of wipe
