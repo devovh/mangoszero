@@ -153,22 +153,18 @@ struct boss_baron_geddon : public CreatureScript
                     switch (InfCount)
                     {
                         case 0:
-                        case 1:
                             Damage = 500;
                             break;
-                        case 2:
-                        case 3:
+                        case 1:
                             Damage = 1000;
                             break;
-                        case 4:
-                        case 5:
+                        case 2:
                             Damage = 1500;
                             break;
-                        case 6:
-                        case 7:
+                        case 3:
                             Damage = 2000;
                             break;
-                        case 8:
+                        case 4:
                             Damage = 2500;
                             m_bIsInferno = false;
                             m_creature->clearUnitState(UNIT_STAT_ROOT);
