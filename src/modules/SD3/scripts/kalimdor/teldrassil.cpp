@@ -128,10 +128,4 @@ void AddSC_teldrassil()
     Script* s;
     s = new npc_mist();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_mist";
-    //pNewScript->GetAI = &GetAI_npc_mist;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_mist;
-    //pNewScript->RegisterSelf();
 }

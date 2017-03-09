@@ -176,9 +176,4 @@ void AddSC_boss_flamegor()
     Script* s;
     s = new boss_flamegor();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_flamegor";
-    //pNewScript->GetAI = &GetAI_boss_flamegor;
-    //pNewScript->RegisterSelf();
 }

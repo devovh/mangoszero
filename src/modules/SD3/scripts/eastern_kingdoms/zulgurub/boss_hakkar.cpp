@@ -308,9 +308,4 @@ void AddSC_boss_hakkar()
     Script* s;
     s = new boss_hakkar();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_hakkar";
-    //pNewScript->GetAI = &GetAI_boss_hakkar;
-    //pNewScript->RegisterSelf();
 }

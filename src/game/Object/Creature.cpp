@@ -425,9 +425,9 @@ bool Creature::UpdateEntry(uint32 Entry, Team team, const CreatureData* data /*=
         { unitFlags |= UNIT_FLAG_IN_COMBAT; }
 
     if (m_movementInfo.HasMovementFlag(MOVEFLAG_SWIMMING) && (GetCreatureInfo()->ExtraFlags & CREATURE_EXTRA_FLAG_HAVE_NO_SWIM_ANIMATION) == 0)
-        unitFlags |= UNIT_FLAG_UNK_15;
+        unitFlags |= UNIT_FLAG_USE_SWIM_ANIMATION;
     else
-        unitFlags &= ~UNIT_FLAG_UNK_15;
+        unitFlags &= ~UNIT_FLAG_USE_SWIM_ANIMATION;
 
     SetUInt32Value(UNIT_FIELD_FLAGS, unitFlags);
 
@@ -1930,38 +1930,56 @@ bool Creature::CanAssistTo(const Unit* u, const Unit* enemy, bool checkfaction /
 {
     // we don't need help from zombies :)
     if (!IsAlive())
-        { return false; }
+        return false;
 
     // we don't need help from non-combatant ;)
     if (GetCreatureInfo()->ExtraFlags & CREATURE_EXTRA_FLAG_NO_AGGRO)
-        { return false; }
+        return false;
 
     if (HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_PASSIVE))
-        { return false; }
+        return false;
 
     // skip fighting creature
     if (enemy && IsInCombat())
-        { return false; }
+        return false;
 
     // only free creature
     if (GetCharmerOrOwnerGuid())
-        { return false; }
+        return false;
 
-    // only from same creature faction
+    // No help from invisible creatures.
+    if (m_invisibilityMask)
+        return false;
+
+    // No help from evading creatures.
+    if (IsInEvadeMode())
+        return false;
+
+    // Only from factions friendly to ours.
     if (checkfaction)
     {
-        if (getFaction() != u->getFaction())
-            { return false; }
+        FactionTemplateEntry const* myFaction = getFactionTemplateEntry();
+        FactionTemplateEntry const* testerFaction = u->getFactionTemplateEntry();
+
+        if (myFaction && testerFaction)
+        {
+            if (myFaction->IsFriendlyTo(*testerFaction))
+                return true;
+        }
+        else
+        {
+            return false; // assert?
+        }
     }
     else
     {
         if (!IsFriendlyTo(u))
-            { return false; }
+            return false;
     }
 
     // skip non hostile to caster enemy creatures
     if (enemy && !IsHostileTo(enemy))
-        { return false; }
+        return false;
 
     return true;
 }

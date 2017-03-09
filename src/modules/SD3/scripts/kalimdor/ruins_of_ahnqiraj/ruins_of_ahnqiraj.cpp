@@ -196,9 +196,4 @@ void AddSC_ruins_of_ahnqiraj()
     Script* s;
     s = new mob_anubisath_guardian();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_anubisath_guardian";
-    //pNewScript->GetAI = &GetAI_mob_anubisath_guardian;
-    //pNewScript->RegisterSelf();
 }

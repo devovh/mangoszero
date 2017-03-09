@@ -183,9 +183,4 @@ void AddSC_boss_moam()
     Script* s;
     s = new boss_moam();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_moam";
-    //pNewScript->GetAI = &GetAI_boss_moam;
-    //pNewScript->RegisterSelf();
 }

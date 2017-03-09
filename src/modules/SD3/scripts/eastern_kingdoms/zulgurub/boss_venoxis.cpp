@@ -277,9 +277,4 @@ void AddSC_boss_venoxis()
     Script* s;
     s = new boss_venoxis();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_venoxis";
-    //pNewScript->GetAI = &GetAI_boss_venoxis;
-    //pNewScript->RegisterSelf();
 }

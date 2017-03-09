@@ -152,19 +152,4 @@ void AddSC_zulfarrak()
     s->RegisterSelf();
     s = new at_zulfarrak();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "event_go_zulfarrak_gong";
-    //pNewScript->pProcessEventId = &ProcessEventId_event_go_zulfarrak_gong;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "event_spell_unlocking";
-    //pNewScript->pProcessEventId = &ProcessEventId_event_spell_unlocking;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "at_zulfarrak";
-    //pNewScript->pAreaTrigger = &AreaTrigger_at_zulfarrak;
-    //pNewScript->RegisterSelf();
 }

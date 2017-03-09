@@ -5,6 +5,7 @@
  *
  * Copyright (C) 2006-2013  ScriptDev2 <http://www.scriptdev2.com/>
  * Copyright (C) 2014-2017  MaNGOS  <https://getmangos.eu>
+ * Copyright (C) 2017       NostraliaWoW  <https://nostralia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +43,13 @@ enum
     SPELL_ANTIMAGICPULSE        = 19492,
     SPELL_MAGMASHACKLES         = 19496,
     SPELL_ERUPTION_TRIGGER      = 20482,    // target script, dispel and permanent immune to banish anywhere on map
-    SPELL_ENRAGE_TRIGGER        = 19515,    // target script, effect dummy anywhere on map
+    SPELL_ENRAGE_TRIGGER        = 19516,    // target script, effect dummy anywhere on map
 
     // Add spells
-    SPELL_THRASH                = 8876,
+    SPELL_THRASH                = 3391,
     SPELL_ERUPTION              = 19497,
     SPELL_MASSIVE_ERUPTION      = 20483,                    // TODO possible on death
-    SPELL_IMMOLATE              = 15733,
+    SPELL_IMMOLATE              = 20294,
 };
 
 struct boss_garr : public CreatureScript
@@ -71,17 +72,23 @@ struct boss_garr : public CreatureScript
 
         void Reset() override
         {
-            m_uiAntiMagicPulseTimer = 25 * IN_MILLISECONDS;
-            m_uiMagmaShacklesTimer = 15 * IN_MILLISECONDS;
-            m_uiExplodeAddTimer = 60 * IN_MILLISECONDS;
+            m_uiAntiMagicPulseTimer = 25000;
+            m_uiMagmaShacklesTimer  = 15000;
+            m_uiExplodeAddTimer     = urand(3000, 6000);
             m_bHasFreed = false;
+
+            if (m_pInstance && m_creature->IsAlive())
+                m_pInstance->SetData(TYPE_GARR, NOT_STARTED);
         }
 
         void Aggro(Unit* /*pWho*/) override
         {
             if (m_pInstance)
             {
-                m_pInstance->SetData(TYPE_GARR, IN_PROGRESS);
+                if (m_pInstance->GetData(TYPE_GARR) != DONE)
+                {
+                    m_pInstance->SetData(TYPE_GARR, IN_PROGRESS);
+                }
             }
         }
 
@@ -132,7 +139,7 @@ struct boss_garr : public CreatureScript
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_ANTIMAGICPULSE) == CAST_OK)
                 {
-                    m_uiAntiMagicPulseTimer = urand(10 * IN_MILLISECONDS, 15 * IN_MILLISECONDS);
+                    m_uiAntiMagicPulseTimer = urand(10000, 15000);
                 }
             }
             else
@@ -145,7 +152,7 @@ struct boss_garr : public CreatureScript
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_MAGMASHACKLES) == CAST_OK)
                 {
-                    m_uiMagmaShacklesTimer = urand(8 * IN_MILLISECONDS, 12 * IN_MILLISECONDS);
+                    m_uiMagmaShacklesTimer = urand(8000, 12000);
                 }
             }
             else
@@ -162,7 +169,7 @@ struct boss_garr : public CreatureScript
                     if (Creature* firesworn = m_pInstance->instance->GetCreature(guid))
                         SendAIEvent(AI_EVENT_CUSTOM_A, firesworn, firesworn, SPELL_MASSIVE_ERUPTION);   // this is an instant explosion with no SPELL_ERUPTION_TRIGGER
                 }
-                m_uiExplodeAddTimer = 15 * IN_MILLISECONDS;
+                m_uiExplodeAddTimer = urand(10000, 20000);
             }
             else m_uiExplodeAddTimer -= uiDiff;
 
@@ -199,9 +206,9 @@ struct mob_firesworn : public CreatureScript
 
         void Reset() override
         {
-            m_uiImmolateTimer = urand(4 * IN_MILLISECONDS, 8 * IN_MILLISECONDS);    // These times are probably wrong
-            m_uiSeparationCheckTimer = 5 * IN_MILLISECONDS;
-            m_bExploding = false;
+            m_uiImmolateTimer           = urand(4000, 7000);
+            m_uiSeparationCheckTimer    = 5000;
+            m_bExploding                = false;
         }
 
         void DamageTaken(Unit* /*pDealer*/, uint32& uiDamage) override
@@ -222,17 +229,6 @@ struct mob_firesworn : public CreatureScript
                 m_bExploding = true;
             }
         }
-    
-#if defined (WOTLK) || defined (CATA)
-    void JustDied(Unit* /*pKiller*/) override
-    {
-        if (m_pInstance)
-        {
-            if (Creature* pGarr = m_pInstance->GetSingleCreatureFromStorage(NPC_GARR))
-                pGarr->CastSpell(pGarr, SPELL_GARR_ENRAGE, true, NULL, NULL, m_creature->GetObjectGuid());
-        }
-    }
-#endif
 
         void JustReachedHome() override
         {
@@ -248,11 +244,7 @@ struct mob_firesworn : public CreatureScript
             }
 
             if (m_uiSeparationCheckTimer < uiDiff)
-            {
-#if defined (WOTLK) || defined (CATA)
-            if (!m_pInstance)
-                return;
-#endif            
+            {         
                 // Distance guesswork, but should be ok
                 Creature* pGarr = m_pInstance->GetSingleCreatureFromStorage(NPC_GARR);
                 if (pGarr && pGarr->IsAlive() && !m_creature->IsWithinDist2d(pGarr->GetPositionX(), pGarr->GetPositionY(), 50.0f))
@@ -260,22 +252,12 @@ struct mob_firesworn : public CreatureScript
                     DoCastSpellIfCan(m_creature, SPELL_SEPARATION_ANXIETY, CAST_TRIGGERED);
                 }
 
-                m_uiSeparationCheckTimer = 5000;
+                m_uiSeparationCheckTimer = urand(5000, 12000);
             }
             else
             {
                 m_uiSeparationCheckTimer -= uiDiff;
-            }
-
-#if defined (WOTLK) || defined (CATA)
-            // Cast Erruption and let them die
-            if (m_creature->GetHealthPercent() <= 10.0f)
-            {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_ERUPTION);
-                m_creature->SetDeathState(JUST_DIED);
-                m_creature->RemoveCorpse();
-            }
-#endif    
+            }  
 
             DoMeleeAttackIfReady();
         }
@@ -294,15 +276,5 @@ void AddSC_boss_garr()
     s->RegisterSelf();
     s = new mob_firesworn();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_garr";
-    //pNewScript->GetAI = &GetAI_boss_garr;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_firesworn";
-    //pNewScript->GetAI = &GetAI_mob_firesworn;
-    //pNewScript->RegisterSelf();
 }
 

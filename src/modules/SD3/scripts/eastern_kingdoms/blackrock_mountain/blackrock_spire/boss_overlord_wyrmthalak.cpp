@@ -180,9 +180,4 @@ void AddSC_boss_overlordwyrmthalak()
     Script *s;
     s = new boss_overlordwyrmthalak();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_overlord_wyrmthalak";
-    //pNewScript->GetAI = &GetAI_boss_overlordwyrmthalak;
-    //pNewScript->RegisterSelf();
 }

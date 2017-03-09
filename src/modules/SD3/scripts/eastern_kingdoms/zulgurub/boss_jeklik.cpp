@@ -488,14 +488,4 @@ void AddSC_boss_jeklik()
     s->RegisterSelf();
     s = new npc_gurubashi_bat_rider();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_jeklik";
-    //pNewScript->GetAI = &GetAI_boss_jeklik;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_gurubashi_bat_rider";
-    //pNewScript->GetAI = &GetAI_npc_gurubashi_bat_rider;
-    //pNewScript->RegisterSelf();
 }

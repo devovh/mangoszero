@@ -361,14 +361,4 @@ void AddSC_boss_arlokk()
     s->RegisterSelf();
     s = new go_gong_of_bethekk();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_arlokk";
-    //pNewScript->GetAI = &GetAI_boss_arlokk;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_gong_of_bethekk";
-    //pNewScript->pGOUse = &GOUse_go_gong_of_bethekk;
-    //pNewScript->RegisterSelf();
 }

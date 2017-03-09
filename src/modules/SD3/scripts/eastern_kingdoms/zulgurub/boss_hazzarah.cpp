@@ -155,9 +155,4 @@ void AddSC_boss_hazzarah()
     Script* s;
     s = new boss_hazzara();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_hazzarah";
-    //pNewScript->GetAI = &GetAI_boss_hazzarah;
-    //pNewScript->RegisterSelf();
 }

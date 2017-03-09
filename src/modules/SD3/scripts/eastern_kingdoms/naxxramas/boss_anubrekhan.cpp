@@ -273,9 +273,4 @@ void AddSC_boss_anubrekhan()
     Script* s;
     s = new boss_anubrekhan();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_anubrekhan";
-    //pNewScript->GetAI = &GetAI_boss_anubrekhan;
-    //pNewScript->RegisterSelf();
 }

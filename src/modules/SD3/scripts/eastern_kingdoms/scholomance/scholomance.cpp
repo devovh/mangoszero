@@ -48,7 +48,6 @@ enum
     SPELL_SILENCE                   = 12528,
 };
 
-
 struct npc_spectral_tutor : public CreatureScript
 {
     npc_spectral_tutor() : CreatureScript("npc_spectral_tutor") {}
@@ -81,7 +80,6 @@ struct npc_spectral_tutor : public CreatureScript
             if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
                 return;
             
-
             if (m_uiProjEndTimer)
             {
                 if (m_uiProjEndTimer <= uiDiff)
@@ -130,7 +128,6 @@ struct npc_spectral_tutor : public CreatureScript
         }
 
     };
-
     CreatureAI* GetAI(Creature* pCreature) override
     {
         return new npc_spectral_tutorAI(pCreature);
@@ -141,8 +138,6 @@ struct npc_spectral_tutor : public CreatureScript
 void AddSC_scholomance()
 {
     Script* s;
-
     s = new npc_spectral_tutor();
     s->RegisterSelf();
-
 }

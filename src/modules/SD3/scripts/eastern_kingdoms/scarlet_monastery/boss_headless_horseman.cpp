@@ -36,9 +36,7 @@ EndScriptData */
 
 enum
 {
-#if defined (CLASSIC) || defined (TBC)
     SAY_ENTRANCE           = -1189022,
-#endif
     SAY_REJOINED           = -1189023,
     SAY_BODY_DEFEAT        = -1189024,
     SAY_LOST_HEAD          = -1189025,
@@ -507,16 +505,4 @@ void AddSC_boss_headless_horseman()
     s->RegisterSelf();
     s = new spell_send_head();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_headless_horseman";
-    //pNewScript->GetAI = GetAI_boss_headless_horseman;
-    //pNewScript->pEffectScriptEffectNPC = &EffectScriptEffectCreature_boss_headless_horseman;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_head_of_horseman";
-    //pNewScript->GetAI = GetAI_boss_head_of_horseman;
-    //pNewScript->pEffectScriptEffectNPC = &EffectScriptEffectCreature_boss_head_of_horseman;
-    //pNewScript->RegisterSelf();
 }

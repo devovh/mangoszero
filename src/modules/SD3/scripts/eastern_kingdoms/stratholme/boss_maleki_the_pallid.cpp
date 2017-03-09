@@ -150,11 +150,4 @@ void AddSC_boss_maleki_the_pallid()
     Script *s;
     s = new boss_maleki_the_pallid();
     s->RegisterSelf();
-
-    //Script* pNewScript;
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_maleki_the_pallid";
-    //pNewScript->GetAI = &GetAI_boss_maleki_the_pallid;
-    //pNewScript->RegisterSelf();
 }

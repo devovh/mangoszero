@@ -170,9 +170,4 @@ void AddSC_boss_arcanist_doan()
     Script *s;
     s = new boss_arcanist_doan();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_arcanist_doan";
-    //pNewScript->GetAI = &GetAI_boss_arcanist_doan;
-    //pNewScript->RegisterSelf();
 }

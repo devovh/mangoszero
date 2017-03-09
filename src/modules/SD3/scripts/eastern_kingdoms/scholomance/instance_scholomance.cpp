@@ -513,14 +513,4 @@ void AddSC_instance_scholomance()
     s->RegisterSelf();
     s = new event_spell_gandling_shadow_portal();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_scholomance";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_scholomance;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "event_spell_gandling_shadow_portal";
-    //pNewScript->pProcessEventId = &ProcessEventId_event_spell_gandling_shadow_portal;
-    //pNewScript->RegisterSelf();
 }

@@ -217,9 +217,4 @@ void AddSC_boss_fankriss()
     Script* s;
     s = new boss_fankriss();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_fankriss";
-    //pNewScript->GetAI = &GetAI_boss_fankriss;
-    //pNewScript->RegisterSelf();
 }

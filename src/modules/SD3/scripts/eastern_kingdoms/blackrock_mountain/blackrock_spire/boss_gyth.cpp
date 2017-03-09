@@ -172,9 +172,4 @@ void AddSC_boss_gyth()
     Script *s;
     s = new boss_gyth();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_gyth";
-    //pNewScript->GetAI = &GetAI_boss_gyth;
-    //pNewScript->RegisterSelf();
 }

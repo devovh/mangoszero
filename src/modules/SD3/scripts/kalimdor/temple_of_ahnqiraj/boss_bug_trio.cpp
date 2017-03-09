@@ -449,19 +449,4 @@ void AddSC_bug_trio()
     s->RegisterSelf();
     s = new boss_yauj();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_kri";
-    //pNewScript->GetAI = &GetAI_boss_kri;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_vem";
-    //pNewScript->GetAI = &GetAI_boss_vem;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_yauj";
-    //pNewScript->GetAI = &GetAI_boss_yauj;
-    //pNewScript->RegisterSelf();
 }

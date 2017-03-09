@@ -357,10 +357,6 @@ struct npc_grark_lorkrub : public CreatureScript
                 m_creature->RemoveAllAurasOnDeath();
                 m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
 
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-                m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
-#endif
-
                 m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 m_creature->ClearAllReactives();
                 m_creature->GetMotionMaster()->Clear();
@@ -519,18 +515,4 @@ void AddSC_burning_steppes()
     s->RegisterSelf();
     s = new spell_capture_grark();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_ragged_john";
-    //pNewScript->GetAI = &GetAI_npc_ragged_john;
-    //pNewScript->pGossipHello =  &GossipHello_npc_ragged_john;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_ragged_john;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_grark_lorkrub";
-    //pNewScript->GetAI = &GetAI_npc_grark_lorkrub;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_grark_lorkrub;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_spell_capture_grark;
-    //pNewScript->RegisterSelf();
 }

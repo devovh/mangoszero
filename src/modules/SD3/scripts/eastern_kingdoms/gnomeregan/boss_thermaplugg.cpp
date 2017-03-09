@@ -417,15 +417,4 @@ void AddSC_boss_thermaplugg()
     s->RegisterSelf();
     s = new spell_boss_thermaplugg();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_thermaplugg";
-    //pNewScript->GetAI = &GetAI_boss_thermaplugg;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_spell_boss_thermaplugg;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_gnomeface_button";
-    //pNewScript->pGOUse = &GOUse_go_gnomeface_button;
-    //pNewScript->RegisterSelf();
 }

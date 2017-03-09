@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2006-2013  ScriptDev2 <http://www.scriptdev2.com/>
  * Copyright (C) 2014-2017  MaNGOS  <https://getmangos.eu>
- *
+ * Copyright (C) 2017       NostraliaWoW  <https://nostralia.org>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -27,8 +27,7 @@
 /**
  * ScriptData
  * SDName:      Boss_Baron_Geddon
- * SD%Complete: 90
- * SDComment:   Armaggedon is not working properly (core issue)
+ * SD%Complete: 100
  * SDCategory:  Molten Core
  * EndScriptData
  */
@@ -57,19 +56,32 @@ struct boss_baron_geddon : public CreatureScript
             m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         }
 
-        ScriptedInstance* m_pInstance;
-
         bool m_bIsArmageddon;
-        uint32 m_uiInfernoTimer;
+        bool m_bIsInferno;
+
         uint32 m_uiIgniteManaTimer;
         uint32 m_uiLivingBombTimer;
+        uint32 m_uiInfernoTimer;
+        uint32 m_uiInfernoAltTimer;
+        uint32 m_uiRestoreTargetTimer;
+        uint32 InfCount;
+        uint32 Tick;
+
+        ScriptedInstance* m_pInstance;
 
         void Reset() override
         {
-            m_bIsArmageddon = false;
-            m_uiInfernoTimer = 28000; // Source: https://www.youtube.com/watch?v=ySGlAlWagTY (might be random between 25-30s)
-            m_uiIgniteManaTimer = 30000;
-            m_uiLivingBombTimer = 35000;
+            m_bIsArmageddon         = false;
+            m_bIsInferno            = false;
+            m_uiInfernoTimer        = urand(18000, 24000);
+            m_uiIgniteManaTimer     = urand(10000, 15000);
+            m_uiLivingBombTimer     = urand(15000, 20000);
+            m_uiRestoreTargetTimer  = 0;
+
+            if (m_pInstance && m_creature->IsAlive())
+                m_pInstance->SetData(TYPE_GEDDON, NOT_STARTED);
+
+            m_creature->clearUnitState(UNIT_STAT_ROOT);
         }
 
         void Aggro(Unit* /*pWho*/) override
@@ -78,6 +90,7 @@ struct boss_baron_geddon : public CreatureScript
             {
                 m_pInstance->SetData(TYPE_GEDDON, IN_PROGRESS);
             }
+            m_creature->SetInCombatWithZone();
         }
 
         void JustDied(Unit* /*pKiller*/) override
@@ -85,14 +98,6 @@ struct boss_baron_geddon : public CreatureScript
             if (m_pInstance)
             {
                 m_pInstance->SetData(TYPE_GEDDON, DONE);
-            }
-        }
-
-        void JustReachedHome() override
-        {
-            if (m_pInstance)
-            {
-                m_pInstance->SetData(TYPE_GEDDON, NOT_STARTED);
             }
         }
 
@@ -108,11 +113,14 @@ struct boss_baron_geddon : public CreatureScript
                 return;
             }
 
-            // If we are <2% hp cast Armageddom
-            if (m_creature->GetHealthPercent() <= 2.0f && !m_bIsArmageddon)
+            // If we are <5% hp cast Armageddom
+            if (!m_bIsArmageddon)
             {
-                if (DoCastSpellIfCan(m_creature, SPELL_ARMAGEDDON, CAST_INTERRUPT_PREVIOUS) == CAST_OK)
+                if (m_creature->GetHealthPercent() < 5.0f)
                 {
+                    m_creature->InterruptNonMeleeSpells(true);
+                    SetCombatMovement(false);
+                    m_creature->CastSpell(m_creature, SPELL_ARMAGEDDON, true);
                     DoScriptText(EMOTE_SERVICE, m_creature);
                     m_bIsArmageddon = true;
                     return;
@@ -124,7 +132,11 @@ struct boss_baron_geddon : public CreatureScript
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_INFERNO) == CAST_OK)
                 {
-                    m_uiInfernoTimer = 28000;
+                    m_uiInfernoTimer = urand(18000, 24000);
+                    InfCount = 0;
+                    Tick = 1000;
+                    m_bIsInferno = true;
+                    m_creature->addUnitState(UNIT_STAT_ROOT);
                 }
             }
             else
@@ -132,12 +144,50 @@ struct boss_baron_geddon : public CreatureScript
                 m_uiInfernoTimer -= uiDiff;
             }
 
+            // Inferno damage increases with each tick
+            if (m_bIsInferno)
+            {
+                if (Tick >= 1000)
+                {
+                    int Damage = 0;
+                    switch (InfCount)
+                    {
+                        case 0:
+                        case 1:
+                            Damage = 500;
+                            break;
+                        case 2:
+                        case 3:
+                            Damage = 1000;
+                            break;
+                        case 4:
+                        case 5:
+                            Damage = 1500;
+                            break;
+                        case 6:
+                        case 7:
+                            Damage = 2000;
+                            break;
+                        case 8:
+                            Damage = 2500;
+                            m_bIsInferno = false;
+                            m_creature->clearUnitState(UNIT_STAT_ROOT);
+                            break;
+                    }
+                    m_creature->CastCustomSpell(m_creature, 19698, &Damage, NULL, NULL, true);
+                    InfCount++;
+                    Tick = 0;
+                }
+                Tick += uiDiff;
+                return;
+            }
+
             // Ignite Mana Timer
             if (m_uiIgniteManaTimer < uiDiff)
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_IGNITE_MANA) == CAST_OK)
                 {
-                    m_uiIgniteManaTimer = 30000;
+                    m_uiIgniteManaTimer = urand(20000, 30000);
                 }
             }
             else
@@ -152,7 +202,10 @@ struct boss_baron_geddon : public CreatureScript
                 {
                     if (DoCastSpellIfCan(pTarget, SPELL_LIVING_BOMB) == CAST_OK)
                     {
-                        m_uiLivingBombTimer = 35000;
+                        m_creature->SetInFront(pTarget);
+                        m_creature->SetTargetGuid(pTarget->GetObjectGuid());
+                        m_uiLivingBombTimer = urand(12000, 15000);
+                        m_uiRestoreTargetTimer = 800;
                     }
                 }
             }
@@ -176,9 +229,4 @@ void AddSC_boss_baron_geddon()
     Script* s;
     s = new boss_baron_geddon();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_baron_geddon";
-    //pNewScript->GetAI = &GetAI_boss_baron_geddon;
-    //pNewScript->RegisterSelf();
 }

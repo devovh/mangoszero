@@ -385,14 +385,4 @@ void AddSC_boss_sartura()
     s->RegisterSelf();
     s = new mob_sartura_royal_guard();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_sartura";
-    //pNewScript->GetAI = &GetAI_boss_sartura;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_sartura_royal_guard";
-    //pNewScript->GetAI = &GetAI_mob_sartura_royal_guard;
-    //pNewScript->RegisterSelf();
 }

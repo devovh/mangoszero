@@ -372,22 +372,4 @@ void AddSC_feralas()
     s->RegisterSelf();
     s = new spell_npc_shay_leafrunner();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_oox22fe";
-    //pNewScript->GetAI = &GetAI_npc_oox22fe;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_oox22fe;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_gordunni_trap";
-    //pNewScript->pGOUse = &GOUse_go_gordunni_trap;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_shay_leafrunner";
-    //pNewScript->GetAI = &GetAI_npc_shay_leafrunner;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_shay_leafrunner;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_npc_shay_leafrunner;
-    //pNewScript->RegisterSelf();
 }

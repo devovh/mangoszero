@@ -428,29 +428,4 @@ void AddSC_thousand_needles()
     s->RegisterSelf();
     s = new npc_plucky_johnson();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_kanati";
-    //pNewScript->GetAI = &GetAI_npc_kanati;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_kanati;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_lakota_windsong";
-    //pNewScript->GetAI = &GetAI_npc_lakota_windsong;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_lakota_windsong;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_paoka_swiftmountain";
-    //pNewScript->GetAI = &GetAI_npc_paoka_swiftmountain;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_paoka_swiftmountain;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_plucky_johnson";
-    //pNewScript->GetAI = &GetAI_npc_plucky_johnson;
-    //pNewScript->pGossipHello = &GossipHello_npc_plucky_johnson;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_plucky_johnson;
-    //pNewScript->RegisterSelf();
 }

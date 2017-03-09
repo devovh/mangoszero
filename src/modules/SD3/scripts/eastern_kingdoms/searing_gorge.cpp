@@ -140,10 +140,4 @@ void AddSC_searing_gorge()
     Script* s;
     s = new npc_dorius_stonetender();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_dorius_stonetender";
-    //pNewScript->GetAI = &GetAI_npc_dorius_stonetender;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_dorius_stonetender;
-    //pNewScript->RegisterSelf();
 }

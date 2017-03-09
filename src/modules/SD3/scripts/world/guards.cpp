@@ -35,28 +35,15 @@
 
 /**
  * ContentData
-#if defined (TBC) || defined (WOTLK) || defined (CATA)  
- * guard_azuremyst
-#endif
  * guard_bluffwatcher
  * guard_contested
  * guard_darnassus
  * guard_dunmorogh
  * guard_durotar
  * guard_elwynnforest
-#if defined (TBC) || defined (WOTLK) || defined (CATA)  
- * guard_eversong
- * guard_exodar
-#endif
  * guard_ironforge
  * guard_mulgore
  * guard_orgrimmar
-#if defined (TBC) || defined (WOTLK) || defined (CATA)  
- * guard_shattrath
- * guard_shattrath_aldor
- * guard_shattrath_scryer
- * guard_silvermoon
-#endif
  * guard_stormwind
  * guard_teldrassil
  * guard_tirisfal
@@ -163,39 +150,6 @@ struct guard_shattrath_asAI : public guardAI
     }
 };
 
-#if defined (TBC) || defined (WOTLK) || defined (CATA)  
-
-struct guard_shattrath_aldor : public CreatureScript
-{
-    guard_shattrath_aldor() : CreatureScript("guard_shattrath_aldor") {}
-
-    struct guard_shattrath_aldorAI : public guard_shattrath_asAI
-    {
-        guard_shattrath_aldorAI(Creature* pCreature) : guard_shattrath_asAI(pCreature, SPELL_BANISHED_SHATTRATH_A) { }
-    };
-
-    CreatureAI* GetAI(Creature* pCreature) override
-    {
-        return new guard_shattrath_aldorAI(pCreature);
-    }
-};
-
-struct guard_shattrath_scryer : public CreatureScript
-{
-    guard_shattrath_scryer() : CreatureScript("guard_shattrath_scryer") {}
-
-    struct guard_shattrath_scryerAI : public guard_shattrath_asAI
-    {
-        guard_shattrath_scryerAI(Creature* pCreature) : guard_shattrath_asAI(pCreature, SPELL_BANISHED_SHATTRATH_S) { }
-    };
-
-    CreatureAI* GetAI(Creature* pCreature) override
-    {
-        return new guard_shattrath_scryerAI(pCreature);
-    }
-};
-#endif
-
 void AddSC_guards()
 {
     Script* s;
@@ -205,76 +159,4 @@ void AddSC_guards()
     s->RegisterSelf();
     s = new guard_stormwind();
     s->RegisterSelf();
-
-#if defined (TBC) || defined (WOTLK) || defined (CATA)  
-    s = new guard_shattrath_aldor();
-    s->RegisterSelf();
-    s = new guard_shattrath_scryer();
-    s->RegisterSelf();
-#endif
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_azuremyst";
-    //pNewScript->GetAI = &GetAI_guard_azuremyst;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_contested";
-    //pNewScript->GetAI = &GetAI_guard_contested;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_darnassus";
-    //pNewScript->GetAI = &GetAI_guard_darnassus;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_dunmorogh";
-    //pNewScript->GetAI = &GetAI_guard_dunmorogh;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_durotar";
-    //pNewScript->GetAI = &GetAI_guard_durotar;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_elwynnforest";
-    //pNewScript->GetAI = &GetAI_guard_elwynnforest;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_ironforge";
-    //pNewScript->GetAI = &GetAI_guard_ironforge;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_eversong";
-    //pNewScript->GetAI = &GetAI_guard_eversong;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_exodar";
-    //pNewScript->GetAI = &GetAI_guard_exodar;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_stormwind";
-    //pNewScript->GetAI = &GetAI_guard_stormwind;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_teldrassil";
-    //pNewScript->GetAI = &GetAI_guard_teldrassil;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_tirisfal";
-    //pNewScript->GetAI = &GetAI_guard_tirisfal;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "guard_shattrath";
-    //pNewScript->GetAI = &GetAI_guard_shattrath;
-    //pNewScript->RegisterSelf();
 }

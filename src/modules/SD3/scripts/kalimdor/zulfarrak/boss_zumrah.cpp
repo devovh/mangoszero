@@ -236,9 +236,4 @@ void AddSC_boss_zumrah()
 
     s = new boss_zumrah();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_zumrah";
-    //pNewScript->GetAI = &GetAI_boss_zumrah;
-    //pNewScript->RegisterSelf();
 }

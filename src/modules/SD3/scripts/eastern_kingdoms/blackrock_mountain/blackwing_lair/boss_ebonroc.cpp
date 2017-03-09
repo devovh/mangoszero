@@ -168,9 +168,4 @@ void AddSC_boss_ebonroc()
     Script* s;
     s = new boss_ebonroc();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_ebonroc";
-    //pNewScript->GetAI = &GetAI_boss_ebonroc;
-    //pNewScript->RegisterSelf();
 }

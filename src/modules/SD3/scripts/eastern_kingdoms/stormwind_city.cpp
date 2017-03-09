@@ -47,7 +47,6 @@
 #include "../scripts/world/world_map_scripts.h"
 #include "escort_ai.h"
 
-#if defined (CLASSIC) || defined (TBC) || defined(WOTLK) || defined (CATA)
 /*######
 ## npc_tyrion
 ######*/
@@ -76,7 +75,6 @@ struct npc_tyrion : public CreatureScript
         return false;
     }
 };
-#endif
 
 /*######
 ## npc_bartleby
@@ -996,10 +994,6 @@ struct npc_reginald_windsor : public CreatureScript
                 m_creature->RemoveAllAurasOnDeath();
                 m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
 
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-                m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
-#endif
-
                 m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 m_creature->ClearAllReactives();
                 m_creature->GetMotionMaster()->Clear();
@@ -1183,7 +1177,6 @@ struct npc_reginald_windsor : public CreatureScript
     }
 };
 
-#if defined (CLASSIC) || defined (TBC) || defined (WOTLK) || defined (CATA)
 /*######
 ## npc_tyrion_spybot
 ######*/
@@ -1332,7 +1325,6 @@ struct npc_tyrion_spybot : public CreatureScript
         return new npc_tyrion_spybotAI(pCreature);
     }
 };
-#endif
 
 void AddSC_stormwind_city()
 {
@@ -1351,37 +1343,4 @@ void AddSC_stormwind_city()
     s->RegisterSelf();
     s = new npc_tyrion_spybot();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_bartleby";
-    //pNewScript->GetAI = &GetAI_npc_bartleby;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_bartleby;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_dashel_stonefist";
-    //pNewScript->GetAI = &GetAI_npc_dashel_stonefist;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_dashel_stonefist;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_lady_katrana_prestor";
-    //pNewScript->pGossipHello = &GossipHello_npc_lady_katrana_prestor;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_lady_katrana_prestor;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_squire_rowe";
-    //pNewScript->GetAI = &GetAI_npc_squire_rowe;
-    //pNewScript->pGossipHello = &GossipHello_npc_squire_rowe;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_squire_rowe;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_reginald_windsor";
-    //pNewScript->GetAI = &GetAI_npc_reginald_windsor;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_reginald_windsor;
-    //pNewScript->pGossipHello = &GossipHello_npc_reginald_windsor;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_reginald_windsor;
-    //pNewScript->RegisterSelf();
 }

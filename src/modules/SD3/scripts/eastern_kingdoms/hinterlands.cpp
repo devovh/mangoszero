@@ -369,16 +369,4 @@ void AddSC_hinterlands()
     s->RegisterSelf();
     s = new npc_rinji();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_00x09hl";
-    //pNewScript->GetAI = &GetAI_npc_00x09hl;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_00x09hl;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_rinji";
-    //pNewScript->GetAI = &GetAI_npc_rinji;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_rinji;
-    //pNewScript->RegisterSelf();
 }

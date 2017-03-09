@@ -35,12 +35,7 @@ enum
 
     TYPE_KELRIS                 = 1,
     TYPE_SHRINE                 = 2,
-#if defined (CLASSIC) || defined (TBC)
     TYPE_STONE                  = 3,
-#endif
-#if defined (WOTLK) || defined (CATA)
-    TYPE_AQUANIS                = 3,
-#endif
 
     NPC_KELRIS                  = 4832,
     NPC_BARON_AQUANIS           = 12876,
@@ -55,10 +50,7 @@ enum
     GO_SHRINE_1                 = 21118,
     GO_SHRINE_2                 = 21119,
     GO_SHRINE_3                 = 21120,
-    GO_SHRINE_4                 = 21121,
-#if defined (WOTLK) || defined (CATA)
-    GO_FATHOM_STONE             = 177964,
-#endif
+    GO_SHRINE_4                 = 21121
 };
 
 /* This is the spawn pattern for the event mobs
@@ -79,7 +71,4 @@ enum
 * On wipe the mobs don't despawn; they stay there until player returns
 */
 
-#endif
-#if defined(WOTLK) || defined(CATA)
-static const float afAquanisPos[4] = { -782.21f, -63.26f, -42.43f, 2.36f };
 #endif
