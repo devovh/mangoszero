@@ -256,9 +256,4 @@ void AddSC_mob_anubisath_sentinel()
     Script* s;
     s = new npc_anubisath_sentinel();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_anubisath_sentinel";
-    //pNewScript->GetAI = &GetAI_npc_anubisath_sentinel;
-    //pNewScript->RegisterSelf();
 }

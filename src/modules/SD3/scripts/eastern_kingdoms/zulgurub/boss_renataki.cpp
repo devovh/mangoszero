@@ -161,9 +161,4 @@ void AddSC_boss_renataki()
     Script* s;
     s = new boss_renataki();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_renataki";
-    //pNewScript->GetAI = &GetAI_boss_renataki;
-    //pNewScript->RegisterSelf();
 }

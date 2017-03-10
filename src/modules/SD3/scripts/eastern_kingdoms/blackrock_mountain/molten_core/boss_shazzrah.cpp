@@ -5,6 +5,7 @@
  *
  * Copyright (C) 2006-2013  ScriptDev2 <http://www.scriptdev2.com/>
  * Copyright (C) 2014-2017  MaNGOS  <https://getmangos.eu>
+ * Copyright (C) 2017       NostraliaWoW  <https://nostralia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,11 +67,11 @@ struct boss_shazzrah : public CreatureScript
 
         void Reset() override
         {
-            m_uiArcaneExplosionTimer = 6000;
-            m_uiShazzrahCurseTimer = 10000;
-            m_uiMagicGroundingTimer = 24000;
-            m_uiCounterspellTimer = 15000;
-            m_uiBlinkTimer = 30000;
+            m_uiArcaneExplosionTimer    = 2000;
+            m_uiShazzrahCurseTimer      = 10000;
+            m_uiMagicGroundingTimer     = 5000;
+            m_uiCounterspellTimer       = 15000;
+            m_uiBlinkTimer              = urand(25000, 30000);
         }
 
         void Aggro(Unit* /*pWho*/) override
@@ -109,7 +110,7 @@ struct boss_shazzrah : public CreatureScript
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_ARCANE_EXPLOSION) == CAST_OK)
                 {
-                    m_uiArcaneExplosionTimer = urand(5000, 9000);
+                    m_uiArcaneExplosionTimer = urand(3000, 5000);
                 }
             }
             else
@@ -120,7 +121,7 @@ struct boss_shazzrah : public CreatureScript
             // Shazzrah Curse Timer
             if (m_uiShazzrahCurseTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature, SPELL_SHAZZRAH_CURSE) == CAST_OK)
+			    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHAZZRAH_CURSE, CAST_AURA_NOT_PRESENT) == CAST_OK)
                 {
                     m_uiShazzrahCurseTimer = 20000;
                 }
@@ -135,7 +136,7 @@ struct boss_shazzrah : public CreatureScript
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_MAGIC_GROUNDING) == CAST_OK)
                 {
-                    m_uiMagicGroundingTimer = 35000;
+                    m_uiMagicGroundingTimer = urand(7000, 14000);
                 }
             }
             else
@@ -146,9 +147,9 @@ struct boss_shazzrah : public CreatureScript
             // Counterspell Timer
             if (m_uiCounterspellTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature, SPELL_COUNTERSPELL) == CAST_OK)
+                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_COUNTERSPELL) == CAST_OK)
                 {
-                    m_uiCounterspellTimer = urand(16000, 20000);
+                    m_uiCounterspellTimer = urand(16000, 18000);
                 }
             }
             else
@@ -165,13 +166,14 @@ struct boss_shazzrah : public CreatureScript
                     // manual, until added effect of dummy properly -- TODO REMOVE HACK
                     if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     {
+                        DoResetThreat();
                         m_creature->NearTeleportTo(pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), m_creature->GetOrientation());
+                        m_creature->Attack(pTarget, true);
                     }
-                    DoResetThreat();
 
                     DoCastSpellIfCan(m_creature, SPELL_ARCANE_EXPLOSION, CAST_TRIGGERED);
 
-                    m_uiBlinkTimer = 45000;
+                    m_uiBlinkTimer = urand(25000, 35000);
                 }
             }
             else
@@ -194,9 +196,4 @@ void AddSC_boss_shazzrah()
     Script* s;
     s = new boss_shazzrah();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_shazzrah";
-    //pNewScript->GetAI = &GetAI_boss_shazzrah;
-    //pNewScript->RegisterSelf();
 }

@@ -907,14 +907,14 @@ uint32 Player::EnvironmentalDamage(EnvironmentalDamageType type, uint32 damage)
     
     if (type == DAMAGE_LAVA)
     {
-        if (this->IsImmunedToDamage(SPELL_SCHOOL_MASK_FIRE))
+        if (this->IsImmuneToDamage(SPELL_SCHOOL_MASK_FIRE))
             return 0;
             
         CalculateDamageAbsorbAndResist(this, SPELL_SCHOOL_MASK_FIRE, DIRECT_DAMAGE, damage, &absorb, &resist);
     }
     else if (type == DAMAGE_SLIME)
     {
-        if (this->IsImmunedToDamage(SPELL_SCHOOL_MASK_NATURE))
+        if (this->IsImmuneToDamage(SPELL_SCHOOL_MASK_NATURE))
             return 0;
             
         CalculateDamageAbsorbAndResist(this, SPELL_SCHOOL_MASK_NATURE, DIRECT_DAMAGE, damage, &absorb, &resist);
@@ -3092,13 +3092,27 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool dependen
                 // lockpicking special case, not have ABILITY_LEARNED_ON_GET_RACE_OR_CLASS_SKILL
                     (pSkill->id == SKILL_LOCKPICKING && skillAbility->max_value == 0))
             {
+				uint16 startingLevelValue = 1;
+
                 switch (GetSkillRangeType(pSkill, skillAbility->racemask != 0))
                 {
                     case SKILL_RANGE_LANGUAGE:
                         SetSkill(pSkill->id, 300, 300);
                         break;
                     case SKILL_RANGE_LEVEL:
-                        SetSkill(pSkill->id, 1, GetMaxSkillValueForLevel());
+						// If the skill already exists but is disabled, 
+						// set the skill's value to the disabled skill's value.
+						if (HasDisabledSkill(pSkill->id)) {
+							startingLevelValue = GetPureSkillValue(pSkill->id);
+
+							if (startingLevelValue == 0) // If it doesn't exist here, see if it's in the DB.
+								startingLevelValue = GetPureSkillValueFromDb(pSkill->id);
+
+							if (startingLevelValue == 0) // Something is wrong, set the value to default 1.
+								startingLevelValue = 1;
+						}
+
+                        SetSkill(pSkill->id, startingLevelValue, GetMaxSkillValueForLevel());
                         break;
                     case SKILL_RANGE_MONO:
                         SetSkill(pSkill->id, 1, 1);
@@ -4965,7 +4979,7 @@ bool Player::UpdateSkill(uint32 skill_id, uint32 step)
         { return false; }
 
     SkillStatusData &skillStatus = itr->second;
-    if (skillStatus.uState == SKILL_DELETED)
+    if (skillStatus.IsUnavailable())
         { return false; }
 
     uint32 valueIndex = PLAYER_SKILL_VALUE_INDEX(skillStatus.pos);
@@ -5085,7 +5099,7 @@ bool Player::UpdateSkillPro(uint16 SkillId, int32 Chance, uint32 step)
         { return false; }
 
     SkillStatusData &skillStatus = itr->second;
-    if (skillStatus.uState == SKILL_DELETED)
+    if (skillStatus.IsUnavailable())
         { return false; }
 
     uint32 valueIndex = PLAYER_SKILL_VALUE_INDEX(skillStatus.pos);
@@ -5183,8 +5197,8 @@ void Player::UpdateCombatSkills(Unit* pVictim, WeaponAttackType attType, bool de
 
 void Player::ModifySkillBonus(uint32 skillid, int32 val, bool talent)
 {
-    SkillStatusMap::const_iterator itr = mSkillStatus.find(skillid);
-    if (itr == mSkillStatus.end() || itr->second.uState == SKILL_DELETED)
+    SkillStatusMap::iterator itr = mSkillStatus.find(skillid);
+    if (itr == mSkillStatus.end() || (itr->second).IsUnavailable())
         { return; }
 
     uint32 bonusIndex = PLAYER_SKILL_BONUS_INDEX(itr->second.pos);
@@ -5209,7 +5223,7 @@ void Player::UpdateSkillsForLevel()
     for (SkillStatusMap::iterator itr = mSkillStatus.begin(); itr != mSkillStatus.end(); ++itr)
     {
         SkillStatusData &skillStatus = itr->second;
-        if (skillStatus.uState == SKILL_DELETED)
+        if (skillStatus.IsUnavailable())
             { continue; }
 
         uint32 pskill = itr->first;
@@ -5251,7 +5265,7 @@ void Player::UpdateSkillsToMaxSkillsForLevel()
     for (SkillStatusMap::iterator itr = mSkillStatus.begin(); itr != mSkillStatus.end(); ++itr)
     {
         SkillStatusData &skillStatus = itr->second;
-        if (skillStatus.uState == SKILL_DELETED)
+        if (skillStatus.IsUnavailable())
             { continue; }
 
         uint32 pskill = itr->first;
@@ -5284,7 +5298,7 @@ void Player::SetSkill(uint16 id, uint16 currVal, uint16 maxVal, uint16 step /*=0
     SkillStatusMap::iterator itr = mSkillStatus.find(id);
 
     // has skill
-    if (itr != mSkillStatus.end() && itr->second.uState != SKILL_DELETED)
+    if (itr != mSkillStatus.end() && !itr->second.IsUnavailable())
     {
         SkillStatusData &skillStatus = itr->second;
         if (currVal)
@@ -5295,21 +5309,36 @@ void Player::SetSkill(uint16 id, uint16 currVal, uint16 maxVal, uint16 step /*=0
             // update value
             SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(skillStatus.pos), MAKE_SKILL_VALUE(currVal, maxVal));
             if (skillStatus.uState != SKILL_NEW)
-                { skillStatus.uState = SKILL_CHANGED; }
-            // learnSkillRewardedSpells(id, currVal);       // pre-3.x have only 1 skill level req (so at learning only)
+                { skillStatus.uState = SKILL_CHANGED; }    
         }
         else                                                // remove
         {
-            // clear skill fields
-            SetUInt32Value(PLAYER_SKILL_INDEX(skillStatus.pos), 0);
-            SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(skillStatus.pos), 0);
-            SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(skillStatus.pos), 0);
+			// If shaman and we're trying to delete 2H Axes or 2H maces,
+			// disable this skill and save it instead of deleting it. We want to retain gained skill points.
+			if (getClass() == CLASS_SHAMAN && (id == SKILL_2H_MACES || id == SKILL_2H_AXES))
+			{
+				skillStatus.uState = SKILL_DISABLED;
+				uint32 currentSkillValue = SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(skillStatus.pos)));
+				CharacterDatabase.PExecute("UPDATE character_skills SET value = '%u', disabled = '%u' WHERE guid = '%u' AND skill = '%u'", currentSkillValue, 1, GetGUIDLow(), id);
+			}
 
-            // mark as deleted or simply remove from map if not saved yet
-            if (skillStatus.uState != SKILL_NEW)
-                { skillStatus.uState = SKILL_DELETED; }
-            else
-                { mSkillStatus.erase(itr); }
+			// clear skill fields
+			SetUInt32Value(PLAYER_SKILL_INDEX(skillStatus.pos), 0);
+			SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(skillStatus.pos), 0);
+			SetUInt32Value(PLAYER_SKILL_BONUS_INDEX(skillStatus.pos), 0);
+
+			if (skillStatus.uState != SKILL_DISABLED)
+			{
+				// mark as deleted or simply remove from map if not saved yet
+				if (skillStatus.uState != SKILL_NEW)
+				{
+					skillStatus.uState = SKILL_DELETED;
+				}
+				else
+				{
+					mSkillStatus.erase(itr);
+				}
+			}
 
             // remove all spells that related to this skill
             for (uint32 j = 0; j < sSkillLineAbilityStore.GetNumRows(); ++j)
@@ -5338,7 +5367,11 @@ void Player::SetSkill(uint16 id, uint16 currVal, uint16 maxVal, uint16 step /*=0
                 if (itr != mSkillStatus.end())
                 {
                     itr->second.pos = i;
-                    itr->second.uState = SKILL_CHANGED;
+
+					if (itr->second.uState == SKILL_DISABLED)
+						itr->second.uState = SKILL_NEW;
+					else
+						itr->second.uState = SKILL_CHANGED;
                 }
                 else
                     { mSkillStatus.insert(SkillStatusMap::value_type(id, SkillStatusData(i, SKILL_NEW))); }
@@ -5369,10 +5402,19 @@ void Player::SetSkill(uint16 id, uint16 currVal, uint16 maxVal, uint16 step /*=0
 bool Player::HasSkill(uint32 skill) const
 {
     if (!skill)
-        { return false; }
+		return false;
 
     SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
-    return (itr != mSkillStatus.end() && itr->second.uState != SKILL_DELETED);
+    return (itr != mSkillStatus.end() && itr->second.uState != SKILL_DELETED && itr->second.uState != SKILL_DISABLED);
+}
+
+bool Player::HasDisabledSkill(uint32 skill) const
+{
+	if (!skill)
+		return false;
+
+	SkillStatusMap::const_iterator itr = mSkillStatus.find(skill);
+	return (itr != mSkillStatus.end() && itr->second.uState == SKILL_DISABLED);
 }
 
 uint16 Player::GetSkillValue(uint32 skill) const
@@ -5384,8 +5426,8 @@ uint16 Player::GetSkillValue(uint32 skill) const
     if (itr == mSkillStatus.end())
         { return 0; }
 
-    SkillStatusData const& skillStatus = itr->second;
-    if (skillStatus.uState == SKILL_DELETED)
+    SkillStatusData skillStatus = itr->second;
+    if (skillStatus.IsUnavailable())
         { return 0; }
 
     uint32 bonus = GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(skillStatus.pos));
@@ -5405,8 +5447,8 @@ uint16 Player::GetMaxSkillValue(uint32 skill) const
     if (itr == mSkillStatus.end())
         { return 0; }
 
-    SkillStatusData const& skillStatus = itr->second;
-    if (skillStatus.uState == SKILL_DELETED)
+    SkillStatusData skillStatus = itr->second;
+    if (skillStatus.IsUnavailable())
         { return 0; }
 
     uint32 bonus = GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(skillStatus.pos));
@@ -5426,8 +5468,8 @@ uint16 Player::GetPureMaxSkillValue(uint32 skill) const
     if (itr == mSkillStatus.end())
         { return 0; }
 
-    SkillStatusData const& skillStatus = itr->second;
-    if (skillStatus.uState == SKILL_DELETED)
+    SkillStatusData skillStatus = itr->second;
+    if (skillStatus.IsUnavailable())
         { return 0; }
 
     return SKILL_MAX(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(skillStatus.pos)));
@@ -5442,8 +5484,8 @@ uint16 Player::GetBaseSkillValue(uint32 skill) const
     if (itr == mSkillStatus.end())
         { return 0;}
 
-    SkillStatusData const& skillStatus = itr->second;
-    if (skillStatus.uState == SKILL_DELETED)
+    SkillStatusData skillStatus = itr->second;
+    if (skillStatus.IsUnavailable())
         { return 0; }
 
     int32 result = int32(SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(skillStatus.pos))));
@@ -5460,11 +5502,34 @@ uint16 Player::GetPureSkillValue(uint32 skill) const
     if (itr == mSkillStatus.end())
         { return 0; }
 
-    SkillStatusData const& skillStatus = itr->second;
-    if (skillStatus.uState == SKILL_DELETED)
+    SkillStatusData skillStatus = itr->second;
+    if (skillStatus.IsUnavailable())
         { return 0; }
 
     return SKILL_VALUE(GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(skillStatus.pos)));
+}
+
+uint16 Player::GetPureSkillValueFromDb(uint32 skill)
+{
+	if (!skill)
+		return 0;
+
+	QueryResult* result = CharacterDatabase.PQuery("SELECT value FROM character_skills WHERE guid = '%u' AND skill = '%u'", GetGUIDLow(), skill);
+
+	uint16 value = 0;
+
+	if (result)
+	{
+		do
+		{
+			Field* fields = result->Fetch();
+			value = fields[0].GetUInt16();
+		} while (result->NextRow());
+
+		delete result;
+	}
+
+	return value;
 }
 
 int16 Player::GetSkillPermBonusValue(uint32 skill) const
@@ -5476,8 +5541,8 @@ int16 Player::GetSkillPermBonusValue(uint32 skill) const
     if (itr == mSkillStatus.end())
         { return 0; }
 
-    SkillStatusData const& skillStatus = itr->second;
-    if (skillStatus.uState == SKILL_DELETED)
+    SkillStatusData skillStatus = itr->second;
+    if (skillStatus.IsUnavailable())
         { return 0; }
 
     return SKILL_PERM_BONUS(GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(skillStatus.pos)));
@@ -5492,8 +5557,8 @@ int16 Player::GetSkillTempBonusValue(uint32 skill) const
     if (itr == mSkillStatus.end())
         { return 0; }
 
-    SkillStatusData const& skillStatus = itr->second;
-    if (skillStatus.uState == SKILL_DELETED)
+    SkillStatusData skillStatus = itr->second;
+    if (skillStatus.IsUnavailable())
         { return 0; }
 
     return SKILL_TEMP_BONUS(GetUInt32Value(PLAYER_SKILL_BONUS_INDEX(skillStatus.pos)));
@@ -16062,9 +16127,10 @@ void Player::_SaveQuestStatus()
 
 void Player::_SaveSkills()
 {
-    static SqlStatementID delSkills ;
-    static SqlStatementID insSkills ;
-    static SqlStatementID updSkills ;
+    static SqlStatementID delSkills,
+						  insSkills,
+						  updSkills,
+						  disSkills;
 
     // we don't need transactions here.
     for (SkillStatusMap::iterator itr = mSkillStatus.begin(); itr != mSkillStatus.end();)
@@ -16083,6 +16149,14 @@ void Player::_SaveSkills()
             continue;
         }
 
+		if (itr->second.uState == SKILL_DISABLED)
+		{
+			SqlStatement stmt = CharacterDatabase.CreateStatement(disSkills, "UPDATE character_skills SET disabled = ? WHERE guid = ? AND skill = ?");
+			stmt.PExecute(1, GetGUIDLow(), itr->first);
+			++itr;
+			continue;
+		}
+
         uint32 valueData = GetUInt32Value(PLAYER_SKILL_VALUE_INDEX(itr->second.pos));
         uint16 value = SKILL_VALUE(valueData);
         uint16 max = SKILL_MAX(valueData);
@@ -16091,8 +16165,8 @@ void Player::_SaveSkills()
         {
             case SKILL_NEW:
             {
-                SqlStatement stmt = CharacterDatabase.CreateStatement(insSkills, "INSERT INTO character_skills (guid, skill, value, max) VALUES (?, ?, ?, ?)");
-                stmt.PExecute(GetGUIDLow(), itr->first, value, max);
+                SqlStatement stmt = CharacterDatabase.CreateStatement(insSkills, "REPLACE INTO character_skills (guid, skill, value, max, disabled) VALUES (?, ?, ?, ?, ?)");
+                stmt.PExecute(GetGUIDLow(), itr->first, value, max, 0);
             }
             break;
             case SKILL_CHANGED:
@@ -16103,6 +16177,7 @@ void Player::_SaveSkills()
             break;
             case SKILL_UNCHANGED:
             case SKILL_DELETED:
+			case SKILL_DISABLED:
                 MANGOS_ASSERT(false);
                 break;
         };
@@ -19319,6 +19394,7 @@ void Player::_LoadSkills(QueryResult* result)
             uint16 skill    = fields[0].GetUInt16();
             uint16 value    = fields[1].GetUInt16();
             uint16 max      = fields[2].GetUInt16();
+			bool disabled	= fields[3].GetBool();
 
             SkillLineEntry const* pSkill = sSkillLineStore.LookupEntry(skill);
             if (!pSkill)
@@ -19349,6 +19425,13 @@ void Player::_LoadSkills(QueryResult* result)
                 CharacterDatabase.PExecute("DELETE FROM character_skills WHERE guid = '%u' AND skill = '%u' ", GetGUIDLow(), skill);
                 continue;
             }
+
+			// Disabled skills are used to store the value without deleting.
+			// E.g. Shaman keeps value of 2H mace and axes skills even when respeccing.
+			if (disabled) {
+				mSkillStatus.insert(SkillStatusMap::value_type(skill, SkillStatusData(count, SKILL_DISABLED)));
+				continue;
+			}
 
             SetUInt32Value(PLAYER_SKILL_INDEX(count), MAKE_PAIR32(skill, 0));
             SetUInt32Value(PLAYER_SKILL_VALUE_INDEX(count), MAKE_SKILL_VALUE(value, max));
@@ -19413,7 +19496,7 @@ void Player::HandleFall(MovementInfo const& movementInfo)
     // 14.57 can be calculated by resolving damageperc formula below to 0
     if (z_diff >= 14.57f && !IsDead() && !isGameMaster() && !HasMovementFlag(MOVEFLAG_ONTRANSPORT) &&
         !HasAuraType(SPELL_AURA_HOVER) && !HasAuraType(SPELL_AURA_FEATHER_FALL) &&
-        !IsImmunedToDamage(SPELL_SCHOOL_MASK_NORMAL))
+        !IsImmuneToDamage(SPELL_SCHOOL_MASK_NORMAL))
     {
         // Safe fall, fall height reduction
         int32 safe_fall = GetTotalAuraModifier(SPELL_AURA_SAFE_FALL);

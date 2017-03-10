@@ -311,16 +311,4 @@ void AddSC_arathi_highlands()
     s->RegisterSelf();
     s = new npc_kinelory();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_professor_phizzlethorpe";
-    //pNewScript->GetAI = &GetAI_npc_professor_phizzlethorpe;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_professor_phizzlethorpe;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_kinelory";
-    //pNewScript->GetAI = &GetAI_npc_kinelory;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_kinelory;
-    //pNewScript->RegisterSelf();
 }

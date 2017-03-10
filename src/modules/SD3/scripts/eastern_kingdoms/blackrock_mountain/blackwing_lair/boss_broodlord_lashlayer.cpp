@@ -180,9 +180,4 @@ void AddSC_boss_broodlord()
     Script* s;
     s = new boss_broodlord();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_broodlord";
-    //pNewScript->GetAI = &GetAI_boss_broodlord;
-    //pNewScript->RegisterSelf();
 }

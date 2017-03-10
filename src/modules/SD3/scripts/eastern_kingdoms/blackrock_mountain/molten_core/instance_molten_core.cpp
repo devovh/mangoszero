@@ -85,7 +85,7 @@ struct is_molten_core : public InstanceScript
         {
             switch (pCreature->GetEntry())
             {
-                // Bosses
+            // Bosses
             case NPC_GARR:
             case NPC_SULFURON:
             case NPC_MAJORDOMO:
@@ -140,7 +140,7 @@ struct is_molten_core : public InstanceScript
         {
             switch (pGo->GetEntry())
             {
-                // Runes
+            // Runes
             case GO_RUNE_KRESS:
             case GO_RUNE_MOHN:
             case GO_RUNE_BLAZ:
@@ -160,15 +160,15 @@ struct is_molten_core : public InstanceScript
                         break;
                     }
                 }
-                // no break here!
-                // Majordomo event chest
+            // no break here!
+            // Majordomo event chest
             case GO_CACHE_OF_THE_FIRE_LORD:
-                // Ragnaros GOs
+            // Ragnaros GOs
             case GO_LAVA_STEAM:
             case GO_LAVA_SPLASH:
                 m_mGoEntryGuidStore[pGo->GetEntry()] = pGo->GetObjectGuid();
                 break;
-                // rune traps: just change state
+            // rune traps: just change state
             case GO_RUNE_KRESS_TRAP:
             case GO_RUNE_MOHN_TRAP:
             case GO_RUNE_BLAZ_TRAP:
@@ -242,18 +242,14 @@ struct is_molten_core : public InstanceScript
             // if a rune boss is done, then: pre-WOTLK: allow to use the rune GO; WOTLK and later: set the rune as doused
             if (uiType > TYPE_LUCIFRON && uiType < TYPE_MAJORDOMO && uiData == DONE)
             {
-#if defined (CLASSIC) || defined (TBC)
                 if (sRuneEncounters const *rstr = GetRuneStructForBoss(uiType))
                 {
                     m_auiRuneState[rstr->getRuneType()] = SPECIAL;
                     if (GameObject *trap = GetSingleGameObjectFromStorage(rstr->m_uiTrapEntry))
                         trap->SetGoState(GO_STATE_READY);
                 }
-#endif
-#if defined (WOTLK) || defined (CATA)
                 SetRuneDoused(GetRuneStructForBoss(uiType));
                 DoSpawnMajordomoIfCan(false);
-#endif
             }
 
             if (save)
@@ -445,9 +441,4 @@ void AddSC_instance_molten_core()
     Script* s;
     s = new is_molten_core();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_molten_core";
-    //pNewScript->GetInstanceData = &GetInstance_instance_molten_core;
-    //pNewScript->RegisterSelf();
 }

@@ -467,8 +467,28 @@ float Unit::GetCombatReach(Unit const* pVictim, bool forMeleeRange /*=true*/, fl
     float reach = GetFloatValue(UNIT_FIELD_COMBATREACH) + pVictim->GetFloatValue(UNIT_FIELD_COMBATREACH) +
                   BASE_MELEERANGE_OFFSET + flat_mod;
 
-    if (forMeleeRange && reach < ATTACK_DISTANCE)
-        { reach = ATTACK_DISTANCE; }
+	float attackDistance = ATTACK_DISTANCE;
+
+	// Check for leeway mechanic in PVP situations
+	// If caster and target are both above 70% movement speed, add leeway.
+	if (forMeleeRange && GetTypeId() == TYPEID_PLAYER && pVictim->GetTypeId() == TYPEID_PLAYER)
+	{
+		// Check if the caster is moving forward or strafing, and not walking.
+		float casterSpeed = m_movementInfo.HasMovementFlag(MovementFlags(MOVEFLAG_FORWARD | MOVEFLAG_STRAFE_LEFT | MOVEFLAG_STRAFE_RIGHT)) && 
+							!m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE) ? 
+								GetSpeedRate(MOVE_RUN) : 0.0f;
+		
+		// Check if the target is moving forward or strafing, and not walking.
+		float targetSpeed = pVictim->m_movementInfo.HasMovementFlag(MovementFlags(MOVEFLAG_FORWARD | MOVEFLAG_STRAFE_LEFT | MOVEFLAG_STRAFE_RIGHT)) &&
+							!pVictim->m_movementInfo.HasMovementFlag(MOVEFLAG_WALK_MODE) ?
+								pVictim->GetSpeedRate(MOVE_RUN) : 0.0f;
+
+		if (casterSpeed > 0.7f && targetSpeed > 0.7f)
+			attackDistance += MELEE_RANGE_LEEWAY_RUNNING;
+	}
+
+    if (forMeleeRange && reach < attackDistance)
+        { reach = attackDistance; }
 
     return reach;
 }
@@ -1526,7 +1546,7 @@ void Unit::CalculateMeleeDamage(Unit* pVictim, CalcDamageInfo* damageInfo, Weapo
     }
 
     // Physical Immune check
-    if (damageInfo->target->IsImmunedToDamage(damageInfo->damageSchoolMask))
+    if (damageInfo->target->IsImmuneToDamage(damageInfo->damageSchoolMask))
     {
         damageInfo->HitInfo       |= HITINFO_NORMALSWING;
         damageInfo->TargetState    = VICTIMSTATE_IS_IMMUNE;
@@ -2749,7 +2769,7 @@ SpellMissInfo Unit::SpellHitResult(Unit* pVictim, SpellEntry const* spell, bool 
         { return SPELL_MISS_NONE; }
 
     // Check for immune (use charges)
-    if (pVictim->IsImmunedToDamage(GetSpellSchoolMask(spell)) && !spell->HasAttribute(SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY))
+    if (pVictim->IsImmuneToDamage(GetSpellSchoolMask(spell)) && !spell->HasAttribute(SPELL_ATTR_UNAFFECTED_BY_INVULNERABILITY))
         { return SPELL_MISS_IMMUNE; }
 
     // Try victim reflect spell
@@ -6154,7 +6174,7 @@ int32 Unit::SpellBaseHealingBonusTaken(SpellSchoolMask schoolMask)
     return AdvertisedBenefit;
 }
 
-bool Unit::IsImmunedToDamage(SpellSchoolMask shoolMask)
+bool Unit::IsImmuneToDamage(SpellSchoolMask shoolMask)
 {
     // If m_immuneToSchool type contain this school type, IMMUNE damage.
     SpellImmuneList const& schoolList = m_spellImmune[IMMUNITY_SCHOOL];
@@ -7416,7 +7436,7 @@ bool Unit::IsSecondChoiceTarget(Unit* pTarget, bool checkThreatArea)
     MANGOS_ASSERT(pTarget && GetTypeId() == TYPEID_UNIT);
 
     return
-        pTarget->IsImmunedToDamage(GetMeleeDamageSchoolMask()) ||
+        pTarget->IsImmuneToDamage(GetMeleeDamageSchoolMask()) ||
         pTarget->hasNegativeAuraWithInterruptFlag(AURA_INTERRUPT_FLAG_DAMAGE) ||
         (checkThreatArea && ((Creature*)this)->IsOutOfThreatArea(pTarget));
 }
@@ -8923,9 +8943,20 @@ void Unit::SetFeignDeath(bool apply, ObjectGuid casterGuid /*= ObjectGuid()*/)
         {
             // restore appropriate movement generator
             if (getVictim())
-                { GetMotionMaster()->MoveChase(getVictim()); }
+            {
+                if (GetCreatureType() == CREATURE_TYPE_CRITTER)
+                {
+                    GetMotionMaster()->MoveFleeing(getVictim(),0);
+                }
+                else
+                {
+                    GetMotionMaster()->MoveChase(getVictim());
+                }
+            }
             else
-                { GetMotionMaster()->Initialize(); }
+            {
+                GetMotionMaster()->Initialize();
+            }
         }
     }
 }

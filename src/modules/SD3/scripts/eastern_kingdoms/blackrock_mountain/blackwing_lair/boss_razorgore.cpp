@@ -297,14 +297,4 @@ void AddSC_boss_razorgore()
     s->RegisterSelf();
     s = new spell_go_black_dragon_egg();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_razorgore";
-    //pNewScript->GetAI = &GetAI_boss_razorgore;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_black_dragon_egg";
-    //pNewScript->pEffectDummyGO = &EffectDummyGameObj_go_black_dragon_egg;
-    //pNewScript->RegisterSelf();
 }

@@ -1071,6 +1071,7 @@ enum SpellRangeIndex
 
 #define SPELL_RANGE_LEEWAY_START	1.25f	// Allow some leeway of maximum range (to account for player model size?)
 #define SPELL_RANGE_LEEWAY_CONTINUE	6.25f	// Allow some leeway when already casting and mob moves out of range.
+#define MELEE_RANGE_LEEWAY_RUNNING  2.50f	// Allow some leeway when both caster and target are above 70% movement speed.
 
 enum DamageEffectType
 {

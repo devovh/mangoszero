@@ -403,9 +403,4 @@ void AddSC_instance_zulfarrak()
     Script* s;
     s = new is_zulfarrak();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_zulfarrak";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_zulfarrak;
-    //pNewScript->RegisterSelf();
 }

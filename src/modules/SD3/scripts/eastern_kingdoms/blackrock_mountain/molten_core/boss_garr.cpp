@@ -5,6 +5,7 @@
  *
  * Copyright (C) 2006-2013  ScriptDev2 <http://www.scriptdev2.com/>
  * Copyright (C) 2014-2017  MaNGOS  <https://getmangos.eu>
+ * Copyright (C) 2017       NostraliaWoW  <https://nostralia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,14 +42,15 @@ enum
     // Garr spells
     SPELL_ANTIMAGICPULSE        = 19492,
     SPELL_MAGMASHACKLES         = 19496,
-    SPELL_ERUPTION_TRIGGER      = 20482,    // target script, dispel and permanent immune to banish anywhere on map
-    SPELL_ENRAGE_TRIGGER        = 19515,    // target script, effect dummy anywhere on map
+    SPELL_ENRAGE                = 19516,
 
     // Add spells
-    SPELL_THRASH                = 8876,
-    SPELL_ERUPTION              = 19497,
-    SPELL_MASSIVE_ERUPTION      = 20483,                    // TODO possible on death
-    SPELL_IMMOLATE              = 15733,
+    SPELL_IMMOLATE              = 20294,
+    SPELL_THRASH                = 3391,
+    SPELL_ADD_ERUPTION          = 19497,
+    SPELL_MASSIVE_ERUPTION      = 20483,
+
+    EMOTE_MASSIVE_ERUPTION      = -1409001
 };
 
 struct boss_garr : public CreatureScript
@@ -62,26 +64,34 @@ struct boss_garr : public CreatureScript
             m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         }
 
-        ScriptedInstance* m_pInstance;
-
         uint32 m_uiAntiMagicPulseTimer;
         uint32 m_uiMagmaShacklesTimer;
-        uint32 m_uiExplodeAddTimer;
-        bool m_bHasFreed;
+        uint32 m_uiCheckAddsTimer;
+        uint32 m_uiExplodeTimer;
+
+        ScriptedInstance* m_pInstance;
 
         void Reset() override
         {
-            m_uiAntiMagicPulseTimer = 25 * IN_MILLISECONDS;
-            m_uiMagmaShacklesTimer = 15 * IN_MILLISECONDS;
-            m_uiExplodeAddTimer = 60 * IN_MILLISECONDS;
-            m_bHasFreed = false;
+            m_uiAntiMagicPulseTimer = 25000;
+            m_uiMagmaShacklesTimer  = 15000;
+            m_uiCheckAddsTimer      = 2000;
+            m_uiExplodeTimer        = urand(3000, 6000);
+
+            if (m_pInstance && m_creature->IsAlive())
+            {
+                m_pInstance->SetData(TYPE_GARR, NOT_STARTED);
+            }
         }
 
         void Aggro(Unit* /*pWho*/) override
         {
             if (m_pInstance)
             {
-                m_pInstance->SetData(TYPE_GARR, IN_PROGRESS);
+                if (m_pInstance->GetData(TYPE_GARR) != DONE)
+                {
+                    m_pInstance->SetData(TYPE_GARR, IN_PROGRESS);
+                }
             }
         }
 
@@ -101,23 +111,42 @@ struct boss_garr : public CreatureScript
             }
         }
 
-        void DamageTaken(Unit* /*damager*/, uint32 &damage) override
+        void DoMassiveEruption()
         {
-            if (!m_bHasFreed && m_creature->HealthBelowPctDamaged(50, damage))
+            std::list<Creature*> LigesListe;
+            GetCreatureListWithEntryInGrid(LigesListe, m_creature, NPC_FIRESWORN, 150.0f);
+            uint32 numLiges = LigesListe.size();
+            if (!numLiges)
             {
-                m_pInstance->SetData(TYPE_DO_FREE_GARR_ADDS, 0);
-                m_bHasFreed = true;
+                return;
             }
-        }
 
-        void ReceiveAIEvent(AIEventType type, Creature* pSender, Unit* /*pInvoker*/, uint32 /*uiData*/) override
-        {
-            if (type == AI_EVENT_CUSTOM_B && pSender == m_creature)
+            int32 explodeIdx = urand(0, numLiges-1);
+            Creature* validCreature = NULL;
+            std::list<Creature*>::iterator itr = LigesListe.begin();
+            while (explodeIdx > 0 || !validCreature)
             {
-                if (Creature* spawn = m_creature->SummonCreature(NPC_FIRESWORN, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), m_creature->GetOrientation(), TEMPSUMMON_CORPSE_DESPAWN, true))
-                    spawn->SetOwnerGuid(ObjectGuid());  // trying to prevent despawn of the summon at Garr death
-                m_uiExplodeAddTimer = 25 * IN_MILLISECONDS;
+                if (itr == LigesListe.end())
+                    break;
+
+                if ((*itr)->IsAlive())
+                    validCreature = *itr;
+                ++itr;
+                --explodeIdx;
             }
+            if (validCreature)
+            { 
+                DoScriptText(EMOTE_MASSIVE_ERUPTION, m_creature);
+/*                // Garr can choose a banished add as one of his random selects, and it will fail
+                if (!(validCreature->HasAura(18647) || validCreature->HasAura(710)))
+                {
+                    if (mob_fireswornAI* pFireswornAI = dynamic_cast<mob_fireswornAI*> (validCreature->AI()))
+                    {
+                        pFireswornAI->m_bCommanded = true;
+                        validCreature->CastSpell(validCreature, SPELL_DEATHTOUCH, true);
+                    }
+                }
+*/          }
         }
 
         void UpdateAI(const uint32 uiDiff) override
@@ -132,7 +161,7 @@ struct boss_garr : public CreatureScript
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_ANTIMAGICPULSE) == CAST_OK)
                 {
-                    m_uiAntiMagicPulseTimer = urand(10 * IN_MILLISECONDS, 15 * IN_MILLISECONDS);
+                    m_uiAntiMagicPulseTimer = urand(10000, 15000);
                 }
             }
             else
@@ -145,7 +174,7 @@ struct boss_garr : public CreatureScript
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_MAGMASHACKLES) == CAST_OK)
                 {
-                    m_uiMagmaShacklesTimer = urand(8 * IN_MILLISECONDS, 12 * IN_MILLISECONDS);
+                    m_uiMagmaShacklesTimer = urand(8000, 12000);
                 }
             }
             else
@@ -153,18 +182,18 @@ struct boss_garr : public CreatureScript
                 m_uiMagmaShacklesTimer -= uiDiff;
             }
 
-            // Explode an add
-            if (m_uiExplodeAddTimer < uiDiff)
+            if (m_creature->GetHealthPercent() < 50.0f)
             {
-                if (urand(0, 1)) // 50% chance to explode, is it too much?
+                if (m_uiExplodeTimer < uiDiff)
                 {
-                    ObjectGuid guid = m_pInstance->GetGuid(NPC_FIRESWORN);
-                    if (Creature* firesworn = m_pInstance->instance->GetCreature(guid))
-                        SendAIEvent(AI_EVENT_CUSTOM_A, firesworn, firesworn, SPELL_MASSIVE_ERUPTION);   // this is an instant explosion with no SPELL_ERUPTION_TRIGGER
+                    DoMassiveEruption();
+                    m_uiExplodeTimer = urand(10000, 20000);
                 }
-                m_uiExplodeAddTimer = 15 * IN_MILLISECONDS;
+                else
+                {
+                    m_uiExplodeTimer -= uiDiff;
+                }
             }
-            else m_uiExplodeAddTimer -= uiDiff;
 
             DoMeleeAttackIfReady();
         }
@@ -186,96 +215,106 @@ struct mob_firesworn : public CreatureScript
         {
             m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
             Reset();
-
-            DoCastSpellIfCan(m_creature, SPELL_THRASH, CAST_TRIGGERED | CAST_AURA_NOT_PRESENT);
-            DoCastSpellIfCan(m_creature, SPELL_IMMOLATE, CAST_TRIGGERED | CAST_AURA_NOT_PRESENT);
         }
 
         ScriptedInstance* m_pInstance;
 
         uint32 m_uiImmolateTimer;
-        uint32 m_uiSeparationCheckTimer;
-        bool m_bExploding;
+        uint32 m_uiAnxietyTimer;
+        uint32 m_uiThrashTimer;
+        bool m_bCommanded;
 
-        void Reset() override
+        void Reset()
         {
-            m_uiImmolateTimer = urand(4 * IN_MILLISECONDS, 8 * IN_MILLISECONDS);    // These times are probably wrong
-            m_uiSeparationCheckTimer = 5 * IN_MILLISECONDS;
-            m_bExploding = false;
+            m_uiImmolateTimer  = urand(4000, 7000);
+            m_uiThrashTimer    = urand(10000, 15000);
+            m_uiAnxietyTimer   = 10000;
+            m_bCommanded       = false;
         }
 
-        void DamageTaken(Unit* /*pDealer*/, uint32& uiDamage) override
+        void Aggro(Unit* /*pWho*/) override
         {
-            if (!m_bExploding && m_creature->HealthBelowPctDamaged(10, uiDamage))
+            if (m_pInstance)
             {
-                ReceiveAIEvent(AI_EVENT_CUSTOM_A, m_creature, m_creature, SPELL_ERUPTION);
-                uiDamage = 0;
+                m_pInstance->SetData(TYPE_GARR, IN_PROGRESS);
             }
+            m_creature->SetInCombatWithZone();
         }
 
-        void ReceiveAIEvent(AIEventType type, Creature* /*pSender*/, Unit* pInvoker, uint32 uiData) override
+        void JustDied(Unit*)
         {
-            if (type == AI_EVENT_CUSTOM_A && pInvoker == m_creature)
+            // Buff Garr on death
+            if (Creature* pGarr = GetClosestCreatureWithEntry(m_creature, NPC_GARR, 100.0f, true))
             {
-                m_creature->CastSpell(m_creature, uiData, true);
-                m_creature->ForcedDespawn(100);
-                m_bExploding = true;
-            }
-        }
-    
-#if defined (WOTLK) || defined (CATA)
-    void JustDied(Unit* /*pKiller*/) override
-    {
-        if (m_pInstance)
-        {
-            if (Creature* pGarr = m_pInstance->GetSingleCreatureFromStorage(NPC_GARR))
-                pGarr->CastSpell(pGarr, SPELL_GARR_ENRAGE, true, NULL, NULL, m_creature->GetObjectGuid());
-        }
-    }
-#endif
-
-        void JustReachedHome() override
-        {
-            DoCastSpellIfCan(m_creature, SPELL_THRASH, CAST_TRIGGERED | CAST_AURA_NOT_PRESENT);
-            DoCastSpellIfCan(m_creature, SPELL_IMMOLATE, CAST_TRIGGERED | CAST_AURA_NOT_PRESENT);
-        }
-
-        void UpdateAI(const uint32 uiDiff) override
-        {
-            if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || m_bExploding)
-            {
-                return;
+                pGarr->CastSpell(pGarr, SPELL_ENRAGE, true);
             }
 
-            if (m_uiSeparationCheckTimer < uiDiff)
+            if (m_bCommanded)
             {
-#if defined (WOTLK) || defined (CATA)
-            if (!m_pInstance)
-                return;
-#endif            
-                // Distance guesswork, but should be ok
-                Creature* pGarr = m_pInstance->GetSingleCreatureFromStorage(NPC_GARR);
-                if (pGarr && pGarr->IsAlive() && !m_creature->IsWithinDist2d(pGarr->GetPositionX(), pGarr->GetPositionY(), 50.0f))
-                {
-                    DoCastSpellIfCan(m_creature, SPELL_SEPARATION_ANXIETY, CAST_TRIGGERED);
-                }
-
-                m_uiSeparationCheckTimer = 5000;
+                m_creature->CastSpell(m_creature, SPELL_MASSIVE_ERUPTION, true);
             }
             else
             {
-                m_uiSeparationCheckTimer -= uiDiff;
+                m_creature->CastSpell(m_creature, SPELL_ADD_ERUPTION, true);
+            }
+        }
+
+        void UpdateAI(const uint32 uiDiff)
+        {
+            if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            {
+                return;
             }
 
-#if defined (WOTLK) || defined (CATA)
-            // Cast Erruption and let them die
-            if (m_creature->GetHealthPercent() <= 10.0f)
+            // Immolate
+            // This should be a proc aura, need to define a reasonable % to proc in DB before implementing it that way
+            if (m_uiImmolateTimer < uiDiff)
             {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_ERUPTION);
-                m_creature->SetDeathState(JUST_DIED);
-                m_creature->RemoveCorpse();
+                if (m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+                {
+                    DoCastSpellIfCan(m_creature->getVictim(), SPELL_IMMOLATE);
+                    m_uiImmolateTimer = urand(5000, 12000);
+                    if (m_uiThrashTimer < 2000) m_uiThrashTimer += 2000 - m_uiThrashTimer;
+                }
             }
-#endif    
+            else
+            {
+                m_uiImmolateTimer -= uiDiff;
+            }
+
+            // Thrash
+            // This should be a proc aura, need to define a reasonable % to proc in DB before implementing it that way
+            if (m_uiThrashTimer < uiDiff)
+            {
+                if (DoCastSpellIfCan(m_creature, SPELL_THRASH) == CAST_OK)
+                {
+                    m_uiThrashTimer = urand(5000, 12000);
+                    if (m_uiImmolateTimer < 2000) m_uiImmolateTimer += 2000 - m_uiImmolateTimer;
+                }
+            }
+            else
+            {
+                m_uiThrashTimer -= uiDiff;
+            }
+
+            if (!m_creature->HasAura(SPELL_SEPARATION_ANXIETY))
+            {
+                if (Creature* pGarr = GetClosestCreatureWithEntry(m_creature, NPC_GARR, 100.0f, true))
+                {
+                    if (m_creature->GetDistance2d(pGarr) > 45.0f)
+                    {
+                        if (m_uiAnxietyTimer < uiDiff)
+                        {
+                            DoCastSpellIfCan(m_creature, SPELL_SEPARATION_ANXIETY);
+                            m_uiAnxietyTimer = 5000;
+                        }
+                        else
+                        {
+                            m_uiAnxietyTimer -= uiDiff;
+                        }
+                    }
+                }
+            }
 
             DoMeleeAttackIfReady();
         }
@@ -294,15 +333,4 @@ void AddSC_boss_garr()
     s->RegisterSelf();
     s = new mob_firesworn();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_garr";
-    //pNewScript->GetAI = &GetAI_boss_garr;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_firesworn";
-    //pNewScript->GetAI = &GetAI_mob_firesworn;
-    //pNewScript->RegisterSelf();
 }
-

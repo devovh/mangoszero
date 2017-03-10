@@ -129,18 +129,9 @@ struct mob_yenniku : public CreatureScript
     }
 };
 
-/*######
-##
-######*/
-
 void AddSC_stranglethorn_vale()
 {
     Script* s;
     s = new mob_yenniku();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_yenniku";
-    //pNewScript->GetAI = &GetAI_mob_yenniku;
-    //pNewScript->RegisterSelf();
 }

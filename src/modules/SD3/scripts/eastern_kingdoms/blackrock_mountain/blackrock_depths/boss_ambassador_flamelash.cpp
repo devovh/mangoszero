@@ -146,10 +146,4 @@ void AddSC_boss_ambassador_flamelash()
     s->RegisterSelf();
     s = new spell_boss_ambassador_flamelash();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_ambassador_flamelash";
-    //pNewScript->GetAI = &GetAI_boss_ambassador_flamelash;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_spell_boss_ambassador_flamelash;
-    //pNewScript->RegisterSelf();
 }

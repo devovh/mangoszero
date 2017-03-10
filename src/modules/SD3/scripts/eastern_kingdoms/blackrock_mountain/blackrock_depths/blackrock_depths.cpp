@@ -1322,9 +1322,6 @@ struct npc_marshal_windsor : public CreatureScript
                 }
                 break;
             case 15:
-#if defined (WOTLK) || defined (CATA)
-                m_creature->HandleEmoteCommand(EMOTE_ONESHOT_USESTANDING);
-#endif
                 break;
             case 16:
                 if (m_pInstance)
@@ -1336,9 +1333,6 @@ struct npc_marshal_windsor : public CreatureScript
                 DoScriptText(SAY_WINDSOR_EQUIPMENT_2, m_creature);
                 break;
             case 19:
-#if defined (WOTLK) || defined (CATA)
-                m_creature->HandleEmoteCommand(EMOTE_ONESHOT_USESTANDING);
-#endif
                 break;
             case 20:
                 if (m_pInstance)
@@ -2228,59 +2222,4 @@ void AddSC_blackrock_depths()
     s->RegisterSelf();
     s = new spell_banner_of_provocation();
     s->RegisterSelf();
-    
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_shadowforge_brazier";
-    //pNewScript->pGOUse = &GOUse_go_shadowforge_brazier;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_relic_coffer_door";
-    //pNewScript->pGOUse = &GOUse_go_relic_coffer_door;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "at_ring_of_law";
-    //pNewScript->pAreaTrigger = &AreaTrigger_at_ring_of_law;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_grimstone";
-    //pNewScript->GetAI = &GetAI_npc_grimstone;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_theldren_trigger";
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_spell_banner_of_provocation;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_rocknot";
-    //pNewScript->GetAI = &GetAI_npc_rocknot;
-    //pNewScript->pQuestRewardedNPC = &QuestRewarded_npc_rocknot;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_marshal_windsor";
-    //pNewScript->GetAI = &GetAI_npc_marshal_windsor;
-    //pNewScript->pQuestAcceptNPC = &QuestAccept_npc_marshal_windsor;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_tobias_seecher";
-    //pNewScript->pGossipHello =  &GossipHello_npc_tobias_seecher;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_tobias_seecher;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_dughal_stormwing";
-    //pNewScript->pGossipHello =  &GossipHello_npc_dughal_stormwing;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_dughal_stormwing;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_doomrel";
-    //pNewScript->pGossipHello = &GossipHello_boss_doomrel;
-    //pNewScript->pGossipSelect = &GossipSelect_boss_doomrel;
-    //pNewScript->RegisterSelf();
 }

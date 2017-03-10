@@ -297,14 +297,4 @@ void AddSC_boss_sulfuron()
     s->RegisterSelf();
     s = new mob_flamewaker_priest();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_sulfuron";
-    //pNewScript->GetAI = &GetAI_boss_sulfuron;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_flamewaker_priest";
-    //pNewScript->GetAI = &GetAI_mob_flamewaker_priest;
-    //pNewScript->RegisterSelf();
 }

@@ -27,7 +27,7 @@
 /**
  * ScriptData
  * SDName:      Boss_Ragnaros
- * SD%Complete: 70
+ * SD%Complete: 0
  * SDComment:   Melee/Range Combat behavior is not correct(any enemy in melee range, not only getVictim), Some abilities are missing
  * SDCategory:  Molten Core
  * EndScriptData
@@ -401,9 +401,4 @@ void AddSC_boss_ragnaros()
     Script* s;
     s = new boss_ragnaros();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_ragnaros";
-    //pNewScript->GetAI = &GetAI_boss_ragnaros;
-    //pNewScript->RegisterSelf();
 }

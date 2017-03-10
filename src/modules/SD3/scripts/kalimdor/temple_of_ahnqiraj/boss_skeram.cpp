@@ -362,10 +362,4 @@ void AddSC_boss_skeram()
     s->RegisterSelf();
     s = new spell_npc_prophet_skeram();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_skeram";
-    //pNewScript->GetAI = &GetAI_boss_skeram;
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_prophet_skeram;
-    //pNewScript->RegisterSelf();
 }

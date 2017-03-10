@@ -12,14 +12,14 @@ local SpectralProjection = {};
 local NPC_SPECTRAL_PROJECTION     = 11263;
 local SPELL_IMAGE_PROJECTION_HEAL = 17652;
 
-function SpectralProjection.OnLeaveCombat(event, creature)
-	creature:Kill(creature); -- Don't hang around, happens if Spectral Tutor resets during the Spectral Projection timer.
+function SpectralProjection.OnLeaveCombat(event, pCreature)
+	pCreature:Kill(pCreature); -- Don't hang around, happens if Spectral Tutor resets during the Spectral Projection timer.
 end
 
-function SpectralProjection.OnHitBySpell(event, creature, caster, spellid)
+function SpectralProjection.OnHitBySpell(event, pCreature, pCaster, spellid)
 	-- Spectral Tutor is ready to enter in combat again.
 	if (spellid == SPELL_IMAGE_PROJECTION_HEAL) then
-		creature:Kill(creature); -- Despawns on death.
+		pCreature:Kill(pCreature); -- Despawns on death.
 	end
 end
 

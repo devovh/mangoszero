@@ -218,9 +218,4 @@ void AddSC_boss_loatheb()
     Script* s;
     s = new boss_loatheb();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_loatheb";
-    //pNewScript->GetAI = &GetAI_boss_loatheb;
-    //pNewScript->RegisterSelf();
 }

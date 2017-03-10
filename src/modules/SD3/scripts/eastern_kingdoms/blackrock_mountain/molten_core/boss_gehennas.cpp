@@ -5,6 +5,7 @@
  *
  * Copyright (C) 2006-2013  ScriptDev2 <http://www.scriptdev2.com/>
  * Copyright (C) 2014-2017  MaNGOS  <https://getmangos.eu>
+ * Copyright (C) 2017       NostraliaWoW  <https://nostralia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@
 /**
  * ScriptData
  * SDName:      Boss_Gehennas
- * SD%Complete: 90
+ * SD%Complete: 100
  * SDComment:   None
  * SDCategory:  Molten Core
  * EndScriptData
@@ -38,7 +39,7 @@
 
 enum
 {
-    SPELL_SHADOW_BOLT           = 19728,                    // 19729 exists too, but can be reflected
+    SPELL_SHADOW_BOLT           = 19728,
     SPELL_RAIN_OF_FIRE          = 19717,
     SPELL_GEHENNAS_CURSE        = 19716
 };
@@ -54,17 +55,20 @@ struct boss_gehennas : public CreatureScript
             m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         }
 
-        ScriptedInstance* m_pInstance;
-
         uint32 m_uiShadowBoltTimer;
         uint32 m_uiRainOfFireTimer;
         uint32 m_uiGehennasCurseTimer;
 
+        ScriptedInstance* m_pInstance;
+
         void Reset() override
         {
-            m_uiShadowBoltTimer = 6000;
-            m_uiRainOfFireTimer = 10000;
-            m_uiGehennasCurseTimer = 12000;
+            m_uiShadowBoltTimer = 5000;
+            m_uiRainOfFireTimer = 7000;
+            m_uiGehennasCurseTimer = 8000;
+
+            if (m_pInstance && m_creature->IsAlive())
+                m_pInstance->SetData(TYPE_GEHENNAS, NOT_STARTED);
         }
 
         void Aggro(Unit* /*pwho*/) override
@@ -73,6 +77,7 @@ struct boss_gehennas : public CreatureScript
             {
                 m_pInstance->SetData(TYPE_GEHENNAS, IN_PROGRESS);
             }
+            m_creature->SetInCombatWithZone();
         }
 
         void JustDied(Unit* /*pKiller*/) override
@@ -105,7 +110,7 @@ struct boss_gehennas : public CreatureScript
                 {
                     if (DoCastSpellIfCan(pTarget, SPELL_SHADOW_BOLT) == CAST_OK)
                     {
-                        m_uiShadowBoltTimer = 7000;
+                        m_uiShadowBoltTimer = 2000 + rand() % 3000;
                     }
                 }
                 else                                            // In case someone attempts soloing, we don't need to scan for targets every tick
@@ -125,7 +130,7 @@ struct boss_gehennas : public CreatureScript
                 {
                     if (DoCastSpellIfCan(pTarget, SPELL_RAIN_OF_FIRE) == CAST_OK)
                     {
-                        m_uiRainOfFireTimer = urand(4000, 12000);
+                        m_uiRainOfFireTimer = urand(8000, 10000);
                     }
                 }
             }
@@ -139,7 +144,7 @@ struct boss_gehennas : public CreatureScript
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_GEHENNAS_CURSE) == CAST_OK)
                 {
-                    m_uiGehennasCurseTimer = 30000;
+                    m_uiGehennasCurseTimer = urand(22000, 30000);
                 }
             }
             else
@@ -162,9 +167,4 @@ void AddSC_boss_gehennas()
     Script* s;
     s = new boss_gehennas();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_gehennas";
-    //pNewScript->GetAI = &GetAI_boss_gehennas;
-    //pNewScript->RegisterSelf();
 }

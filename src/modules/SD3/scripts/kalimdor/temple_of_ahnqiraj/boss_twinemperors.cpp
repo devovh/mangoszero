@@ -525,14 +525,4 @@ void AddSC_boss_twinemperors()
     s->RegisterSelf();
     s = new boss_veklor();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_veknilash";
-    //pNewScript->GetAI = &GetAI_boss_veknilash;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_veklor";
-    //pNewScript->GetAI = &GetAI_boss_veklor;
-    //pNewScript->RegisterSelf();
 }

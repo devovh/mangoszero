@@ -118,12 +118,6 @@ struct npc_shadowfang_prisoner : public CreatureScript
                     DoScriptText(EMOTE_UNLOCK_DOOR_AD, m_creature);
                 }
                 break;
-#if defined (WOTLK) || defined (CATA)
-            case 12:
-                if (m_uiNpcEntry != NPC_ASH)
-                    m_creature->HandleEmote(EMOTE_ONESHOT_USESTANDING);
-                break;
-#endif
             case 13:
                 if (m_uiNpcEntry == NPC_ASH)
                 {
@@ -1080,31 +1074,4 @@ void AddSC_shadowfang_keep()
     s->RegisterSelf();
     s = new npc_deathstalker_vincent();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_shadowfang_prisoner";
-    //pNewScript->pGossipHello =  &GossipHello_npc_shadowfang_prisoner;
-    //pNewScript->pGossipSelect = &GossipSelect_npc_shadowfang_prisoner;
-    //pNewScript->GetAI = &GetAI_npc_shadowfang_prisoner;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_arugal_voidwalker";
-    //pNewScript->GetAI = &GetAI_mob_arugal_voidwalker;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_arugal";
-    //pNewScript->GetAI = &GetAI_npc_arugal;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_arugal";
-    //pNewScript->GetAI = &GetAI_boss_arugal;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_deathstalker_vincent";
-    //pNewScript->GetAI = &GetAI_npc_deathstalker_vincent;
-    //pNewScript->RegisterSelf();
 }

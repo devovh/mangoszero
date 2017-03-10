@@ -334,14 +334,4 @@ void AddSC_instance_zulgurub()
     s->RegisterSelf();
     s = new at_zulgurub();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_zulgurub";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_zulgurub;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "at_zulgurub";
-    //pNewScript->pAreaTrigger = &AreaTrigger_at_zulgurub;
-    //pNewScript->RegisterSelf();
 }

@@ -51,13 +51,8 @@
 enum
 {
     SPELL_SPIRIT_HEAL_CHANNEL       = 22011,                // Spirit Heal Channel
-
     SPELL_SPIRIT_HEAL               = 22012,                // Spirit Heal
-
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
     SPELL_SPIRIT_HEAL_MANA          = 44535,                // in battlegrounds player get this no-mana-cost-buff
-#endif
-
     SPELL_WAITING_TO_RESURRECT      = 2584                  // players who cancel this aura don't want a resurrection
 };
 
@@ -84,6 +79,8 @@ struct npc_spirit_guide : public CreatureScript
             // auto cast the whole time this spell
             if (!m_creature->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
             {
+                m_creature->InterruptNonMeleeSpells(true);
+                m_creature->CastSpell(m_creature, SPELL_SPIRIT_HEAL, true);
                 m_creature->CastSpell(m_creature, SPELL_SPIRIT_HEAL_CHANNEL, false);
             }
         }
@@ -103,7 +100,7 @@ struct npc_spirit_guide : public CreatureScript
             for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
             {
                 Player* pPlayer = itr->getSource();
-                if (!pPlayer || !pPlayer->IsWithinDistInMap(m_creature, 20.0f) || !pPlayer->HasAura(SPELL_WAITING_TO_RESURRECT))
+                if (!pPlayer || !pPlayer->IsWithinDistInMap(m_creature, 20.0f) || !pPlayer->HasAura(SPELL_WAITING_TO_RESURRECT) || pPlayer->IsAlive())
                 {
                     continue;
                 }
@@ -112,15 +109,6 @@ struct npc_spirit_guide : public CreatureScript
                 pPlayer->RepopAtGraveyard();
             }
         }
-
-#if defined (TBC) || defined (WOTLK) || defined (CATA)    
-        void SpellHitTarget(Unit* pUnit, const SpellEntry* pSpellEntry) override
-        {
-            if (pSpellEntry->Id == SPELL_SPIRIT_HEAL && pUnit->GetTypeId() == TYPEID_PLAYER
-                && pUnit->HasAura(SPELL_WAITING_TO_RESURRECT))
-            { pUnit->CastSpell(pUnit, SPELL_SPIRIT_HEAL_MANA, true); }
-        }
-#endif
     };
 
     CreatureAI* GetAI(Creature* pCreature) override
@@ -134,10 +122,4 @@ void AddSC_battleground()
     Script *s;
     s = new npc_spirit_guide();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_spirit_guide";
-    //pNewScript->GetAI = &GetAI_npc_spirit_guide;
-    //pNewScript->pGossipHello = &GossipHello_npc_spirit_guide;
-    //pNewScript->RegisterSelf();
 }

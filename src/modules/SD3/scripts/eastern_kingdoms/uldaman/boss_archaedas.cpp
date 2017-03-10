@@ -303,17 +303,4 @@ void AddSC_boss_archaedas()
     s->RegisterSelf();
     s = new spell_aura_awaken_dwarf();
     s->RegisterSelf();
-
-    //Script* pNewScript;
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_archaedas";
-    //pNewScript->GetAI = &GetAI_boss_archaedas;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_archaeras_add";
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_npc_vault_warder;
-    //pNewScript->pEffectAuraDummy = &EffectAuraDummy_spell_aura_dummy_awaken_dwarf;
-    //pNewScript->RegisterSelf();
 }

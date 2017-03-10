@@ -393,14 +393,4 @@ void AddSC_boss_sapphiron()
     s->RegisterSelf();
     s = new go_sapphiron_birth();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_sapphiron";
-    //pNewScript->GetAI = &GetAI_boss_sapphiron;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "go_sapphiron_birth";
-    //pNewScript->pGOUse = &GOUse_go_sapphiron_birth;
-    //pNewScript->RegisterSelf();
 }

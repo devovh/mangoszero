@@ -461,14 +461,4 @@ void AddSC_boss_gothik()
     s->RegisterSelf();
     s = new spell_anchor();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_gothik";
-    //pNewScript->GetAI = &GetAI_boss_gothik;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "spell_anchor";
-    //pNewScript->pEffectDummyNPC = &EffectDummyCreature_spell_anchor;
-    //pNewScript->RegisterSelf();
 }

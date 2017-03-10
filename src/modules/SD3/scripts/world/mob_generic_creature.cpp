@@ -71,7 +71,10 @@ struct generic_creature : public CreatureScript
             {
                 GlobalCooldown -= diff;
             }
-            else { GlobalCooldown = 0; }
+            else
+            {
+                GlobalCooldown = 0;
+            }
 
             // Buff timer (only buff when we are alive and not in combat
             if (!m_creature->IsInCombat() && m_creature->IsAlive())
@@ -103,17 +106,11 @@ struct generic_creature : public CreatureScript
                 return;
             }
 
-            // Return if we already cast a spell
-            if (m_creature->IsNonMeleeSpellCasted(false))
-            {
-                return;
-            }
-
             // If we are within range melee the target
             if (m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
             {
                 // Make sure our attack is ready
-                if (m_creature->isAttackReady())
+                if (m_creature->isAttackReady() && !m_creature->IsNonMeleeSpellCasted(false))
                 {
                     bool Healing = false;
                     SpellEntry const* info = NULL;
@@ -132,53 +129,78 @@ struct generic_creature : public CreatureScript
                     if (info && (rand() % (m_creature->GetCreatureInfo()->Rank > 1 ? 2 : 5) == 0) && !GlobalCooldown)
                     {
                         // Cast the spell
-                        if (Healing) { DoCastSpell(m_creature, info); }
-                        else { DoCastSpell(m_creature->getVictim(), info); }
+                        if (Healing)
+                        {
+                            DoCastSpell(m_creature, info);
+                        }
+                        else
+                        {
+                            DoCastSpell(m_creature->getVictim(), info);
+                        }
 
                         // Set our global cooldown
                         GlobalCooldown = GENERIC_CREATURE_COOLDOWN;
                     }
-                    else { m_creature->AttackerStateUpdate(m_creature->getVictim()); }
+                    else
+                    {
+                        m_creature->AttackerStateUpdate(m_creature->getVictim());
+                    }
 
                     m_creature->resetAttackTimer();
                 }
             }
             else
             {
-                bool Healing = false;
-                SpellEntry const* info = NULL;
-
-                // Select a healing spell if less than 30% hp ONLY 33% of the time
-                if (m_creature->GetHealthPercent() < 30.0f && !urand(0, 2))
+                //Only run this code if we aren't already casting
+                if (!m_creature->IsNonMeleeSpellCasted(false))
                 {
-                    info = SelectSpell(m_creature, -1, -1, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
-                }
+                    bool Healing = false;
+                    SpellEntry const* info = NULL;
 
-                // No healing spell available, See if we can cast a ranged spell (Range must be greater than ATTACK_DISTANCE)
-                if (info) { Healing = true; }
-                else { info = SelectSpell(m_creature->getVictim(), -1, -1, SELECT_TARGET_ANY_ENEMY, 0, 0, ATTACK_DISTANCE, 0, SELECT_EFFECT_DONTCARE); }
-
-                // Found a spell, check if we arn't on cooldown
-                if (info && !GlobalCooldown)
-                {
-                    // If we are currently moving stop us and set the movement generator
-                    if (!IsSelfRooted)
+                    // Select a healing spell if less than 30% hp ONLY 33% of the time
+                    if (m_creature->GetHealthPercent() < 30.0f && !urand(0, 2))
                     {
-                        IsSelfRooted = true;
+                        info = SelectSpell(m_creature, -1, -1, SELECT_TARGET_ANY_FRIEND, 0, 0, 0, 0, SELECT_EFFECT_HEALING);
                     }
 
-                    // Cast spell
-                    if (Healing) { DoCastSpell(m_creature, info); }
-                    else { DoCastSpell(m_creature->getVictim(), info); }
+                    // No healing spell available, See if we can cast a ranged spell (Range must be greater than ATTACK_DISTANCE)
+                    if (info)
+                    {
+                        Healing = true;
+                    }
+                    else
+                    {
+                        info = SelectSpell(m_creature->getVictim(), -1, -1, SELECT_TARGET_ANY_ENEMY, 0, 0, ATTACK_DISTANCE, 0, SELECT_EFFECT_DONTCARE);
+                    }
 
-                    // Set our global cooldown
-                    GlobalCooldown = GENERIC_CREATURE_COOLDOWN;
-                }// If no spells available and we arn't moving run to target
-                else if (IsSelfRooted)
-                {
-                    // Cancel our current spell and then allow movement agian
-                    m_creature->InterruptNonMeleeSpells(false);
-                    IsSelfRooted = false;
+                    // Found a spell, check if we arn't on cooldown
+                    if (info && !GlobalCooldown)
+                    {
+                        // If we are currently moving stop us and set the movement generator
+                        if (!IsSelfRooted)
+                        {
+                            IsSelfRooted = true;
+                        }
+
+                        // Cast spell
+                        if (Healing)
+                        {
+                            DoCastSpell(m_creature, info);
+                        }
+                        else
+                        {
+                            DoCastSpell(m_creature->getVictim(), info);
+                        }
+
+                        // Set our global cooldown
+                        GlobalCooldown = GENERIC_CREATURE_COOLDOWN;
+                    }// If no spells available and we arn't moving run to target
+                    else if (IsSelfRooted)
+                    {
+                        // Cancel our current spell and then allow movement agian
+                        m_creature->InterruptNonMeleeSpells(false);
+                        IsSelfRooted = false;
+                    }
                 }
             }
         }
@@ -189,6 +211,7 @@ struct generic_creature : public CreatureScript
         return new generic_creatureAI(pCreature);
     }
 };
+
 void AddSC_generic_creature()
 {
     return; //TODO why was it removed for some ACID EAI?

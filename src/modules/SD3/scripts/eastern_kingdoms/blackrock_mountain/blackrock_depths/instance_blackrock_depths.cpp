@@ -826,9 +826,4 @@ void AddSC_instance_blackrock_depths()
     Script* s;
     s = new is_blackrock_depths();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "instance_blackrock_depths";
-    //pNewScript->GetInstanceData = &GetInstanceData_instance_blackrock_depths;
-    //pNewScript->RegisterSelf();
 }

@@ -231,9 +231,4 @@ void AddSC_boss_faerlina()
     Script* s;
     s = new boss_faerlina();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_faerlina";
-    //pNewScript->GetAI = &GetAI_boss_faerlina;
-    //pNewScript->RegisterSelf();
 }

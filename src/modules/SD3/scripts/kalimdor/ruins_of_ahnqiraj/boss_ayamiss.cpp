@@ -42,7 +42,7 @@ enum
 
     SPELL_STINGER_SPRAY     = 25749,
     SPELL_POISON_STINGER    = 25748,                // only used in phase1
-    // SPELL_SUMMON_SWARMER  = 25844,                // might be 25708    - spells were removed since 2.0.1
+//  SPELL_SUMMON_SWARMER    = 25844,                // might be 25708    - spells were removed since 2.0.1
     SPELL_PARALYZE          = 25725,
     SPELL_LASH              = 25852,
     SPELL_FRENZY            = 8269,
@@ -384,14 +384,4 @@ void AddSC_boss_ayamiss()
     s->RegisterSelf();
     s = new npc_hive_zara_larva();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_ayamiss";
-    //pNewScript->GetAI = &GetAI_boss_ayamiss;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "npc_hive_zara_larva";
-    //pNewScript->GetAI = &GetAI_npc_hive_zara_larva;
-    //pNewScript->RegisterSelf();
 }

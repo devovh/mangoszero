@@ -206,10 +206,4 @@ void AddSC_boss_coren_direbrew()
     Script* s;
     s = new boss_coren_direbrew();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_coren_direbrew";
-    //pNewScript->GetAI = &GetAI_boss_coren_direbrew;
-    //pNewScript->pQuestRewardedNPC = &QuestRewarded_npc_coren_direbrew;
-    //pNewScript->RegisterSelf();
 }

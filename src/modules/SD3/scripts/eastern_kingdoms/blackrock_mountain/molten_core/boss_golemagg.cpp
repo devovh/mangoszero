@@ -5,6 +5,7 @@
  *
  * Copyright (C) 2006-2013  ScriptDev2 <http://www.scriptdev2.com/>
  * Copyright (C) 2014-2017  MaNGOS  <https://getmangos.eu>
+ * Copyright (C) 2017       NostraliaWoW  <https://nostralia.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,8 @@ enum
 
     // Core Rager
     EMOTE_LOW_HP            = -1409002,
-    SPELL_MANGLE            = 19820
+    SPELL_MANGLE            = 19820,
+    SPELL_TRASH             = 3391
 };
 
 struct boss_golemagg : public CreatureScript
@@ -58,24 +60,36 @@ struct boss_golemagg : public CreatureScript
         boss_golemaggAI(Creature* pCreature) : ScriptedAI(pCreature)
         {
             m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-#if defined (WOTLK) || defined (CATA)
-        DoCastSpellIfCan(m_creature, SPELL_MAGMA_SPLASH, CAST_TRIGGERED | CAST_AURA_NOT_PRESENT);
-#endif
         }
 
         ScriptedInstance* m_pInstance;
 
         uint32 m_uiPyroblastTimer;
         uint32 m_uiEarthquakeTimer;
-        uint32 m_uiBuffTimer;
+        uint32 TickTimer;
         bool m_bEnraged;
 
         void Reset() override
         {
-            m_uiPyroblastTimer = 7 * IN_MILLISECONDS;
-            m_uiEarthquakeTimer = 3 * IN_MILLISECONDS;
-            m_uiBuffTimer = 1.5 * IN_MILLISECONDS;
-            m_bEnraged = false;
+            m_uiPyroblastTimer  = 7000;
+            m_uiEarthquakeTimer = 3000;
+            TickTimer           = 10000;
+            m_bEnraged          = false;
+
+            if (m_pInstance && m_creature->IsAlive())
+                m_pInstance->SetData(TYPE_GOLEMAGG, NOT_STARTED);
+
+            std::list<Creature*> ChiensListe;
+            GetCreatureListWithEntryInGrid(ChiensListe, m_creature, 11672, 150.0f);
+            if (ChiensListe.empty() == false)
+            {
+                for (std::list<Creature*>::iterator itr = ChiensListe.begin(); itr != ChiensListe.end(); ++itr)
+                {
+                    if ((*itr)->GetDeathState() == ALIVE)
+                        (*itr)->DealDamage((*itr), (*itr)->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                    (*itr)->Respawn();
+                }
+            }
 
             m_creature->CastSpell(m_creature, SPELL_MAGMA_SPLASH, true);
         }
@@ -102,9 +116,6 @@ struct boss_golemagg : public CreatureScript
             {
                 m_pInstance->SetData(TYPE_GOLEMAGG, FAIL);
             }
-#if defined (WOTLK) || defined (CATA)
-        DoCastSpellIfCan(m_creature, SPELL_MAGMA_SPLASH, CAST_TRIGGERED | CAST_AURA_NOT_PRESENT);
-#endif
         }
 
         void UpdateAI(const uint32 uiDiff) override
@@ -121,7 +132,7 @@ struct boss_golemagg : public CreatureScript
                 {
                     if (DoCastSpellIfCan(pTarget, SPELL_PYROBLAST) == CAST_OK)
                     {
-                        m_uiPyroblastTimer = 7 * IN_MILLISECONDS;
+                        m_uiPyroblastTimer = (3 + rand() % 4) * IN_MILLISECONDS;
                     }
                 }
             }
@@ -139,14 +150,24 @@ struct boss_golemagg : public CreatureScript
                 }
             }
 
+            if (TickTimer < uiDiff)
+            {
+                if (DoCastSpellIfCan(m_creature, SPELL_GOLEMAGG_TRUST) == CAST_OK)
+                    TickTimer = 2000;
+            }
+            else
+            {
+                TickTimer -= uiDiff;
+            }
+
             // Earthquake
             if (m_bEnraged)
             {
                 if (m_uiEarthquakeTimer < uiDiff)
                 {
-                    if (DoCastSpellIfCan(m_creature, SPELL_EARTHQUAKE) == CAST_OK)
+                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_EARTHQUAKE) == CAST_OK)
                     {
-                        m_uiEarthquakeTimer = 3 * IN_MILLISECONDS;
+                        m_uiEarthquakeTimer = 3000;
                     }
                 }
                 else
@@ -156,14 +177,14 @@ struct boss_golemagg : public CreatureScript
             }
 
             // Golemagg's Trust
-            if (m_uiBuffTimer < uiDiff)
+            if (TickTimer < uiDiff)
             {
                 DoCastSpellIfCan(m_creature, SPELL_GOLEMAGG_TRUST);
-                m_uiBuffTimer = 1.5 * IN_MILLISECONDS;
+                TickTimer = 2000;
             }
             else
             {
-                m_uiBuffTimer -= uiDiff;
+                TickTimer -= uiDiff;
             }
 
             DoMeleeAttackIfReady();
@@ -189,21 +210,29 @@ struct mob_core_rager : public CreatureScript
 
         ScriptedInstance* m_pInstance;
         uint32 m_uiMangleTimer;
+        uint32 TickTimer;
 
         void Reset() override
         {
-            m_uiMangleTimer = 7 * IN_MILLISECONDS;              // These times are probably wrong
+            TickTimer       = 1000;
+            m_uiMangleTimer = 7000;
         }
 
         void DamageTaken(Unit* /*pDoneBy*/, uint32& uiDamage) override
         {
-            if (m_creature->GetHealthPercent() < 50.0f)
+            if (m_pInstance)
             {
-                if (m_pInstance && m_pInstance->GetData(TYPE_GOLEMAGG) != DONE)
+                if (Creature* pGolemagg = m_pInstance->instance->GetCreature(m_pInstance->GetData64(DATA_GOLEMAGG)))
                 {
-                    DoScriptText(EMOTE_LOW_HP, m_creature);
-                    m_creature->SetHealth(m_creature->GetMaxHealth());
-                    uiDamage = 0;
+                    if (pGolemagg->IsAlive())
+                    {
+                        if (m_creature->GetHealthPercent() < 50.0f)
+                        {
+                            DoScriptText(EMOTE_LOW_HP, m_creature);
+                            m_creature->SetHealth(m_creature->GetMaxHealth());
+                            uiDamage = 0;
+                        }
+                    }
                 }
             }
         }
@@ -228,6 +257,19 @@ struct mob_core_rager : public CreatureScript
                 m_uiMangleTimer -= uiDiff;
             }
 
+            if (TickTimer < uiDiff)
+            {
+                TickTimer = 1000;
+                if (!m_creature->HasAura(SPELL_TRASH) && !rand() % 10)
+                {
+                    m_creature->CastSpell(m_creature, SPELL_TRASH, true);
+                }
+            }
+            else
+            {
+                TickTimer -= uiDiff;
+            }
+
             DoMeleeAttackIfReady();
         }
     };
@@ -245,14 +287,4 @@ void AddSC_boss_golemagg()
     s->RegisterSelf();
     s = new mob_core_rager();
     s->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "boss_golemagg";
-    //pNewScript->GetAI = &GetAI_boss_golemagg;
-    //pNewScript->RegisterSelf();
-
-    //pNewScript = new Script;
-    //pNewScript->Name = "mob_core_rager";
-    //pNewScript->GetAI = &GetAI_mob_core_rager;
-    //pNewScript->RegisterSelf();
 }
