@@ -98,7 +98,6 @@ ClientWardenModule* WardenMac::GetModuleForClient()
 void WardenMac::InitializeModule()
 {
     sLog.outWarden("Initialize module");
-    Warden::InitializeModule();
 }
 
 struct keyData {
@@ -175,6 +174,8 @@ void WardenMac::HandleHashResult(ByteBuffer &buff)
     _inputCrypto.Init(_inputKey);
     _outputCrypto.Init(_outputKey);
 
+    _initialized = true;
+
     _previousTimestamp = WorldTimer::getMSTime();
 }
 
@@ -199,12 +200,15 @@ void WardenMac::RequestData()
     pkt.append(buff);
     _session->SendPacket(&pkt);
 
-    Warden::RequestData();
+    _dataSent = true;
 }
 
 void WardenMac::HandleData(ByteBuffer &buff)
 {
     sLog.outWarden("Handle data");
+
+    _dataSent = false;
+    _clientResponseTimer = 0;
 
     //uint16 Length;
     //buff >> Length;
