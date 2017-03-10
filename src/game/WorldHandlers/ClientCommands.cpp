@@ -345,3 +345,16 @@ void WorldSession::GmSilenceHandler(WorldPacket &msg)
     else
         SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
 }
+
+void WorldSession::GmBroadcastHandler(WorldPacket &msg)
+{
+	char broadcast[255];
+
+	*broadcast = 0;
+	if (GetSecurity() > 1)
+	{
+		sWorld.SendWorldText(LANG_SYSTEMMESSAGE, broadcast);
+	}
+	else
+		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}
