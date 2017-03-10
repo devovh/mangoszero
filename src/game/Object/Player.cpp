@@ -907,14 +907,14 @@ uint32 Player::EnvironmentalDamage(EnvironmentalDamageType type, uint32 damage)
     
     if (type == DAMAGE_LAVA)
     {
-        if (this->IsImmunedToDamage(SPELL_SCHOOL_MASK_FIRE))
+        if (this->IsImmuneToDamage(SPELL_SCHOOL_MASK_FIRE))
             return 0;
             
         CalculateDamageAbsorbAndResist(this, SPELL_SCHOOL_MASK_FIRE, DIRECT_DAMAGE, damage, &absorb, &resist);
     }
     else if (type == DAMAGE_SLIME)
     {
-        if (this->IsImmunedToDamage(SPELL_SCHOOL_MASK_NATURE))
+        if (this->IsImmuneToDamage(SPELL_SCHOOL_MASK_NATURE))
             return 0;
             
         CalculateDamageAbsorbAndResist(this, SPELL_SCHOOL_MASK_NATURE, DIRECT_DAMAGE, damage, &absorb, &resist);
