@@ -3506,21 +3506,8 @@ bool ChatHandler::HandleDamageCommand(char* args)
 
 bool ChatHandler::HandleReviveCommand(char* args)
 {
-    Player* target;
-    ObjectGuid target_guid;
-    if (!ExtractPlayerTarget(&args, &target, &target_guid))
-        { return false; }
-
-    if (target)
-    {
-        target->ResurrectPlayer(0.5f);
-        target->SpawnCorpseBones();
-    }
-    else
-        // will resurrected at login without corpse
-        { sObjectAccessor.ConvertCorpseForPlayer(target_guid); }
-
-    return true;
+	m_session->SendNotification("revive is deprecated. Please use /console resurrect <player>");
+	return false;
 }
 
 bool ChatHandler::HandleAuraCommand(char* args)

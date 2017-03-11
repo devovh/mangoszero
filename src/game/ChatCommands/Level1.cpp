@@ -131,25 +131,24 @@ bool ChatHandler::HandleNpcWhisperCommand(char* args)
 // global announce
 bool ChatHandler::HandleAnnounceCommand(char* args)
 {
-    if (!*args)
-        { return false; }
-
-    sWorld.SendWorldText(LANG_SYSTEMMESSAGE, args);
-    return true;
+	m_session->SendNotification("announce is deprecated. Please use /console broadcast <message> instead");
+	return false;
 }
 
 // notification player at the screen
 bool ChatHandler::HandleNotifyCommand(char* args)
 {
-    if (!*args)
-        { return false; }
+	if (!*args)
+	{
+		return false;
+	}
 
-    std::string str = GetMangosString(LANG_GLOBAL_NOTIFY);
-    str += args;
+	std::string str = GetMangosString(LANG_GLOBAL_NOTIFY);
+	str += args;
 
-    WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
-    data << str;
-    sWorld.SendGlobalMessage(&data);
+	WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+	data << str;
+	sWorld.SendGlobalMessage(&data);
 
     return true;
 }
