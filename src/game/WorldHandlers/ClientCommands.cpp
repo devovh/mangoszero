@@ -209,11 +209,11 @@ void WorldSession::HandleTeleportToUnit(WorldPacket &msg)
 				SendPlayerNotFoundFailure();
 			else
 			{
-				worldId = plyr->GetMapId();
-				position.x = plyr->GetPositionX();
-				position.y = plyr->GetPositionY();
-				position.z = plyr->GetPositionZ();
-				facing = plyr->GetOrientation();
+				worldId = unit->GetMapId();
+				position.x = unit->GetPositionX();
+				position.y = unit->GetPositionY();
+				position.z = unit->GetPositionZ();
+				facing = unit->GetOrientation();
 				summoning = plyr->TeleportTo(worldId, position.x, position.y, position.z, facing, TELE_TO_GM_MODE, true);
 				msg.clear();
 				msg.SetOpcode(MSG_GM_SUMMON);
