@@ -733,6 +733,7 @@ class WorldSession
 		void GmResurrectHandler(WorldPacket &msg);
         void GmFreezeHandler(WorldPacket &msg);
         void GmSilenceHandler(WorldPacket &msg);
+		void GmBroadcastHandler(WorldPacket &msg);
 
 #ifdef ENABLE_PLAYERBOTS
         void HandleBotPackets();

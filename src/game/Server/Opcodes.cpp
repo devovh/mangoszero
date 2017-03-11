@@ -748,7 +748,7 @@ void Opcodes::BuildOpcodeList()
     /*[-ZERO] Need check */ /*0x2AF*/  StoreOpcode(SMSG_PET_BROKEN,                   "SMSG_PET_BROKEN",                  STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x2B0*/  StoreOpcode(MSG_MOVE_FEATHER_FALL,             "MSG_MOVE_FEATHER_FALL",            STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x2B1*/  StoreOpcode(MSG_MOVE_WATER_WALK,               "MSG_MOVE_WATER_WALK",              STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
-    /*0x2B2*/  StoreOpcode(CMSG_SERVER_BROADCAST,             "CMSG_SERVER_BROADCAST",            STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x2B2*/  StoreOpcode(CMSG_SERVER_BROADCAST,             "CMSG_SERVER_BROADCAST",            STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::GmBroadcastHandler);
     /*[-ZERO] Need check */ /*0x2B3*/  StoreOpcode(CMSG_SELF_RES,                     "CMSG_SELF_RES",                    STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleSelfResOpcode);
     /*[-ZERO] Need check */ /*0x2B4*/  StoreOpcode(SMSG_FEIGN_DEATH_RESISTED,         "SMSG_FEIGN_DEATH_RESISTED",        STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x2B5*/  StoreOpcode(CMSG_RUN_SCRIPT,                   "CMSG_RUN_SCRIPT",                  STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
