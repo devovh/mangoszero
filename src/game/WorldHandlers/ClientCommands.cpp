@@ -353,7 +353,9 @@ void WorldSession::GmBroadcastHandler(WorldPacket &msg)
 	*broadcast = 0;
 	if (GetSecurity() > 1)
 	{
-		sWorld.SendWorldText(LANG_SYSTEMMESSAGE, broadcast);
+		msg >> broadcast;
+		if (*broadcast)
+			sWorld.SendServerMessage(SERVER_MSG_CUSTOM, broadcast, 0);
 	}
 	else
 		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
