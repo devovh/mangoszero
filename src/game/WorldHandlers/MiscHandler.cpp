@@ -260,6 +260,10 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
 
         ++displaycount;
 
+		// Displaying the GM label in the Who list
+		if (pl->isGMChat())
+			pname = "<GM>" + pname;
+
         data << pname;                                      // player name
         data << gname;                                      // guild name
         data << uint32(lvl);                                // player level
