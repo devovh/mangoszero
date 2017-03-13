@@ -125,6 +125,7 @@ class ChatHandler
             ObjectGuid const& senderGuid = ObjectGuid(), char const* senderName = NULL,
             ObjectGuid const& targetGuid = ObjectGuid(), char const* targetName = NULL,
             char const* channelName = NULL, uint8 playerRank = 0);
+
     protected:
         explicit ChatHandler() : m_session(NULL) {}      // for CLI subclass
 

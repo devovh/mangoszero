@@ -16311,7 +16311,10 @@ void Player::UpdateSpeakTime()
 
 bool Player::CanSpeak() const
 {
-    return  GetSession()->m_muteTime <= time(NULL);
+	if (HasAura(1852))
+		return false;
+	else
+		return GetSession()->m_muteTime <= time(NULL);
 }
 
 /*********************************************************/

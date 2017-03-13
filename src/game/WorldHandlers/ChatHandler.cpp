@@ -146,11 +146,13 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
 
         if (type != CHAT_MSG_AFK && type != CHAT_MSG_DND)
         {
-            if (!_player->CanSpeak())
+            if (!_player->CanSpeak() && type != CHAT_MSG_WHISPER && type != CHAT_MSG_WHISPER_INFORM)
             {
-                std::string timeStr = secsToTimeString(m_muteTime - time(NULL));
-                SendNotification(GetMangosString(LANG_WAIT_BEFORE_SPEAKING), timeStr.c_str());
-                return;
+			CHAT_SUSPENDED:
+				WorldPacket data1;
+				ChatHandler::BuildChatPacket(data1, CHAT_MSG_SYSTEM, "Your chat and mail privileges have been temporarily suspended pending Game Master review.", LANG_UNIVERSAL, _player->GetChatTag(), _player->GetObjectGuid(), _player->GetName());
+				_player->SendDirectMessage(&data1);
+				return;
             }
 
             GetPlayer()->UpdateSpeakTime();
@@ -219,20 +221,24 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket& recv_data)
             if (!processChatmessageFurtherAfterSecurityChecks(msg, lang))
                 { return; }
 
-            if (!normalizePlayerName(to))
-            {
-                SendPlayerNotFoundNotice(to);
-                { break; }
-            }
+			normalizePlayerName(to);
+
 
             Player* player = sObjectMgr.GetPlayer(to.c_str());
             uint32 tSecurity = GetSecurity();
             uint32 pSecurity = player ? player->GetSession()->GetSecurity() : SEC_PLAYER;
+
+			if (player && !player->isGMChat() && !_player->CanSpeak())
+				goto CHAT_SUSPENDED;
+
             if (!player || (tSecurity == SEC_PLAYER && pSecurity > SEC_PLAYER && !player->isAcceptWhispers()))
             {
+				if (!_player->CanSpeak())
+					goto CHAT_SUSPENDED;
                 SendPlayerNotFoundNotice(to);
                 return;
             }
+
 
             if (!sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_CHAT) && tSecurity == SEC_PLAYER && pSecurity == SEC_PLAYER)
             {
@@ -734,8 +740,9 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket& recv_data)
 
     if (!GetPlayer()->CanSpeak())
     {
-        std::string timeStr = secsToTimeString(m_muteTime - time(NULL));
-        SendNotification(GetMangosString(LANG_WAIT_BEFORE_SPEAKING), timeStr.c_str());
+		WorldPacket data1;
+		ChatHandler::BuildChatPacket(data1, CHAT_MSG_SYSTEM, "Your chat and mail privileges have been temporarily suspended pending Game Master review.", LANG_UNIVERSAL, _player->GetChatTag(), _player->GetObjectGuid(), _player->GetName());
+		_player->SendDirectMessage(&data1);
         return;
     }
 
@@ -818,6 +825,6 @@ void WorldSession::SendWrongFactionNotice()
 
 void WorldSession::SendChatRestrictedNotice()
 {
-    WorldPacket data(SMSG_CHAT_RESTRICTED, 0);
-    SendPacket(&data);
+		WorldPacket data(SMSG_CHAT_RESTRICTED, 0);
+		SendPacket(&data);
 }

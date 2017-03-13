@@ -97,7 +97,6 @@ void WorldSession::HandleSendMail(WorldPacket& recv_data)
     recv_data >> unk4;                                      // const 0
 
     // packet read complete, now do check
-
     if (!CheckMailBox(mailboxGuid))
         { return; }
 
@@ -105,6 +104,11 @@ void WorldSession::HandleSendMail(WorldPacket& recv_data)
         { return; }
 
     Player* pl = _player;
+	if (!pl->CanSpeak())
+	{
+		pl->SendMailResult(0, MAIL_SEND, MAIL_ERR_MAIL_AND_CHAT_SUSPENDED);
+		return;
+	}
 
     ObjectGuid rc;
     if (normalizePlayerName(receiver))
