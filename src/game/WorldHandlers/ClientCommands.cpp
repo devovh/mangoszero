@@ -296,6 +296,7 @@ void WorldSession::GmFreezeHandler(WorldPacket &msg)
             msg.clear();
             msg.SetOpcode(SMSG_GM_FREEZE);
             msg << result;
+			msg.rpos(msg.size());	// Muting ByteBuffer::m_readPos related warning message
             SendPacket(&msg);
         }
         else
@@ -305,7 +306,6 @@ void WorldSession::GmFreezeHandler(WorldPacket &msg)
         SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
 }
 
-// @TODO: Only the visual is implemented for this.
 void WorldSession::GmSilenceHandler(WorldPacket &msg)
 {
     Player *plyr;
@@ -321,22 +321,28 @@ void WorldSession::GmSilenceHandler(WorldPacket &msg)
         NormalizePlayerName(name);
         if (plyr = sObjectAccessor.FindPlayerByName(name))
         {
-            if (plyr->HasAura(1852)) // GM Silence (visual).
+			if (plyr->isGameMaster() || !plyr->IsAlive())
+				goto SEND_RESULT;
+            if (plyr->GetSession()->m_muteTime > time(0) || plyr->HasAura(1852))
             {
                 result = 2;
                 plyr->RemoveAura(1852, EFFECT_INDEX_0, 0);
+				plyr->GetSession()->m_muteTime = 0;
+				LoginDatabase.PExecute("UPDATE account SET mutetime=%llu WHERE id=%d", 0, plyr->GetSession()->GetAccountId());
             }
             else
             {
-                if (plyr->IsAlive()) // Should affect while dead too? (Prevents chat with normal players).
+                if (plyr->IsAlive())
                 {
                     plyr->CastSpell(plyr, 1852, false, 0);
                     result = 1;
                 }
             }
+		SEND_RESULT:
             msg.clear();
             msg.SetOpcode(SMSG_GM_SILENCE);
             msg << result;
+			msg.rpos(msg.size());	// Muting ByteBuffer::m_readPos related warning message
             SendPacket(&msg);
         }
         else
