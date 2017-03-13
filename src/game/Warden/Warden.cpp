@@ -131,9 +131,12 @@ void Warden::Update()
                 // Kick player if client response delays more than set in config
                 if (_clientResponseTimer > maxClientResponseDelay * IN_MILLISECONDS)
                 {
-                    sLog.outWarden("%s (latency: %u, IP: %s) exceeded Warden module response delay for more than %s - disconnecting client",
-                        _session->GetPlayerName(), _session->GetLatency(), _session->GetRemoteAddress().c_str(), secsToTimeString(maxClientResponseDelay, true).c_str());
-                    _session->KickPlayer();
+					if (_session->GetSecurity() == 0)
+					{
+						sLog.outWarden("%s (latency: %u, IP: %s) exceeded Warden module response delay for more than %s - disconnecting client",
+							_session->GetPlayerName(), _session->GetLatency(), _session->GetRemoteAddress().c_str(), secsToTimeString(maxClientResponseDelay, true).c_str());
+						_session->KickPlayer();
+					}
                 }
                 else
                     _clientResponseTimer += diff;
@@ -218,8 +221,11 @@ std::string Warden::Penalty(WardenCheck* check /*= NULL*/)
         return "None";
         break;
     case WARDEN_ACTION_KICK:
-        _session->KickPlayer();
-        return "Kick";
+		if (_session->GetSecurity() == 0)
+		{
+			_session->KickPlayer();
+			return "Kick";
+		}
         break;
     case WARDEN_ACTION_BAN:
         {
