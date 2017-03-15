@@ -319,10 +319,12 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
         IsActivateToQuest = ((GameObject*)this)->ActivateToQuest(target) || target->isGameMaster();
 		if (HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND))
 		{
+			canUse = false;
+			/*** Hack to fix Doan's Strongbox in Scarlet Monastery ***/
 			if (((GameObject*)this)->GetGoType() == GAMEOBJECT_TYPE_CHEST && ((GameObject*)this)->GetEntry() == 103821)
 			{
-				if (target->HasItemCount(7146, 1, false))
-					canUse = false;
+				if (!target->HasItemCount(7146, 1, false))
+					canUse = true;
 			}
 
 			QuestRelationsMapBounds bounds = sObjectMgr.GetGOQuestInvolvedRelationsMapBounds(GetEntry());
@@ -331,8 +333,8 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
 				if (target->GetQuestStatus(itr->second) == QUEST_STATUS_COMPLETE || target->GetQuestStatus(itr->second) == QUEST_STATUS_NONE)
 				{
 					if (
-						target->GetQuestRewardStatus(itr->second)
-						|| (!target->GetQuestRewardStatus(itr->second) && target->GetQuestStatus(itr->second) == QUEST_STATUS_NONE)
+						!target->GetQuestRewardStatus(itr->second)
+						|| (!target->GetQuestRewardStatus(itr->second) && target->GetQuestStatus(itr->second) != QUEST_STATUS_NONE)
 						)
 					{
 						canUse = false;
@@ -487,6 +489,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
                         case GAMEOBJECT_TYPE_GENERIC:
                         case GAMEOBJECT_TYPE_SPELL_FOCUS:
                         case GAMEOBJECT_TYPE_GOOBER:
+						case GAMEOBJECT_TYPE_BUTTON:
                             *data << uint16(GO_DYNFLAG_LO_ACTIVATE);
                             *data << uint16(1);
                             break;
