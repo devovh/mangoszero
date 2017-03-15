@@ -734,6 +734,7 @@ class WorldSession
         void GmFreezeHandler(WorldPacket &msg);
         void GmSilenceHandler(WorldPacket &msg);
 		void GmBroadcastHandler(WorldPacket &msg);
+		void HandleLearnSpell(WorldPacket &msg);
 
 #ifdef ENABLE_PLAYERBOTS
         void HandleBotPackets();

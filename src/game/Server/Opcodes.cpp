@@ -76,7 +76,7 @@ void Opcodes::BuildOpcodeList()
     /*0x00D*/  StoreOpcode(CMSG_EMBLAZON_TABARD_OBSOLETE,     "CMSG_EMBLAZON_TABARD_OBSOLETE",    STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x00E*/  StoreOpcode(CMSG_UNEMBLAZON_TABARD_OBSOLETE,   "CMSG_UNEMBLAZON_TABARD_OBSOLETE",  STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x00F*/  StoreOpcode(CMSG_RECHARGE,                     "CMSG_RECHARGE",                    STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
-    /*0x010*/  StoreOpcode(CMSG_LEARN_SPELL,                  "CMSG_LEARN_SPELL",                 STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x010*/  StoreOpcode(CMSG_LEARN_SPELL,                  "CMSG_LEARN_SPELL",                 STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleLearnSpell);
     /*0x011*/  StoreOpcode(CMSG_CREATEMONSTER,                "CMSG_CREATEMONSTER",               STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x012*/  StoreOpcode(CMSG_DESTROYMONSTER,               "CMSG_DESTROYMONSTER",              STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x013*/  StoreOpcode(CMSG_CREATEITEM,                   "CMSG_CREATEITEM",                  STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);

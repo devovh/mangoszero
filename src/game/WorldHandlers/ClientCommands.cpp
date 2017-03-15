@@ -366,3 +366,28 @@ void WorldSession::GmBroadcastHandler(WorldPacket &msg)
 	else
 		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
 }
+
+void WorldSession::HandleLearnSpell(WorldPacket &msg)
+{
+	int spell;
+
+	spell = 0;
+	if (GetSecurity() > 0)
+	{
+		msg >> spell;
+		if (spell)
+		{
+			// Make sure we have no duplicate entries in the Spell Book
+			if (GetPlayer()->addSpell(spell, true, true, false, false) && GetPlayer()->IsInWorld())
+			{
+				msg.clear();
+				msg.SetOpcode(SMSG_LEARNED_SPELL);
+				msg << spell;
+				msg.rpos(msg.size());	// Muting ByteBuffer::m_readPos related warning message
+				SendPacket(&msg);
+			}
+		}
+	}
+	else
+		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}
