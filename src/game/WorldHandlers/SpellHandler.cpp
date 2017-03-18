@@ -300,14 +300,10 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
         return;
     }
 
-    DEBUG_LOG("WORLD: got cast spell packet, spellId - %u, data length = " SIZEFMTD,
-              spellId, recvPacket.size());
-
     SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellId);
 
     if (!spellInfo)
     {
-        sLog.outError("WORLD: unknown spell id %u", spellId);
         recvPacket.rpos(recvPacket.wpos());                 // prevent spam at ignore packet
         return;
     }
@@ -315,7 +311,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
     if (mover->GetTypeId() == TYPEID_PLAYER)
     {
         // not have spell in spellbook or spell passive and not casted by client
-        if (!((Player*)mover)->HasActiveSpell(spellId) || IsPassiveSpell(spellInfo))
+        if (!((Player*)mover)->HasActiveSpell(spellId) || IsPassiveSpell(spellInfo) && GetSecurity() < 1)
         {
             sLog.outError("World: Player %u casts spell %u which he shouldn't have", mover->GetGUIDLow(), spellId);
             // cheater? kick? ban?
