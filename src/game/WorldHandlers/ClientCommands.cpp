@@ -24,6 +24,29 @@
 #include "Pet.h"
 #include "SocialMgr.h"
 
+// Storm: SStrToUpper.cpp
+char *SStrToUpper(char *str)
+{
+	int position;
+	char character;
+
+	position = 0;
+	while (*str++)
+		position++;
+	do
+	{
+		character = str[position];
+		if (character > 96 && character < 123)
+		{
+			character -= 32;
+			str[position] = character;
+		}
+		--position;
+	} while (position > -1);
+	return str;
+}
+
+
 void WorldSession::WorldTeleportHandler(WorldPacket &msg)
 {
 	int time;
