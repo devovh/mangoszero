@@ -137,7 +137,7 @@ class WorldSession
         friend class CharacterHandler;
 
     public:
-        WorldSession(uint32 id, WorldSocket* sock, AccountTypes sec, time_t mute_time, LocaleConstant locale);
+        WorldSession(uint32 id, WorldSocket* sock, AccountTypes sec, time_t mute_time, LocaleConstant locale, const char *accountName);
         ~WorldSession();
 
         bool PlayerLoading() const
@@ -175,6 +175,9 @@ class WorldSession
         {
             return _accountId;
         }
+
+		const char *GetAccountName();
+
         Player* GetPlayer() const
         {
             return _player;
@@ -762,6 +765,7 @@ class WorldSession
 
         AccountTypes _security;
         uint32 _accountId;
+		const char *m_accountName;
 
         // Warden
         Warden* _warden;                                    // Remains NULL if Warden system is not enabled by config
