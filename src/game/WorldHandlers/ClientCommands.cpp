@@ -414,3 +414,53 @@ void WorldSession::HandleLearnSpell(WorldPacket &msg)
 	else
 		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
 }
+
+void WorldSession::HandleGmNuke(WorldPacket &msg)
+{
+	Player *plyr;
+	char characterName[64];
+
+	plyr = 0;
+	*characterName = 0;
+	if (GetSecurity() > 0)
+	{
+		msg >> characterName;
+		NormalizePlayerName(characterName);
+		if (plyr = sObjectAccessor.FindPlayerByName(characterName))
+			plyr->GetSession()->KickPlayer();
+		else
+			SendPlayerNotFoundFailure();
+	}
+	else
+		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}
+
+void WorldSession::HandleGmNukeAccount(WorldPacket &msg)
+{
+	WorldSession *account;
+	Player *plyr;
+	//char accountName[12];
+	unsigned int accountNumber;
+
+	account = 0;
+	plyr = 0;
+	//*accountName = 0;
+	accountNumber = 0;
+	if (GetSecurity() > 0)
+	{
+		//msg >> accountName;
+		msg >> accountNumber;
+		//SStrToUpper(accountName);
+		//account = sWorld.GetSession(accountName);
+		account = sWorld.FindSession(accountNumber);
+		if (account)
+		{
+			plyr = account->GetPlayer();
+			plyr->GetSession()->KickPlayer();
+		}
+		else
+			SendConsoleMessage("Account not found", WARNING_COLOR);
+	}
+	else
+		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}

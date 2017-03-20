@@ -566,7 +566,7 @@ void Opcodes::BuildOpcodeList()
     /*[-ZERO] Need check */ /*0x1F7*/  StoreOpcode(SMSG_PLAY_SPELL_IMPACT,            "SMSG_PLAY_SPELL_IMPACT",           STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*[-ZERO] Need check */ /*0x1F8*/  StoreOpcode(SMSG_EXPLORATION_EXPERIENCE,       "SMSG_EXPLORATION_EXPERIENCE",      STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x1F9*/  StoreOpcode(CMSG_GM_SET_SECURITY_GROUP,        "CMSG_GM_SET_SECURITY_GROUP",       STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
-    /*0x1FA*/  StoreOpcode(CMSG_GM_NUKE,                      "CMSG_GM_NUKE",                     STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x1FA*/  StoreOpcode(CMSG_GM_NUKE,                      "CMSG_GM_NUKE",                     STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::HandleGmNuke);
     /*0x1FB*/  StoreOpcode(MSG_RANDOM_ROLL,                   "MSG_RANDOM_ROLL",                  STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleRandomRollOpcode);
     /*[-ZERO] Need check */ /*0x1FC*/  StoreOpcode(SMSG_ENVIRONMENTALDAMAGELOG,       "SMSG_ENVIRONMENTALDAMAGELOG",      STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x1FD*/  StoreOpcode(CMSG_RWHOIS_OBSOLETE,              "CMSG_RWHOIS_OBSOLETE",             STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::ReverseWhoIsHandler);
@@ -841,7 +841,7 @@ void Opcodes::BuildOpcodeList()
     /*0x30C*/  StoreOpcode(SMSG_SPLINE_MOVE_STOP_SWIM,        "SMSG_SPLINE_MOVE_STOP_SWIM",       STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x30D*/  StoreOpcode(SMSG_SPLINE_MOVE_SET_RUN_MODE,     "SMSG_SPLINE_MOVE_SET_RUN_MODE",    STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x30E*/  StoreOpcode(SMSG_SPLINE_MOVE_SET_WALK_MODE,    "SMSG_SPLINE_MOVE_SET_WALK_MODE",   STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
-    /*0x30F*/  StoreOpcode(CMSG_GM_NUKE_ACCOUNT,              "CMSG_GM_NUKE_ACCOUNT",             STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x30F*/  StoreOpcode(CMSG_GM_NUKE_ACCOUNT,              "CMSG_GM_NUKE_ACCOUNT",             STATUS_LOGGEDIN,     PROCESS_INPLACE,      &WorldSession::HandleGmNukeAccount);
     /*0x310*/  StoreOpcode(MSG_GM_DESTROY_CORPSE,             "MSG_GM_DESTROY_CORPSE",            STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x311*/  StoreOpcode(CMSG_GM_DESTROY_ONLINE_CORPSE,     "CMSG_GM_DESTROY_ONLINE_CORPSE",    STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*[-ZERO] Need check */ /*0x312*/  StoreOpcode(CMSG_ACTIVATETAXIEXPRESS,          "CMSG_ACTIVATETAXIEXPRESS",         STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   &WorldSession::HandleActivateTaxiExpressOpcode);
