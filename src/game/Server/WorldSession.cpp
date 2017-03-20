@@ -700,6 +700,14 @@ void WorldSession::SendPlayerNotFoundFailure()
 	SendPacket(&msg);
 }
 
+void WorldSession::SendConsoleMessage(const char *str, int color)
+{
+	WorldPacket msg(SMSG_CONSOLE_WRITE);
+	msg << str;
+	msg << color;
+	SendPacket(&msg);
+}
+
 void WorldSession::SendAuthWaitQue(uint32 position)
 {
     if (position == 0)

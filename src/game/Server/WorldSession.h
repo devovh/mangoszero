@@ -85,6 +85,20 @@ enum TutorialDataState
     TUTORIALDATA_NEW       = 2
 };
 
+enum COLOR_T
+{
+	DEFAULT_COLOR = 0x0,	// WHITE
+	INPUT_COLOR = 0x1,
+	ECHO_COLOR = 0x2,	// GRAY
+	ERROR_COLOR = 0x3,	// RED
+	WARNING_COLOR = 0x4,	// YELLOW
+	GLOBAL_COLOR = 0x5,
+	ADMIN_COLOR = 0x6,	// RED
+	HIGHLIGHT_COLOR = 0x7,
+	BACKGROUND_COLOR = 0x8,
+	NUM_COLORTYPES = 9,
+};
+
 // class to deal with packet processing
 // allows to determine if next packet is safe to be processed
 class PacketFilter
@@ -160,6 +174,7 @@ class WorldSession
         void SendNotification(const char* format, ...) ATTR_PRINTF(2, 3);
         void SendNotification(int32 string_id, ...);
 		void SendPlayerNotFoundFailure();
+		void SendConsoleMessage(const char *str, int color);
         void SendPetNameInvalid(uint32 error, const std::string& name);
         void SendPartyResult(PartyOperation operation, const std::string& member, PartyResult res);
         void SendGuildInvite(Player* player, bool alreadyInGuild = false);
