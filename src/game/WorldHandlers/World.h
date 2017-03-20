@@ -454,6 +454,7 @@ class World
         void CleanupsBeforeStop();
 
         WorldSession* FindSession(uint32 id) const;
+		WorldSession *GetSession(const char *accountName);
         void AddSession(WorldSession* s);
         bool RemoveSession(uint32 id);
         /// Get the number of current active sessions

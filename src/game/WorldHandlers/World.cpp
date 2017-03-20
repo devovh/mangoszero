@@ -181,6 +181,17 @@ WorldSession* World::FindSession(uint32 id) const
         { return NULL; }
 }
 
+WorldSession *World::GetSession(const char *accountName)
+{
+	SessionMap::iterator i = m_sessions.begin();
+	while (i != m_sessions.end())
+	{
+		if (i->second->GetAccountName() == accountName)
+			return i->second;
+	}
+	return 0;	// No online session matches that account name
+}
+
 /// Remove a given session
 bool World::RemoveSession(uint32 id)
 {
