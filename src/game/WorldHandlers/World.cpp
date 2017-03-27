@@ -1612,6 +1612,7 @@ void World::Update(uint32 diff)
     // update the instance reset times
     sMapPersistentStateMgr.Update();
 
+	/* DISABLE MAINTENANCE WHEN SERVER IS ONLINE
     if (m_MaintenanceTimeChecker < diff)
     {
         if (GetDateToday() >= m_NextMaintenanceDate)
@@ -1623,6 +1624,7 @@ void World::Update(uint32 diff)
     }
     else
         { m_MaintenanceTimeChecker -= diff; }
+	*/
 
     // And last, but not least handle the issued cli commands
     ProcessCliCommands();
