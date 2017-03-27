@@ -1436,7 +1436,12 @@ class Player : public Unit
 
         void SetBindPoint(ObjectGuid guid);
         void SendTalentWipeConfirm(ObjectGuid guid);
-        void RewardRage(uint32 damage, bool attacker);
+
+
+		/*** Rage regeneration formula handler  ***/
+        void RegenerateRage(uint32 damage, bool attacker);
+
+
         void SendPetSkillWipeConfirm();
         void RegenerateAll();
         void Regenerate(Powers power);

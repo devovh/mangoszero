@@ -181,6 +181,17 @@ WorldSession* World::FindSession(uint32 id) const
         { return NULL; }
 }
 
+WorldSession *World::GetSession(const char *accountName)
+{
+	SessionMap::iterator i = m_sessions.begin();
+	while (i != m_sessions.end())
+	{
+		if (i->second->GetAccountName() == accountName)
+			return i->second;
+	}
+	return 0;	// No online session matches that account name
+}
+
 /// Remove a given session
 bool World::RemoveSession(uint32 id)
 {
@@ -400,7 +411,6 @@ void World::LoadConfigSettings(bool reload)
     ///- Read all rates from the config file
     setConfigPos(CONFIG_FLOAT_RATE_HEALTH, "Rate.Health", 1.0f);
     setConfigPos(CONFIG_FLOAT_RATE_POWER_MANA, "Rate.Mana", 1.0f);
-    setConfig(CONFIG_FLOAT_RATE_POWER_RAGE_INCOME, "Rate.Rage.Income", 1.0f);
     setConfigPos(CONFIG_FLOAT_RATE_POWER_RAGE_LOSS, "Rate.Rage.Loss", 1.0f);
     setConfig(CONFIG_FLOAT_RATE_POWER_FOCUS,             "Rate.Focus", 1.0f);
     setConfigPos(CONFIG_FLOAT_RATE_LOYALTY,              "Rate.Loyalty", 1.0f);

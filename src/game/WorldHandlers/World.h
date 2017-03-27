@@ -221,7 +221,6 @@ enum eConfigFloatValues
 {
     CONFIG_FLOAT_RATE_HEALTH = 0,
     CONFIG_FLOAT_RATE_POWER_MANA,
-    CONFIG_FLOAT_RATE_POWER_RAGE_INCOME,
     CONFIG_FLOAT_RATE_POWER_RAGE_LOSS,
     CONFIG_FLOAT_RATE_POWER_FOCUS,
     CONFIG_FLOAT_RATE_POWER_ENERGY,
@@ -455,6 +454,7 @@ class World
         void CleanupsBeforeStop();
 
         WorldSession* FindSession(uint32 id) const;
+		WorldSession *GetSession(const char *accountName);
         void AddSession(WorldSession* s);
         bool RemoveSession(uint32 id);
         /// Get the number of current active sessions

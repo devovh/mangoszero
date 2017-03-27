@@ -1233,7 +1233,6 @@ Visibility.AIRelocationNotifyDelay = 1000
 #
 #    Rate.Health
 #    Rate.Mana
-#    Rate.Rage.Income
 #    Rate.Rage.Loss
 #    Rate.Focus
 #    Rate.Loyalty
@@ -1400,7 +1399,6 @@ Visibility.AIRelocationNotifyDelay = 1000
 
 Rate.Health                       = 1
 Rate.Mana                         = 1
-Rate.Rage.Income                  = 1
 Rate.Rage.Loss                    = 1
 Rate.Focus                        = 1
 Rate.Loyalty                      = 1

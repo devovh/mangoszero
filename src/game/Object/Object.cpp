@@ -316,7 +316,7 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
     // this is called for UPDATETYPE_CREATE_OBJECT, UPDATETYPE_CREATE_OBJECT2, UPDATETYPE_VALUES only
     if (isType(TYPEMASK_GAMEOBJECT) && !((GameObject*)this)->IsTransport())
     {
-        IsActivateToQuest = ((GameObject*)this)->ActivateToQuest(target) || target->isGameMaster();
+        IsActivateToQuest = ((GameObject*)this)->ActivateToQuest(target);
 		if (HasFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND))
 		{
 			canUse = false;
@@ -330,15 +330,12 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
 			QuestRelationsMapBounds bounds = sObjectMgr.GetGOQuestInvolvedRelationsMapBounds(GetEntry());
 			for (QuestRelationsMap::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
 			{
-				if (target->GetQuestStatus(itr->second) == QUEST_STATUS_COMPLETE || target->GetQuestStatus(itr->second) == QUEST_STATUS_NONE)
+				if (target->GetQuestStatus(itr->second) == QUEST_STATUS_COMPLETE || target->GetQuestStatus(itr->second) == QUEST_STATUS_INCOMPLETE)
 				{
-					if (
-						!target->GetQuestRewardStatus(itr->second)
-						|| (!target->GetQuestRewardStatus(itr->second) && target->GetQuestStatus(itr->second) != QUEST_STATUS_NONE)
-						)
+					if (!target->GetQuestRewardStatus(itr->second))
 					{
-						canUse = false;
-						IsActivateToQuest = false;
+						canUse = true;
+						IsActivateToQuest = true;
 					}
 				}
 			}
@@ -347,7 +344,10 @@ void Object::BuildValuesUpdate(uint8 updatetype, ByteBuffer* data, UpdateMask* u
 			bounds = sObjectMgr.GetGOQuestRequirementRelationsMapBounds(GetEntry());
 			for (QuestRelationsMap::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
 			{
-				if (target->GetQuestStatus(itr->second) == QUEST_STATUS_INCOMPLETE)
+				if (
+					(target->GetQuestStatus(itr->second) == QUEST_STATUS_COMPLETE || target->GetQuestStatus(itr->second) == QUEST_STATUS_INCOMPLETE)
+					&& !target->GetQuestRewardStatus(itr->second)
+					)
 				{
 						canUse = true;
 						IsActivateToQuest = true;

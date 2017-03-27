@@ -1914,28 +1914,27 @@ void Player::RemoveFromWorld()
     Unit::RemoveFromWorld();
 }
 
-void Player::RewardRage(uint32 damage, bool attacker)
+void Player::RegenerateRage(uint32 damage, bool attacker)
 {
-    float addRage;
-
-    float rageconversion = float((0.0091107836 * getLevel() * getLevel()) + 3.225598133 * getLevel()) + 4.2652911f;
+    float rageGained;
+	float rageConversion;
+	
+	// The rage regeneration formula is based on http://blue.mmo-champion.com/topic/18325-the-new-rage-formula-by-kalgan/
+	rageConversion = (0.0091107836f * getLevel() * getLevel()) + 3.225598133f * getLevel() + 4.2652911f;
+	rageGained = 0;
 
     if (attacker)
-    {
-        addRage = damage / rageconversion * 7.5f;
-    }
+        rageGained = (damage / rageConversion) * 7.5f;
     else
-    {
-        addRage = damage / rageconversion * 2.5f;
+	{
+        rageGained = damage / rageConversion * 2.5f;
 
         // Berserker Rage effect
         if (HasAura(18499, EFFECT_INDEX_0))
-            { addRage *= 1.3f; }
+            rageGained *= 1.3f;
     }
-
-    addRage *= sWorld.getConfig(CONFIG_FLOAT_RATE_POWER_RAGE_INCOME);
-
-    ModifyPower(POWER_RAGE, uint32(addRage * 10));
+	rageGained *= 10;
+    ModifyPower(POWER_RAGE, int(rageGained));
 }
 
 void Player::RegenerateAll()
