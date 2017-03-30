@@ -5473,26 +5473,8 @@ bool ChatHandler::HandleRespawnCommand(char* /*args*/)
 
 bool ChatHandler::HandleGMFlyCommand(char* args)
 {
-    bool value;
-    if (!ExtractOnOff(&args, value))
-    {
-        SendSysMessage(LANG_USE_BOL);
-        SetSentErrorMessage(true);
-        return false;
-    }
-
-    Player* target = getSelectedPlayer();
-    if (!target)
-        { target = m_session->GetPlayer(); }
-
-    // [-ZERO] Need reimplement in another way
-    {
-        SendSysMessage(LANG_USE_BOL);
-        return false;
-    }
-    target->SetCanFly(value);
-    PSendSysMessage(LANG_COMMAND_FLYMODE_STATUS, GetNameLink(target).c_str(), args);
-    return true;
+	m_session->SendNotification("gm fly is deprecated. Please use /console swim <1/0> instead");
+	return false;
 }
 
 bool ChatHandler::HandlePDumpLoadCommand(char* args)

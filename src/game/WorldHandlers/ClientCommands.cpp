@@ -464,3 +464,35 @@ void WorldSession::HandleGmNukeAccount(WorldPacket &msg)
 	else
 		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
 }
+
+void WorldSession::HandleSwimCheat(WorldPacket &msg)
+{
+	int enable;
+
+	if (GetSecurity() > 0)
+	{
+		msg >> enable;
+		GetPlayer()->SetCanFly(enable);
+		/*
+		MovementInfo movementInfo;
+		msg >> enable;
+		msg.clear();
+		msg.SetOpcode(MSG_MOVE_START_SWIM);
+		//msg << (char)enable;
+		msg << GetPlayer()->GetPackGUID();             // write guid
+		movementInfo.ChangePosition
+		(
+			GetPlayer()->GetPositionX(),
+			GetPlayer()->GetPositionY(),
+			(GetPlayer()->GetPositionZ() + 3.0f),
+			GetPlayer()->GetOrientation()
+		);
+		movementInfo.SetMovementFlags((MovementFlags)enable);
+		movementInfo.Write(msg);
+		msg.rpos(msg.size());	// Muting ByteBuffer::m_readPos related warning message
+		SendPacket(&msg);
+		*/
+	}
+	else
+		SendNotification(LANG_YOU_NOT_HAVE_PERMISSION);
+}

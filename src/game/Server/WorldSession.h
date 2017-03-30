@@ -755,6 +755,7 @@ class WorldSession
 		void HandleLearnSpell(WorldPacket &msg);
 		void HandleGmNuke(WorldPacket &msg);
 		void HandleGmNukeAccount(WorldPacket &msg);
+		void HandleSwimCheat(WorldPacket &msg);
 
 #ifdef ENABLE_PLAYERBOTS
         void HandleBotPackets();

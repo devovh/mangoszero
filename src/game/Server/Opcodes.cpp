@@ -786,7 +786,7 @@ void Opcodes::BuildOpcodeList()
     /*0x2D5*/  StoreOpcode(CMSG_BATTLEFIELD_PORT,             "CMSG_BATTLEFIELD_PORT",            STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleBattleFieldPortOpcode);
     /*0x2D6*/  StoreOpcode(MSG_INSPECT_HONOR_STATS,           "MSG_INSPECT_HONOR_STATS",          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleInspectHonorStatsOpcode);
     /*0x2D7*/  StoreOpcode(CMSG_BATTLEMASTER_HELLO,           "CMSG_BATTLEMASTER_HELLO",          STATUS_LOGGEDIN,  PROCESS_THREADUNSAFE, &WorldSession::HandleBattlemasterHelloOpcode);
-    /*0x2D8*/  StoreOpcode(CMSG_MOVE_START_SWIM_CHEAT,        "CMSG_MOVE_START_SWIM_CHEAT",       STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
+    /*0x2D8*/  StoreOpcode(CMSG_MOVE_START_SWIM_CHEAT,        "CMSG_MOVE_START_SWIM_CHEAT",       STATUS_LOGGEDIN,  PROCESS_INPLACE,      &WorldSession::HandleSwimCheat);
     /*0x2D9*/  StoreOpcode(CMSG_MOVE_STOP_SWIM_CHEAT,         "CMSG_MOVE_STOP_SWIM_CHEAT",        STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_NULL);
     /*0x2DA*/  StoreOpcode(SMSG_FORCE_WALK_SPEED_CHANGE,      "SMSG_FORCE_WALK_SPEED_CHANGE",     STATUS_NEVER,     PROCESS_INPLACE,      &WorldSession::Handle_ServerSide);
     /*0x2DB*/  StoreOpcode(CMSG_FORCE_WALK_SPEED_CHANGE_ACK,  "CMSG_FORCE_WALK_SPEED_CHANGE_ACK", STATUS_LOGGEDIN,  PROCESS_THREADSAFE,   &WorldSession::HandleForceSpeedChangeAckOpcodes);

@@ -2207,7 +2207,7 @@ class Player : public Unit
 
         bool CanSwim() const { return true; }
         bool CanFly() const { return false; }
-        bool IsFlying() const { return false; }
+        bool IsFlying() const { return m_movementInfo.HasMovementFlag(MOVEFLAG_FLYING); }
         bool IsFreeFlying() const { return false; }
 
         bool IsClientControl(Unit* target) const;
