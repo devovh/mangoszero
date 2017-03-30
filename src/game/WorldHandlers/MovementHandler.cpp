@@ -285,6 +285,16 @@ void WorldSession::HandleMovementOpcodes(WorldPacket& recv_data)
     if (plMover)
         { plMover->UpdateFallInformationIfNeed(movementInfo, opcode); }
 
+	if (opcode == MSG_MOVE_JUMP)
+	{
+		if (plMover->IsFlying())
+		{
+			plMover->m_movementInfo.SetMovementFlags(MOVEFLAG_NONE);
+			movementInfo.SetMovementFlags(MOVEFLAG_NONE);
+			plMover->SendHeartBeat();
+		}
+	}
+
     WorldPacket data(opcode, uint16(recv_data.size() + 2));
     data << mover->GetPackGUID();             // write guid
     movementInfo.Write(data);                               // write data

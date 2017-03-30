@@ -6444,7 +6444,7 @@ bool Player::CanUseCapturePoint()
            !HasStealthAura() &&                             // not stealthed
            !HasInvisibilityAura() &&                        // visible
            (IsPvP() || sWorld.IsPvPRealm()) &&
-           !HasMovementFlag(MOVEFLAG_FLYING) &&
+           !HasMovementFlag(MOVEFLAG_GRAVITY_DISABLED) &&
            !IsTaxiFlying() &&
            !isGameMaster();
 }
@@ -18034,7 +18034,7 @@ void Player::SendInitialPacketsBeforeAddToMap()
 
     // Set fly flag if player is on a taxi to avoid falling to the ground
     if (IsTaxiFlying())
-        { m_movementInfo.AddMovementFlag(MOVEFLAG_FLYING); }
+        { m_movementInfo.AddMovementFlag(MOVEFLAG_GRAVITY_DISABLED); }
 
     /* Finally, set the player as the active mover */
     SetMover(this);
