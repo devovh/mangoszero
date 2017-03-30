@@ -646,7 +646,7 @@ struct npc_phalanxAI : public npc_escortAI
         {
             // SetCurrentWaypoint(1); // Causes crash.
             m_creature->GetMotionMaster()->MoveIdle();
-            m_creature->NearTeleportTo(868.122, -223.884, -43.695, m_fKeepDoorOrientation);
+            m_creature->NearTeleportTo(868.122f, -223.884f, -43.695f, m_fKeepDoorOrientation);
             m_creature->SendHeartBeat();
             // MovementGenerator should be reset?
         }

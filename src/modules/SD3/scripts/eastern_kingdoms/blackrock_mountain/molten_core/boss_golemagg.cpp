@@ -260,7 +260,7 @@ struct mob_core_rager : public CreatureScript
             if (TickTimer < uiDiff)
             {
                 TickTimer = 1000;
-                if (!m_creature->HasAura(SPELL_TRASH) && !rand() % 10)
+                if (!m_creature->HasAura(SPELL_TRASH) && !(rand() % 10))
                 {
                     m_creature->CastSpell(m_creature, SPELL_TRASH, true);
                 }
